@@ -1,0 +1,25 @@
+<div class="dashboard-container">
+    <h1>Dashboard</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Título</th>
+          <th>Descrição</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let issue of issues">
+          <td>{{ issue.id }}</td>
+          <td>{{ issue.title }}</td>
+          <td>{{ issue.description }}</td>
+          <td>{{ issue.state }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+
+
+  
