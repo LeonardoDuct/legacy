@@ -1,1 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.min.css";
+/* Estilos gerais */
+.brand-title {
+    font-family: 'Arial', sans-serif; /* Usando uma fonte moderna */
+    font-size: 3rem; /* Tamanho grande */
+    font-weight: bold; /* Negrito para o nome */
+    color: #0096c7; /* Cor azul para o "JALL" */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .brand-icon {
+    width: 50px; /* Tamanho do ícone */
+    height: 50px; /* Tamanho do ícone */
+    margin-right: 15px; /* Espaçamento entre ícone e texto */
+  }
+  
+  .brand-name {
+    color: #000; /* Cor preta para o "CARD" */
+    font-weight: normal; /* Normal para o "CARD" */
+  }
+  
+  /* Adicionando estilo ao ícone */
+  .brand-icon {
+    border-radius: 50%; /* Caso o ícone seja redondo */
+  }
+  

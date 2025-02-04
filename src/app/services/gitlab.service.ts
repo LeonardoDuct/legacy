@@ -1,69 +1,67 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root', // Torna o serviço disponível em toda a aplicação sem precisar declará-lo em um módulo específico.
+  providedIn: 'root',
 })
 export class GitlabService {
-  private apiUrl = 'https://git.jallcard.com.br:9700/api/v4'; 
-  private token = 'glpat-BCSWzPHzW-qzgDhXzGWv'; 
+  private apiUrl = environment.apiUrl; 
+  private token = environment.gitlabToken; 
 
-  constructor(private http: HttpClient) {} // Injeta o HttpClient para realizar chamadas HTTP.
+  constructor(private http: HttpClient) {}
 
-  /**
-   * Recupera todas as issues (tickets) de um projeto específico no GitLab.
-   * @param projectId - ID do projeto do qual as issues serão buscadas.
-   * @returns Observable contendo as issues retornadas pela API.
-   */
-  getIssues(projectId: number): Observable<any> {
+  getIssues(projectId: number, page: number = 1, perPage: number = 50, state: string = ''): Observable<any> {
     const headers = new HttpHeaders({
       'Private-Token': this.token, 
     });
-    return this.http.get(`${this.apiUrl}/projects/${projectId}/issues`, { headers }); // Faz a requisição GET para obter as issues.
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('per_page', perPage.toString());
+    if (state) {
+      params = params.set('state', state);
+    }
+    return this.http.get(`${this.apiUrl}/projects/${projectId}/issues`, { headers, params });
   }
 
-  /**
-   * Cria uma nova issue em um projeto específico.
-   * @param projectId - ID do projeto no qual a issue será criada.
-   * @param issueData - Objeto contendo os dados da nova issue (ex: título, descrição, rótulos).
-   * @returns Observable contendo a resposta da API após a criação.
-   */
-  createIssue(projectId: number, issueData: any): Observable<any> {
+  getTotalIssues(projectId: number): Observable<number> {
     const headers = new HttpHeaders({
       'Private-Token': this.token, 
     });
-    return this.http.post(`${this.apiUrl}/projects/${projectId}/issues`, issueData, { headers }); // Faz a requisição POST para criar a issue.
+    return this.http.get(`${this.apiUrl}/projects/${projectId}/issues`, {
+      headers,
+      observe: 'response',
+      params: new HttpParams().set('per_page', '1') // Solicita uma única issue para obter o cabeçalho
+    }).pipe(
+      map(response => Number(response.headers.get('X-Total')))
+    );
   }
 
-  updateIssue(projectId: number, issueId: number, issueData: any): Observable<any> {
+  getIssuesForMultipleProjects(projectIds: number[], page: number = 1, perPage: number = 50, state: string = ''): Observable<any[]> {
     const headers = new HttpHeaders({
       'Private-Token': this.token, 
     });
-    return this.http.put(`${this.apiUrl}/projects/${projectId}/issues/${issueId}`, issueData, { headers }); // Faz a requisição PUT para atualizar a issue.
+    const requests = projectIds.map(id => {
+      let params = new HttpParams()
+        .set('page', page.toString())
+        .set('per_page', perPage.toString());
+      if (state) {
+        params = params.set('state', state);
+      }
+      return this.http.get(`${this.apiUrl}/projects/${id}/issues`, { headers, params });
+    });
+    return forkJoin(requests);
   }
 
-  
-  patchIssue(projectId: number, issueId: number, updates: any): Observable<any> {
-    const headers = new HttpHeaders({
-      'Private-Token': this.token, 
-    });
-    return this.http.patch(`${this.apiUrl}/projects/${projectId}/issues/${issueId}`, updates, { headers }); // Faz a requisição PATCH para atualizar a issue.
-  }
-
-
-  deleteIssue(projectId: number, issueId: number): Observable<any> {
-    const headers = new HttpHeaders({
-      'Private-Token': this.token, 
-    });
-    return this.http.delete(`${this.apiUrl}/projects/${projectId}/issues/${issueId}`, { headers }); // Faz a requisição DELETE para excluir a issue.
-  }
-
-  
-  getIssuesWithParams(projectId: number, params: any): Observable<any> {
-    const headers = new HttpHeaders({
-      'Private-Token': this.token, 
-    });
-    return this.http.get(`${this.apiUrl}/projects/${projectId}/issues`, { headers, params }); // Faz a requisição GET com os parâmetros fornecidos.
+  getOverdueIssues(projectId: number, state: string = ''): Observable<any[]> {
+    return this.getIssues(projectId, 1, 100, state).pipe(
+      map((issues: any[]) => issues.filter(issue => {
+        const dueDate = new Date(issue.due_date);
+        const currentDate = new Date();
+        return dueDate < currentDate;
+      }))
+    );
   }
 }

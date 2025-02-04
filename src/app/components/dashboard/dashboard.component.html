@@ -1,25 +1,59 @@
-<div>
-  <label for="projectSelect">Escolha um projeto:</label>
-  <select id="projectSelect" [(ngModel)]="selectedProjectId" (change)="onProjectSelect()">
-    <option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</option>
-  </select>
-</div>
+<div class="container mt-4">
+  <div class="row mb-3">
+    <div class="col">
+      <label for="projectSelect" class="form-label">Escolha um projeto:</label>
+      <select id="projectSelect" [(ngModel)]="selectedProjectId" (change)="onProjectSelect()" class="form-select">
+        <option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</option>
+      </select>
+    </div>
+    <div class="col">
+      <label for="issueStateSelect" class="form-label">Escolha o estado das issues:</label>
+      <select id="issueStateSelect" [(ngModel)]="selectedIssueState" (change)="onIssueStateSelect()" class="form-select">
+        <option value="all">Todas</option>
+        <option value="opened">Abertas</option>
+        <option value="closed">Fechadas</option>
+      </select>
+    </div>
+  </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Título</th>
-      <th>Descrição</th>
-      <th>Estado</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let issue of issues">
-      <td>{{ issue.id }}</td>
-      <td>{{ issue.title }}</td>
-      <td>{{ issue.description }}</td>
-      <td>{{ issue.state }}</td>
-    </tr>
-  </tbody>
-</table>
+  <div class="form-check form-switch d-flex justify-content-end align-items-center">
+    <label class="form-check-label me-5" for="overdueFilterCheck">
+      Mostrar apenas issues atrasadas
+    </label>
+    <input 
+      class="form-check-input" 
+      type="checkbox" 
+      id="overdueFilterCheck" 
+      [(ngModel)]="filterOverdue" 
+      (change)="onOverdueFilterChange()"
+    >
+  </div>
+  
+  
+
+  <!-- Total de Issues -->
+  <div class="mb-3">
+    <h2>Total de Issues: {{ totalIssues }}</h2> <!-- Exibe o total de issues na página atual -->
+    <h2>Total Geral de Issues: {{ totalIssuesOverall }}</h2> <!-- Exibe o total geral de issues -->
+  </div>
+
+  <!-- Tabela de Issues -->
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Descrição</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let issue of issues">
+        <td>{{ issue.id }}</td>
+        <td>{{ issue.title }}</td>
+        <td>{{ issue.description }}</td>
+        <td>{{ issue.state }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
