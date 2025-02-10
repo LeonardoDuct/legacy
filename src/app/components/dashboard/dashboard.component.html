@@ -1,4 +1,5 @@
 <div class="container mt-4">
+  <!-- Filtros -->
   <div class="row mb-3">
     <div class="col">
       <label for="projectSelect" class="form-label">Escolha um projeto:</label>
@@ -16,8 +17,9 @@
     </div>
   </div>
 
+  <!-- Filtro de Issues Atrasadas -->
   <div class="form-check form-switch d-flex justify-content-end align-items-center">
-    <label class="form-check-label me-5" for="overdueFilterCheck">
+    <label class="form-check-label me-3" for="overdueFilterCheck">
       Mostrar apenas issues atrasadas
     </label>
     <input 
@@ -28,13 +30,22 @@
       (change)="onOverdueFilterChange()"
     >
   </div>
-  
-  
 
   <!-- Total de Issues -->
   <div class="mb-3">
-    <h2>Total de Issues: {{ totalIssues }}</h2> <!-- Exibe o total de issues na página atual -->
-    <h2>Total Geral de Issues: {{ totalIssuesOverall }}</h2> <!-- Exibe o total geral de issues -->
+    <h2>Total de Issues: {{ totalIssues }}</h2>
+    <h2>Total Geral de Issues: {{ totalIssuesOverall }}</h2>
+  </div>
+
+  <!-- Gráfico de Pizza -->
+  <div class="mb-4 d-flex justify-content-center">
+    <canvas baseChart
+      [data]="pieChartData"
+      [labels]="pieChartLabels"
+      [options]="pieChartOptions"
+      [type]="pieChartType"
+      [legend]="pieChartLegend">
+    </canvas>
   </div>
 
   <!-- Tabela de Issues -->
@@ -52,7 +63,17 @@
         <td>{{ issue.id }}</td>
         <td>{{ issue.title }}</td>
         <td>{{ issue.description }}</td>
-        <td>{{ issue.state }}</td>
+        <td>
+          <span [ngClass]="{
+            'badge bg-success': issue.state === 'closed',
+            'badge bg-warning': issue.state === 'in_progress',
+            'badge bg-primary': issue.state === 'opened',
+            'badge bg-info': issue.state === 'testing',
+            'badge bg-danger': isOverdue(issue)
+          }">
+            {{ issue.state }}
+          </span>
+        </td>
       </tr>
     </tbody>
   </table>

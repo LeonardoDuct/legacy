@@ -54,14 +54,23 @@ export class GitlabService {
     });
     return forkJoin(requests);
   }
-
-  getOverdueIssues(projectId: number, state: string = ''): Observable<any[]> {
-    return this.getIssues(projectId, 1, 100, state).pipe(
-      map((issues: any[]) => issues.filter(issue => {
-        const dueDate = new Date(issue.due_date);
-        const currentDate = new Date();
-        return dueDate < currentDate;
-      }))
-    );
+  
+  getTotalIssuesByState(projectId: number): Observable<any> {
+    const headers = new HttpHeaders({
+      'Private-Token': this.token, 
+    });
+  
+    return this.http.get<any>(`${this.apiUrl}/projects/${projectId}/issues_statistics`, { headers })
+      .pipe(
+        map(response => ({
+          opened: response.statistics.counts.opened || 0,
+          closed: response.statistics.counts.closed || 0,
+          in_progress: response.statistics.counts.in_progress || 0,
+          testing: response.statistics.counts.testing || 0,
+          overdue: response.statistics.counts.overdue || 0
+        }))
+      );
   }
+  
+  
 }
