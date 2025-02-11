@@ -70,7 +70,10 @@ export class GitlabService {
           overdue: response.statistics.counts.overdue || 0
         }))
       );
+    
   }
   
-  
+  getTaskDetails(projectId: number, taskId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/projects/${projectId}/issues/${taskId}`);
+  }
 }

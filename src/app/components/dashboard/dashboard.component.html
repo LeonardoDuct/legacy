@@ -1,80 +1,90 @@
 <div class="container mt-4">
-  <!-- Filtros -->
-  <div class="row mb-3">
-    <div class="col">
-      <label for="projectSelect" class="form-label">Escolha um projeto:</label>
-      <select id="projectSelect" [(ngModel)]="selectedProjectId" (change)="onProjectSelect()" class="form-select">
-        <option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</option>
-      </select>
+  <!-- Header como Card -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="row align-items-center">
+        <!-- Logo e Descrição (5 colunas) -->
+        <div class="col-4">
+          <img src="assets/images/logo.png" alt="Logo da Empresa" class="logo-img mb-0" />
+        </div>
+  
+        <!-- Painel de Métricas (5 colunas) -->
+        <div class="col-3">
+          <div class="d-flex">
+            <!-- Tarefas Abertas -->
+            <div class="metric-card bg-card-body p-3 text-center flex-grow-1">
+              <h6 class="mb-1">Tarefas Abertas</h6>
+              <span class="fs-3 text-white fw-bold">311</span>
+            </div>
+        
+            <!-- Tarefas Fechadas -->
+            <div class="metric-card bg-card-body p-3 text-center flex-grow-1">
+              <h6 class="mb-1">Tarefas Fechadas</h6>
+              <span class="fs-3 text-white fw-bold">207</span>
+            </div>
+        
+            <!-- Tarefas Urgentes -->
+            <div class="metric-card bg-urgente p-3 text-center flex-grow-1">
+              <h6 class="mb-1">Tarefas Urgentes</h6>
+              <span class="fs-3 text-white fw-bold">42</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Filtros (2 colunas) -->
+        <div class="col-4 flex-grow-1">
+          <div class="d-flex justify-content-between">
+            <!-- Filtro de Labels -->
+            <div class="d-flex flex-column">
+              <label class="form-label mb-2 text-white label-extrabold">Filtros</label> <!-- Montserrat ExtraBold -->
+              <label class="form-label mb-2 text-white label-regular">Labels:</label> <!-- Montserrat Regular -->
+              <select class="form-select label-select mb-2">
+                <option>Label 1</option>
+                <option>Label 2</option>
+                <option>Label 3</option>
+              </select>
+            </div>
+            
+            <!-- Filtro de Período -->
+            <div class="d-flex flex-column text-end">
+              <label class="form-label mb-2 text-white label-regular" style="margin-right: 95px;">Período:</label> <!-- Montserrat Regular -->
+              <select class="form-select custom-select mb-2">
+                <option>Essa semana</option>
+                <option>Últimos 15 dias</option>
+                <option>Último mês</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        
+      </div>
     </div>
-    <div class="col">
-      <label for="issueStateSelect" class="form-label">Escolha o estado das issues:</label>
-      <select id="issueStateSelect" [(ngModel)]="selectedIssueState" (change)="onIssueStateSelect()" class="form-select">
-        <option value="all">Todas</option>
-        <option value="opened">Abertas</option>
-        <option value="closed">Fechadas</option>
-      </select>
+  </div>
+
+  <!-- Cards de Categorias -->
+  <div class="row mt-4">
+    <div *ngFor="let project of projects" class="col-md-4 mb-4">
+        <div class="card card-custom">
+            <div class="header-card">
+                <h5 class="title-custom">{{ project.name }}</h5>
+                <p class="tarefas-abertas">Tarefas<br>abertas: {{ project.totalIssues }}</p>
+            </div>
+            <div class="separator"></div> <!-- Linha separadora -->
+            <div class="card-custom position-relative">
+                <ul class="list-group list-group-flush lista-custom">
+                    <li class="list-group-item"><span class="bullet">•</span> Tarefas abertas dentro do prazo <span class="text-success">{{ project.openedOnTime }}</span></li>
+                    <li class="list-group-item"><span class="bullet">•</span> Tarefas abertas fora do prazo <span class="text-danger">{{ project.overdue }}</span></li>
+                    <li class="list-group-item"><span class="bullet">•</span> Tarefas fechadas <span class="text-secondary">{{ project.closed }}</span></li>
+                </ul>
+                <button class="btn detalhes-btn position-absolute">+ DETALHES</button>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
 
-  <!-- Filtro de Issues Atrasadas -->
-  <div class="form-check form-switch d-flex justify-content-end align-items-center">
-    <label class="form-check-label me-3" for="overdueFilterCheck">
-      Mostrar apenas issues atrasadas
-    </label>
-    <input 
-      class="form-check-input" 
-      type="checkbox" 
-      id="overdueFilterCheck" 
-      [(ngModel)]="filterOverdue" 
-      (change)="onOverdueFilterChange()"
-    >
-  </div>
-
-  <!-- Total de Issues -->
-  <div class="mb-3">
-    <h2>Total de Issues: {{ totalIssues }}</h2>
-    <h2>Total Geral de Issues: {{ totalIssuesOverall }}</h2>
-  </div>
-
-  <!-- Gráfico de Pizza -->
-  <div class="mb-4 d-flex justify-content-center">
-    <canvas baseChart
-      [data]="pieChartData"
-      [labels]="pieChartLabels"
-      [options]="pieChartOptions"
-      [type]="pieChartType"
-      [legend]="pieChartLegend">
-    </canvas>
-  </div>
-
-  <!-- Tabela de Issues -->
-  <table class="table table-bordered table-striped">
-    <thead class="thead-dark">
-      <tr>
-        <th>ID</th>
-        <th>Título</th>
-        <th>Descrição</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let issue of issues">
-        <td>{{ issue.id }}</td>
-        <td>{{ issue.title }}</td>
-        <td>{{ issue.description }}</td>
-        <td>
-          <span [ngClass]="{
-            'badge bg-success': issue.state === 'closed',
-            'badge bg-warning': issue.state === 'in_progress',
-            'badge bg-primary': issue.state === 'opened',
-            'badge bg-info': issue.state === 'testing',
-            'badge bg-danger': isOverdue(issue)
-          }">
-            {{ issue.state }}
-          </span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Rodapé -->
+  <footer class="mt-5 text-center text-muted">
+    <p>© 2025 JALLCARD - Todos os direitos reservados.</p>
+  </footer>
 </div>

@@ -1,0 +1,224 @@
+/* 🔹 Estilização dos Cards */
+.card {
+  transition: transform 0.3s ease-in-out;
+  cursor: pointer;
+  border-radius: 10px; /* Mantém os cantos arredondados */
+  overflow: hidden;
+  border: none;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card-custom {
+  background-color: #1D2A3F; /* Mantém a cor do card */
+  color: #ffffff;
+  border-radius: 15px;
+  overflow: hidden; /* Garante que os cantos fiquem arredondados */
+  min-height: 200px; /* Aumenta a altura mínima do card */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Mantém os conteúdos organizados */
+  border: none;
+}
+
+/* 🔹 Cabeçalho do Card */
+.header-card {
+  background: linear-gradient(90deg, #1D2A3F, #009ec5);
+  padding: 12px 15px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title-custom {
+  font-family: 'Montserrat', sans-serif; /* Usando a fonte Montserrat ExtraBold */
+  font-weight: 700; /* Definindo como ExtraBold */
+  font-size: 1.5rem;
+  margin: 0;
+  color: white;
+  text-transform: uppercase;
+}
+
+.tarefas-abertas {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+  text-align: right;
+}
+
+/* 🔹 Separador */
+.separator {
+  height: 1px;
+  background-color: #089fc1;
+  width: 100%;
+}
+
+/* 🔹 Corpo do Card */
+.card-body {
+  background: linear-gradient(90deg, #1D2A3F, #009ec5);
+  padding: 0.5px;
+  flex-grow: 1; /* Permite que o corpo do card ocupe espaço disponível */
+}
+
+/* 🔹 Estilização da Lista */
+.lista-custom .list-group-item {
+  font-family: 'Montserrat', sans-serif; /* Usando a fonte Montserrat Regular */
+  font-weight: 400;
+  background-color: #1D2A3F;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+}
+
+/* 🔹 Marcador da Lista */
+.bullet {
+  color: white; /* Cor do bullet para combinar com o background */
+  margin-right: 5px;
+}
+
+/* 🔹 Botão de Detalhes */
+.detalhes-btn {
+  bottom: 10px;
+  right: 10px;
+  background-color: black;
+  color: white;
+  border-radius: 50px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.text-muted {
+  color: white !important; /* Sobrescreve a cor do texto */
+}
+
+/* Estilo para os cards de métricas */
+.metric-card {
+  transition: transform 0.3s ease-in-out;
+  cursor: pointer;
+  border-radius: 0;
+  min-width: 100px; /* Largura mínima para cada card de métrica */
+  min-height: 150px;
+  display: flex; /* Usando Flexbox para alinhamento */
+  flex-direction: column; /* Alinhando elementos em coluna */
+  justify-content: center; /* Centralizando verticalmente */
+  align-items: center; /* Centralizando horizontalmente */
+  text-align: center;
+}
+
+.metric-card:hover {
+  transform: scale(1.05);
+}
+
+/* Espaçamento entre as métricas */
+.d-flex.gap-2 {
+  gap: 8px !important; /* Reduz o espaçamento entre os cards */
+}
+
+/* 🔹 Fundo igual ao do card-body */
+.bg-card-body {
+  background-color: none; /* Cor de fundo do card-body */
+  color: #ffffff; /* Cor do texto branco */
+  border: none;
+}
+
+/* 🔹 Fundo vermelho para tarefas urgentes */
+.bg-urgente {
+  background-color: #ed0808; /* Vermelho do Bootstrap (ou use qualquer tom de vermelho que preferir) */
+  color: #ffffff;
+}
+
+.logo-img {
+  max-width: 100%; 
+  max-height: 150px; 
+  height: auto; 
+  width: auto;
+}
+
+.col-4:last-child {
+  background-color: #1D2A3F;
+  padding: 15px; /* Opcional: Adiciona um espaçamento interno */
+  border-radius: 0; /* Opcional: Se quiser manter cantos arredondados */
+  min-height: 150px;
+
+}
+
+.mb-1 {
+  font-family: 'Montserrat', sans-serif; /* Usando a fonte Montserrat Regular */
+  font-weight: 800;
+  font-size: 0.7rem; /* Ajuste conforme necessário */
+  line-height: 1rem; /* Garantindo que a altura da linha seja uniforme */
+  text-align: right; /* Alinhando o texto à esquerda */
+  margin: 
+  0; /* Remover qualquer margem adicional */
+}
+.col-4, .col-3 {
+  padding: 0; /* Garante que não haja espaçamento interno */
+  margin: 0; /* Remove margens externas */
+}
+
+/* Estilo personalizado para o select existente */
+.custom-select {
+  background-color: black; /* Fundo preto */
+  color: white; /* Texto branco */
+  border-radius: 8px; /* Cantos arredondados */
+  font-size: 14px; /* Texto menor */
+  padding: 5px 25px; /* Menor espaçamento interno */
+  border: none; /* Borda branca */
+  width: auto; /* Ajusta automaticamente a largura */
+  background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http://www.w3.org/2000/svg%22%20viewBox%3D%220%200%2010%206%22%3E%3Cpath%20d%3D%22M1%200l4%204%204-4z%22%20fill%3D%22%23FFF%22/%3E%3C/svg%3E'); /* URL da seta branca */
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 10px 10px;
+  padding-right: 30px; /* Espaço extra para a seta */
+  margin-right: 10px;
+}
+
+/* Estilo ao focar */
+.custom-select:focus {
+  outline: none; /* Remove o contorno azul padrão */
+  box-shadow: none; /* Adiciona um leve brilho branco ao focar */
+}
+
+/* Estilo para o novo select de labels */
+.label-select {
+  background-color: white; /* Fundo branco */
+  color: black; /* Texto preto */
+  border-radius: 5px; /* Cantos ligeiramente arredondados */
+  font-size: 12px; /* Texto menor */
+  padding: 4px 8px; /* Menor espaçamento interno */
+  border: 1px solid black; /* Borda preta */
+  width: auto; /* Ajusta automaticamente a largura */
+  -webkit-appearance: none; /* Remove a aparência padrão do select */
+  -moz-appearance: none; /* Remove a aparência padrão do select no Firefox */
+  appearance: none; /* Remove a aparência padrão do select nos navegadores */
+  background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http://www.w3.org/2000/svg%22%20viewBox%3D%220%200%2010%206%22%3E%3Cpath%20d%3D%22M1%200l4%204%204-4z%22%20fill%3D%22%23000%22/%3E%3C/svg%3E'); /* URL da seta preta */
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 10px 10px;
+  padding-right: 25px; /* Espaço extra para a seta */
+}
+
+/* Estilo ao focar para o novo select de labels */
+.label-select:focus {
+  outline: none; /* Remove o contorno padrão */
+  box-shadow: 0 0 5px black; /* Adiciona um leve brilho preto ao focar */
+}
+
+/* Estilo para Montserrat Regular */
+.label-regular {
+  font-family: 'Montserrat', sans-serif; /* Usando a fonte Montserrat Regular */
+  font-weight: 400;
+}
+
+/* Estilo para Montserrat ExtraBold */
+.label-extrabold {
+  font-family: 'Montserrat', sans-serif; /* Usando a fonte Montserrat ExtraBold */
+  font-weight: 800;
+}
+
