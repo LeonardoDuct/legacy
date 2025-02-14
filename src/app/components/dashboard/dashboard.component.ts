@@ -31,21 +31,23 @@ export class DashboardComponent implements OnInit {
   projects: Project[] = [
     
     { id: 108, name: 'Sustentação' },
-    { id: 32, name: 'Processos' },
+    { id: 32, name: 'Processos' }, //Cadastro, Layout, documento, amostra e report. Fazer uma condicional para pegar atraves das labels dos projetos do grupo produtos. Labels demanda processos
 
-    { id: 262, name: 'Analise' ,SubProjects: [
+    /* { id: 262, name: 'QA' ,SubProjects: [ //analise
       { id: 118, name: 'Data Preparation' },
       { id: 107, name: 'Especificação' },
-      { id: 110, name: 'QA quality assurance' },
-      { id: 125, name: 'RNC Tecnologia'}
+      { id: 110, name: 'QA quality assurance' } //ID 107, analise, oq tiver com a label demanda analise deve ser somado aqui
     ] },
 
-    { id: 192, name: 'Projetos' },
-    
+   { id: 192, name: 'Projetos' },
+
     { id: 257, name: 'Produtos',SubProjects: [
       { id: 104, name: 'Cadastro' },
-      { id: 111, name: 'Documento' }
-    ] },
+      { id: 106, name: 'Layout' },//ID 107, analise, oq tiver com a label demanda produtos deve ser somado aqui
+      { id: 111, name: 'Documento' },
+      { id: 113, name: 'Amostra' },
+      { id: 32, name: 'Report' } // fazer condicional atraves das labels, demanda processos e demandas produtos
+    ] },*/
 
     { id: 1, name: 'Desenvolvimento',SubProjects: [
       { id: 79, name: 'pyxis-ADM' },
@@ -53,8 +55,9 @@ export class DashboardComponent implements OnInit {
         { id: 1, name: 'pyxis-SFP' }
     ] },
     
+    
 
-    { id: 26, name: 'infra' },
+    //{ id: 26, name: 'CMO' },
     
   ];
   page: number = 1;
@@ -62,120 +65,57 @@ export class DashboardComponent implements OnInit {
   hoveredProject: any;
   selectedProject: any;
   selectedSubProjectId: number = 123;
+  totalOpened = 0;
+  totalClosed = 0;
+  totalOverdue = 0;
 
 
   constructor(private gitlabService: GitlabService) {}
 
   ngOnInit(): void {
-    // Não vai carregar nada por padrão, o usuário escolhe o projeto
-    this.loadIssues(this.selectedProjectId, this.selectedIssueState);
+    this.loadAllProjectsIssues();
   }
 
-  loadIssues(projectId: number, state: string): void {
-    // Limpar dados
-    this.issues = [];
-    this.totalIssues = 0;
-    this.totalIssuesOverall = 0;
+  loadAllProjectsIssues(): void {
+    const requests = this.projects.map(project => {
+      const allProjectIds: number[] = [project.id, ...((project.SubProjects || []).map(sp => sp.id))];
+      return forkJoin(allProjectIds.map((id: number) => this.gitlabService.getTotalIssuesByState(id)));
+    });
 
-    let stateParam = state === 'all' ? '' : state;
-    
-    // Lista de requisições para o projeto principal e subprojetos
-    const requests = [];
+    forkJoin(requests).subscribe((responses) => {
+      this.totalOpened = 0;
+      this.totalClosed = 0;
+      this.totalOverdue = 0;
+      this.totalIssues = 0;
 
-    // Buscar as issues do projeto principal
-    requests.push(this.gitlabService.getIssues(projectId, this.page, this.perPage, stateParam));
+      responses.forEach((dataList, index) => {
+        let opened = 0, closed = 0, overdue = 0;
+        
+        dataList.forEach(data => {
+          opened += data.opened;
+          closed += data.closed;
+          overdue += data.overdue;
+        });
 
-    // Buscar as issues dos subprojetos, se existirem
-    const project = this.projects.find(p => p.id === projectId);
-    if (project?.SubProjects) {
-  project.SubProjects.forEach((subProject: SubProject) => {
-    requests.push(this.gitlabService.getIssues(subProject.id, this.page, this.perPage, stateParam));
-  });
-}
+        this.projects[index] = {
+          ...this.projects[index],
+          totalIssues: opened + closed,
+          openedOnTime: opened,
+          overdue: overdue,
+          closed: closed,
+        };
 
-    // Realiza todas as requisições
-    forkJoin(requests).subscribe((responses: Issue[][]) => {
-      responses.forEach((data: Issue[]) => {
-        this.issues = this.issues.concat(data);
-        this.totalIssues += data.length;
+        this.totalOpened += opened;
+        this.totalClosed += closed;
+        this.totalOverdue += overdue;
+        this.totalIssues += opened + closed;
       });
-
-      // Atualiza o gráfico
-      this.updateChartData();
-    }, (error: any) => {
-      console.error('Erro ao carregar issues:', error);
-    });
-
-    // Buscar o total geral de issues
-    this.gitlabService.getTotalIssues(projectId).subscribe((total: number) => {
-      this.totalIssuesOverall = total;
-    }, (error: any) => {
-      console.error('Erro ao buscar o total geral de issues:', error);
+    }, (error) => {
+      console.error('Erro ao buscar o total de issues para os projetos:', error);
     });
   }
 
-  updateChartData(): void {
-    const statusLabels = {
-      opened: 'Abertas',
-      closed: 'Fechadas'
-    };
-  
-    // Inicializar o contador de status
-    let statusCount: StatusCount = {
-      opened: 0,
-      closed: 0
-    };
-  
-    // Contabiliza as issues para os estados abertos e fechados
-    this.issues.forEach((issue: Issue) => {
-      switch (issue.state) {
-        case 'opened':
-          statusCount.opened += 1;
-          break;
-        case 'closed':
-          statusCount.closed += 1;
-          break;
-        default:
-          break;
-      }
-    });
-  
-    // Atualiza o gráfico para mostrar apenas Abertas e Fechadas
-    this.pieChartData = {
-      labels: Object.values(statusLabels),
-      datasets: [{
-        data: [
-          statusCount.opened,
-          statusCount.closed
-        ],
-        label: 'Tarefas'
-      }]
-    };
+  selectProject(projectId: number): void {
+    this.selectedProjectId = projectId;
   }
-  
-
-  isOverdue(issue: Issue): boolean {
-    return (new Date(issue.due_date ?? '') < new Date());
-  }
-  onProjectSelect(): void {
-    // Lógica para lidar com a seleção de um projeto
-    console.log('Projeto selecionado:', this.selectedProjectId);
-    this.loadIssues(this.selectedProjectId, this.selectedIssueState);
-  }
-  
-
-  // Método chamado quando um estado de issue é selecionado
-  onIssueStateSelect(): void {
-    // Lógica para lidar com a seleção de um estado de issue
-    console.log('Estado da issue selecionado:', this.selectedIssueState);
-    this.loadIssues(this.selectedProjectId, this.selectedIssueState);
-  }
-
-  
-  onOverdueFilterChange(): void {
-    
-    console.log('Filtro de overdue alterado:', this.filterOverdue);
-    this.updateChartData();
-  }
-  
 }

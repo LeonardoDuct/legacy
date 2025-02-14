@@ -39,21 +39,32 @@ export class GitlabService {
     );
   }
 
-  getIssuesForMultipleProjects(projectIds: number[], page: number = 1, perPage: number = 50, state: string = ''): Observable<any[]> {
+  getTotalIssuesForMultipleProjects(projectIds: number[], state: string = ''): Observable<number> {
     const headers = new HttpHeaders({
       'Private-Token': this.token, 
     });
+  
+    // Aqui criamos uma requisição para cada projeto
     const requests = projectIds.map(id => {
-      let params = new HttpParams()
-        .set('page', page.toString())
-        .set('per_page', perPage.toString());
+      let params = new HttpParams();
       if (state) {
         params = params.set('state', state);
       }
-      return this.http.get(`${this.apiUrl}/projects/${id}/issues`, { headers, params });
+      return this.http.get(`${this.apiUrl}/projects/${id}/issues`, { headers, params, observe: 'response' });
     });
-    return forkJoin(requests);
+  
+    // Faz todas as requisições e retorna o total de issues combinados
+    return forkJoin(requests).pipe(
+      map(responses => {
+        // Agora acessamos o cabeçalho 'X-Total' para cada resposta
+        return responses.reduce((total, response) => {
+          const totalIssues = Number(response.headers.get('X-Total'));
+          return total + (totalIssues || 0); // Se o totalIssues não for um número, consideramos como 0
+        }, 0); // Inicializa com 0
+      })
+    );
   }
+  
   
   getTotalIssuesByState(projectId: number): Observable<any> {
     const headers = new HttpHeaders({
@@ -76,4 +87,6 @@ export class GitlabService {
   getTaskDetails(projectId: number, taskId: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/projects/${projectId}/issues/${taskId}`);
   }
+
+  
 }

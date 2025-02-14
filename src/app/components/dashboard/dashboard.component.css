@@ -44,10 +44,12 @@
 }
 
 .tarefas-abertas {
-  font-size: 0.8rem;
-  font-weight: bold;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
   color: white;
-  text-align: right;
+  text-align: center;
+  margin-right: 90px;
 }
 
 /* 🔹 Separador */

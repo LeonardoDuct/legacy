@@ -14,19 +14,19 @@
             <!-- Tarefas Abertas -->
             <div class="metric-card bg-card-body p-3 text-center flex-grow-1">
               <h6 class="mb-1">Tarefas Abertas</h6>
-              <span class="fs-3 text-white fw-bold">311</span>
+              <span class="fs-3 text-white fw-bold">{{ totalOpened }}</span>
             </div>
         
             <!-- Tarefas Fechadas -->
             <div class="metric-card bg-card-body p-3 text-center flex-grow-1">
               <h6 class="mb-1">Tarefas Fechadas</h6>
-              <span class="fs-3 text-white fw-bold">207</span>
+              <span class="fs-3 text-white fw-bold">{{ totalClosed }}</span>
             </div>
         
             <!-- Tarefas Urgentes -->
             <div class="metric-card bg-urgente p-3 text-center flex-grow-1">
               <h6 class="mb-1">Tarefas Urgentes</h6>
-              <span class="fs-3 text-white fw-bold">42</span>
+              <span class="fs-3 text-white fw-bold">{{ totalOverdue }}</span>
             </div>
           </div>
         </div>
@@ -36,18 +36,18 @@
           <div class="d-flex justify-content-between">
             <!-- Filtro de Labels -->
             <div class="d-flex flex-column">
-              <label class="form-label mb-2 text-white label-extrabold">Filtros</label> <!-- Montserrat ExtraBold -->
-              <label class="form-label mb-2 text-white label-regular">Labels:</label> <!-- Montserrat Regular -->
+              <label class="form-label mb-2 text-white">Filtros</label>
+              <label class="form-label mb-2 text-white">Labels:</label>
               <select class="form-select label-select mb-2">
                 <option>Label 1</option>
                 <option>Label 2</option>
                 <option>Label 3</option>
               </select>
             </div>
-            
+        
             <!-- Filtro de Período -->
             <div class="d-flex flex-column text-end">
-              <label class="form-label mb-2 text-white label-regular" style="margin-right: 95px;">Período:</label> <!-- Montserrat Regular -->
+              <label class="form-label mb-2 text-white" style="margin-right: 95px;">Período:</label>
               <select class="form-select custom-select mb-2">
                 <option>Essa semana</option>
                 <option>Últimos 15 dias</option>
@@ -56,7 +56,6 @@
             </div>
           </div>
         </div>
-        
         
       </div>
     </div>
