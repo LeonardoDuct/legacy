@@ -1,16 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~bootstrap/dist/css/bootstrap.min.css";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
 /* Estilos gerais */
 body {
   background-color: #03080c; /* Fundo geral da página */
   color: #FFF; /* Texto branco */
-  font-family: Arial, sans-serif;
+  font-family: 'Montserrat';
   margin: 0;
   padding: 0;
 }
 
 .brand-title {
-    font-family: 'Arial', sans-serif; /* Usando uma fonte moderna */
+    font-family: 'Montserrat'; /* Usando uma fonte moderna */
     font-size: 3rem; /* Tamanho grande */
     font-weight: bold; /* Negrito para o nome */
     color: #0096c7; /* Cor azul para o "JALL" */
