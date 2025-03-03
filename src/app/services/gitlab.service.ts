@@ -71,18 +71,23 @@ export class GitlabService {
       'Private-Token': this.token, 
     });
   
-    return this.http.get<any>(`${this.apiUrl}/projects/${projectId}/issues_statistics`, { headers })
+    return this.http.get<any[]>(`${this.apiUrl}/projects/${projectId}/issues`, { headers, params: {
+      per_page: '100',  
+      state: 'all',     
+    } })
+   
       .pipe(
-        map(response => ({
-          opened: response.statistics.counts.opened || 0,
-          closed: response.statistics.counts.closed || 0,
-          in_progress: response.statistics.counts.in_progress || 0,
-          testing: response.statistics.counts.testing || 0,
-          overdue: response.statistics.counts.overdue || 0
-        }))
+        map(issues => {
+          const opened = issues.filter(issue => issue.state === 'opened').length;
+          const closed = issues.filter(issue => issue.state === 'closed').length;
+          const overdue = issues.filter(issue => issue.due_date && new Date(issue.due_date) < new Date() && issue.state === 'opened').length;
+          return { opened, closed, overdue };
+        })
       );
-    
   }
+  
+  
+  
   
   getTaskDetails(projectId: number, taskId: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/projects/${projectId}/issues/${taskId}`);

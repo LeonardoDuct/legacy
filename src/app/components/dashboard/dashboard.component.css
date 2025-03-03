@@ -29,6 +29,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-bottom: 20px;
   border: none;
 }
 
@@ -55,8 +56,9 @@
   font-size: 0.7rem;
   font-weight: 700;
   color: white;
-  text-align: center;
-  margin-right: 90px;
+  text-align: right;
+  margin-left: auto; /* Empurra para a direita */
+  margin-right: 10px; /* Ajuste opcional para afastar da borda */
 }
 
 /* 🔹 Separador */
@@ -81,6 +83,14 @@
   border: none;
   padding: 8px 15px;
 }
+
+.list-group-item span.text-success,
+.list-group-item span.text-danger,
+.list-group-item span.text-secondary {
+    float: right;
+    display: block;
+}
+
 
 /* 🔹 Estilo para os cards de métricas */
 .metric-card {
@@ -167,7 +177,7 @@
   
 /* 🔹 Estilo para o rodapé */
 .rodape {
-  position: fixed;
+  position: relative;
   bottom: 0;
   left: 0;
   width: 100%;
