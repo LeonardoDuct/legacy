@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GitlabService } from '../../services/gitlab.service';
-import { Project, Issue, SubProject } from '../../interfaces/models.ts';  // Importando as interfaces
-import { ChartOptions, ChartType, ChartData } from 'chart.js';
+import { Project, Issue, SubProject } from '../../interfaces/models';  // Importando as interfaces
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -30,21 +29,28 @@ export class DashboardComponent implements OnInit {
     { id: 262, name: 'QA', subProjects: [
       { id: 118, name: 'Data Preparation' },
       { id: 107, name: 'Especificação' },
-      { id: 110, name: 'QA quality assurance' },
-      { id: 125, name: 'RNC Tecnologia' }
+      { id: 110, name: 'QA quality assurance' }
     ]},
     { id: 108, name: 'Projetos' },
-    { id: 257, name: 'Produtos', subProjects: [
-      { id: 104, name: 'Cadastro' },
-      { id: 106, name: 'Layout' },
-      { id: 111, name: 'Documento' },
-      { id: 113, name: 'Amostra' },
-      { id: 32, name: 'Report' }
+    { id: 328, name: 'Produtos', subProjects: [
+      { id: 130, name: 'Design' },
+      { id: 129, name: 'Sistemas' }
     ]},
-    { id: 1, name: 'Desenvolvimento', subProjects: [
-      { id: 79, name: 'pyxis-ADM' },
-      { id: 2, name: 'Pyxis' },
-      { id: 1, name: 'pyxis-SFP' }
+    { id: 3, name: 'Desenvolvimento', subProjects: [
+      { id: 1, name: 'Pyxis - SFP' },
+      { id: 2, name: 'Pyxis - WEB' },
+      { id: 119, name: 'agibank-ws' },
+      { id: 54, name: 'pyxis-envio-ws' },
+      { id: 79, name: 'Pyxis ADM' },
+      { id: 101, name: 'pyxis-faturamento' },
+      { id: 103, name: 'pyxis-faturamento-coletor' },
+      { id: 36, name: 'pyxis-ws' },
+      { id: 26, name: 'pyxis-cardcheck' },
+      { id: 61, name: 'pyxis-sfp-ws' },
+      { id: 86, name: 'Flamengo API' },
+      { id: 80, name: 'read-card-api' },
+      { id: 25, name: 'cardcheck' },
+      { id: 58, name: 'pyxis-ids' }
     ]},
   ];
   page: number = 1;
@@ -64,8 +70,9 @@ export class DashboardComponent implements OnInit {
 
   loadAllProjectsIssues(): void {
     const requests = this.projects.map(project => {
-      const allProjectIds: number[] = [project.id, ...(project.subProjects || []).map((sp: SubProject) => sp.id)];
-      return forkJoin(allProjectIds.map((id: number) => 
+      // Busca issues apenas dos subprojetos, se houver
+      const projectIds = project.subProjects ? project.subProjects.map(sp => sp.id) : [project.id];
+      return forkJoin(projectIds.map(id => 
         this.gitlabService.getTotalIssuesByState(id).pipe(
           catchError(error => {
             console.error(`Erro ao buscar issues para o projeto ${id}:`, error);
@@ -92,22 +99,13 @@ export class DashboardComponent implements OnInit {
           totalIssues += data.opened + data.closed;
         });
 
-        // Verifica se é um projeto principal com subprojetos e soma os valores de todos os subprojetos
-        const subProjects = this.projects[index].subProjects;
-        const isMainProjectWithSubprojects = subProjects && subProjects.length > 0;
+        // Atualiza os totais do projeto principal
+        this.projects[index].totalIssues = opened;
+        this.projects[index].openedOnTime = opened - overdue; // Tarefas abertas dentro do prazo
+        this.projects[index].overdue = overdue;
+        this.projects[index].closed = closed;
 
-        if (isMainProjectWithSubprojects) {
-          this.projects[index].totalIssues = opened ;
-          this.projects[index].openedOnTime = opened - overdue; // Tarefas abertas dentro do prazo
-          this.projects[index].overdue = overdue;
-          this.projects[index].closed = this.totalClosed;
-        } else {
-          this.projects[index].totalIssues = opened ;
-          this.projects[index].openedOnTime = opened - overdue; // Tarefas abertas dentro do prazo
-          this.projects[index].overdue = overdue;
-          this.projects[index].closed = closed;
-        }
-
+        // Atualiza os totais gerais
         this.totalOpened += opened;
         this.totalClosed += closed;
         this.totalOverdue += overdue;
@@ -122,3 +120,5 @@ export class DashboardComponent implements OnInit {
     this.selectedProjectId = projectId;
   }
 }
+
+/* FUNCIONANDO */

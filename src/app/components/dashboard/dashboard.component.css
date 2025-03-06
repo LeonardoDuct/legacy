@@ -53,7 +53,7 @@
 }
 
 .tarefas-abertas {
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: white;
   text-align: right;
@@ -89,6 +89,8 @@
 .list-group-item span.text-secondary {
     float: right;
     display: block;
+    font-weight: 800;
+    font-size: 20px;
 }
 
 
