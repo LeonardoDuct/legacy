@@ -7,6 +7,7 @@ export interface Project {
   openedOnTime?: number;
   overdue?: number;
   closed?: number;
+  closedOnTime?: number;
 }
 
 export interface SubProject {

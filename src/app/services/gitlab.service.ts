@@ -72,7 +72,7 @@ export class GitlabService {
     const headers = new HttpHeaders({
       'Private-Token': this.token,
     });
-
+  
     return this.http.get<any[]>(`${this.apiUrl}/projects/${projectId}/issues`, {
       headers,
       observe: 'response',
@@ -102,7 +102,7 @@ export class GitlabService {
       })
     );
   }
-
+  
   getTaskDetails(projectId: number, taskId: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/projects/${projectId}/issues/${taskId}`);
   }

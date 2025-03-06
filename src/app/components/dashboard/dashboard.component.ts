@@ -104,6 +104,7 @@ export class DashboardComponent implements OnInit {
         this.projects[index].openedOnTime = opened - overdue; // Tarefas abertas dentro do prazo
         this.projects[index].overdue = overdue;
         this.projects[index].closed = closed;
+        this.projects[index].closedOnTime = closed - overdue;
 
         // Atualiza os totais gerais
         this.totalOpened += opened;

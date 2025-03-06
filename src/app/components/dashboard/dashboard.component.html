@@ -93,7 +93,8 @@
                 <ul class="list-group list-group-flush lista-custom">
                     <li class="list-group-item"><span class="bullet">•</span> Tarefas abertas dentro do prazo <span class="text-success">{{ project.openedOnTime }}</span></li>
                     <li class="list-group-item"><span class="bullet">•</span> Tarefas abertas fora do prazo <span class="text-danger">{{ project.overdue }}</span></li>
-                    <li class="list-group-item"><span class="bullet">•</span> Tarefas fechadas <span class="text-secondary">{{ project.closed }}</span></li>
+                    <li class="list-group-item"><span class="bullet">•</span> Tarefas fechadas dentro do prazo <span class="text-secondary">{{ project.closedOnTime }}</span></li>
+                    <li class="list-group-item"><span class="bullet">•</span> Tarefas fechadas fora do prazo <span class="text-secondary">{{ project.overdue }}</span></li>
                 </ul>
                 <button class="btn detalhes-btn position-absolute">+ DETALHES</button>
             </div>
