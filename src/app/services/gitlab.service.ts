@@ -103,6 +103,72 @@ export class GitlabService {
     );
   }
   
+  getTotalIssuesByStatefil(projectId: number, params: { label: string, startDate: string, endDate: string }): Observable<{ opened: number; closed: number; overdue: number }> {
+    const headers = new HttpHeaders({
+      'Private-Token': this.token,
+    });
+  
+    // Definindo os parâmetros da requisição sem limitação de `per_page`
+    let queryParams = new HttpParams()
+      .set('page', '1')        // Começando pela primeira página
+      .set('state', 'all');    // Buscando todas as tarefas (abertas e fechadas)
+  
+    // Adicionando filtros extras de label e data
+    if (params.label && params.label !== 'Selecione um cliente') {
+      queryParams = queryParams.set('labels', params.label);  // Filtro de labels
+    }
+  
+    if (params.startDate && params.endDate) {
+      queryParams = queryParams.set('created_after', params.startDate);  // Filtro de data de criação após a data inicial
+      queryParams = queryParams.set('created_before', params.endDate);  // Filtro de data de criação antes da data final
+    }
+  
+    return this.http.get<any[]>(`${this.apiUrl}/projects/${projectId}/issues`, {
+      headers,
+      observe: 'response',
+      params: queryParams,
+    }).pipe(
+      mergeMap(response => {
+        const totalPages = Number(response.headers.get('X-Total-Pages'));  // Pega o total de páginas
+        const issues = response.body;
+        const requests = [];
+  
+        // Paginação: buscando todas as páginas
+        for (let page = 2; page <= totalPages; page++) {
+          requests.push(
+            this.http.get<any[]>(`${this.apiUrl}/projects/${projectId}/issues`, {
+              headers,
+              params: queryParams.set('page', page.toString()),  // Atualizando o número da página
+            })
+          );
+        }
+  
+        // Mesclando as respostas das várias páginas
+        return forkJoin([of(issues), ...requests]).pipe(
+          map(results => results.flat())  // Unifica todas as páginas em um único array
+        );
+      }),
+      map(issues => {
+        // Contagem de issues
+        const opened = issues.filter(issue => issue.state === 'opened').length;
+        const closed = issues.filter(issue => issue.state === 'closed').length;
+        const overdue = issues.filter(issue =>
+          issue.due_date &&
+          new Date(issue.due_date) < new Date() &&
+          issue.state === 'opened'
+        ).length;
+  
+        return { opened, closed, overdue };
+      }),
+      catchError(error => {
+        console.error('Erro ao buscar issues:', error);
+        return of({ opened: 0, closed: 0, overdue: 0 });  // Caso de erro, retorna valores padrão
+      })
+    );
+  }
+  
+  
+  
   getTaskDetails(projectId: number, taskId: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/projects/${projectId}/issues/${taskId}`);
   }

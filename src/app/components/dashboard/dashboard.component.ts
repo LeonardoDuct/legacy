@@ -17,6 +17,9 @@ export class DashboardComponent implements OnInit {
   selectedProjectId: number = 0;
   selectedIssueState: string = 'all';
   filterOverdue: boolean = false;
+  selectedLabel: string = 'Selecione um cliente';  // Filtro de label
+  startDate: string = '';  // Filtro de data inicial
+  endDate: string = '';    // Filtro de data final
   projects: Project[] = [
     { id: 109, name: 'Sustentação' },
     { id: 32, name: 'Processos', subProjects: [
@@ -67,6 +70,81 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.loadAllProjectsIssues();
   }
+
+  applyFilters(): void {
+    // Aplica os filtros quando clicado
+    this.loadIssues();
+  }
+  getFirstDayOfCurrentMonth(): string {
+    const date = new Date();
+    date.setDate(1);
+    date.setHours(0, 0, 0, 0);
+    return date.toISOString().split('T')[0];
+  }
+
+  getLastDayOfCurrentMonth(): string {
+    const date = new Date();
+    date.setMonth(date.getMonth() + 1);
+    date.setDate(0);
+    date.setHours(23, 59, 59, 999);
+    return date.toISOString().split('T')[0];
+  }
+  loadIssues(): void {
+    const requests = this.projects.map(project => {
+      const projectIds = project.subProjects ? project.subProjects.map(sp => sp.id) : [project.id];
+  
+      // Criando o objeto de parâmetros com os filtros aplicados
+      const params = {
+        label: this.selectedLabel,
+        startDate: this.startDate || this.getFirstDayOfCurrentMonth(), // Filtro de Data Inicial
+        endDate: this.endDate || this.getLastDayOfCurrentMonth(),     // Filtro de Data Final
+      };
+  
+      return forkJoin(projectIds.map(id =>
+        this.gitlabService.getTotalIssuesByStatefil(id, params).pipe(
+          catchError(error => {
+            console.error(`Erro ao buscar issues para o projeto ${id}:`, error);
+            return of({ opened: 0, closed: 0, overdue: 0 }); // Caso de erro, retorna valores default
+          })
+        )
+      ));
+    });
+  
+    forkJoin(requests).subscribe((responses) => {
+      this.totalOpened = 0;
+      this.totalClosed = 0;
+      this.totalOverdue = 0;
+      this.totalIssues = 0;
+  
+      responses.forEach((dataList, index) => {
+        let opened = 0, closed = 0, overdue = 0;
+        let totalIssues = 0;
+  
+        dataList.forEach(data => {
+          opened += data.opened;
+          closed += data.closed;
+          overdue += data.overdue;
+          totalIssues += data.opened + data.closed;
+        });
+  
+        this.projects[index].totalIssues = opened;
+        this.projects[index].openedOnTime = opened - overdue;
+        this.projects[index].overdue = overdue;
+        this.projects[index].closed = closed;
+        this.projects[index].closedOnTime = closed - overdue;
+  
+        this.totalOpened += opened;
+        this.totalClosed += closed;
+        this.totalOverdue += overdue;
+        this.totalIssues += totalIssues;
+      });
+    }, (error) => {
+      console.error('Erro ao buscar o total de issues para os projetos:', error);
+    });
+  }
+  
+
+
 
   loadAllProjectsIssues(): void {
     const requests = this.projects.map(project => {
