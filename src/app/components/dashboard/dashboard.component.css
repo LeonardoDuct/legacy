@@ -129,7 +129,7 @@
   color: white;
   border-radius: 100px;
   font-size: 12px;
-  padding: 5px 10px;
+  padding: 3px 9px;
   border: none;
   width: auto;
   appearance: none;
@@ -138,6 +138,11 @@
   background-position: right 10px top 50%;
   background-size: 10px 10px;
   text-align: left;
+}
+
+.custom-back {
+font-size: 12px;
+padding: 10px 9px;
 }
 
 .custom-select:focus, .label-select:focus {
@@ -154,9 +159,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #007bff;
+  background-color: #0B161E; /* Cor do fundo alterada */
   border: none;
   cursor: pointer;
+}
+
+.custom-search-button .bi-search {
+  width: 16px; /* Tamanho padrão do ícone */
+  height: 16px; /* Tamanho padrão do ícone */
+  fill: #ffffff; /* Cor do ícone */
+}
+
+.custom-back .bi-arrow-left {
+  width: 15px; /* Ajuste o tamanho do ícone conforme necessário */
+  height: 10px; /* Ajuste o tamanho do ícone conforme necessário */
+  fill: #ffffff; /* Cor do ícone */
 }
 
 .custom-search-button:hover {
@@ -168,10 +185,20 @@
   color: white;
   border-radius: 100px;
   font-size: 12px;
-  padding: 5px 10px;
+  padding: 3px 9px;
   border: none;
   width: auto;
   text-align: left;
+}
+
+.custom-input::-webkit-outer-spin-button,
+.custom-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.custom-input::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(100%);
 }
 
 .custom-input:focus {
@@ -269,8 +296,9 @@
 /* 🔹 Botão de Detalhes */
 .detalhes-btn {
   position: absolute;
-  bottom: 10px;
+  bottom: 10px; /* Voltar para o valor original */
   right: 10px;
+  transform: translateY(10px); /* Mover o botão 20px para baixo */
   background-color: black;
   color: white;
   border-radius: 50px;

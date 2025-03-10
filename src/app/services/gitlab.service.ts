@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
-import { map, mergeMap, catchError, concatMap, delay } from 'rxjs/operators';
+import { map, mergeMap, catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -10,8 +10,27 @@ import { environment } from 'src/environments/environment';
 export class GitlabService {
   private apiUrl = environment.apiUrl;
   private token = environment.gitlabToken;
+  private cache: Map<string, any> = new Map(); // Cache para armazenar resultados
 
   constructor(private http: HttpClient) {}
+
+  private getRequest(url: string, options?: any): Observable<any> {
+    const cacheKey = JSON.stringify({ url, options });
+    if (this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey)); // Retorna do cache se disponível
+    } else {
+      return this.http.get(url, options).pipe(
+        map(response => {
+          this.cache.set(cacheKey, response); // Armazena no cache
+          return response;
+        }),
+        catchError(error => {
+          console.error('Erro na requisição:', error);
+          return of(null); // Trata o erro e retorna null
+        })
+      );
+    }
+  }
 
   getIssues(projectId: number, page: number = 1, perPage: number = 50, state: string = ''): Observable<any> {
     const headers = new HttpHeaders({
@@ -24,7 +43,7 @@ export class GitlabService {
       params = params.set('state', state);
     }
 
-    return this.http.get(`${this.apiUrl}/projects/${projectId}/issues`, { headers, params });
+    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, { headers, params });
   }
 
   getTotalIssues(projectId: number): Observable<number> {
@@ -32,7 +51,7 @@ export class GitlabService {
       'Private-Token': this.token,
     });
 
-    return this.http.get(`${this.apiUrl}/projects/${projectId}/issues`, {
+    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, {
       headers,
       observe: 'response',
       params: new HttpParams().set('per_page', '1') // Solicita uma única issue para obter o cabeçalho
@@ -51,7 +70,7 @@ export class GitlabService {
       if (state) {
         params = params.set('state', state);
       }
-      return this.http.get(`${this.apiUrl}/projects/${id}/issues`, {
+      return this.getRequest(`${this.apiUrl}/projects/${id}/issues`, {
         headers,
         params,
         observe: 'response'
@@ -72,8 +91,8 @@ export class GitlabService {
     const headers = new HttpHeaders({
       'Private-Token': this.token,
     });
-  
-    return this.http.get<any[]>(`${this.apiUrl}/projects/${projectId}/issues`, {
+
+    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, {
       headers,
       observe: 'response',
       params: new HttpParams().set('per_page', '100').set('page', '1').set('state', 'all'),
@@ -84,7 +103,7 @@ export class GitlabService {
         const requests = [];
         for (let page = 2; page <= totalPages; page++) {
           requests.push(
-            this.http.get<any[]>(`${this.apiUrl}/projects/${projectId}/issues`, {
+            this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, {
               headers,
               params: new HttpParams().set('per_page', '100').set('page', page.toString()).set('state', 'all'),
             })
@@ -102,54 +121,49 @@ export class GitlabService {
       })
     );
   }
-  
-  getTotalIssuesByStatefil(projectId: number, params: { label: string, startDate: string, endDate: string }): Observable<{ opened: number; closed: number; overdue: number }> {
+
+  getTotalIssuesByStatefil(projectId: number, params: { label: string, startDate: string, endDate: string }): Observable<{ opened: number; closed: number; overdue: number; closedLate: number }> {
     const headers = new HttpHeaders({
       'Private-Token': this.token,
     });
-  
-    // Definindo os parâmetros da requisição sem limitação de `per_page`
+
     let queryParams = new HttpParams()
-      .set('page', '1')        // Começando pela primeira página
-      .set('state', 'all');    // Buscando todas as tarefas (abertas e fechadas)
-  
-    // Adicionando filtros extras de label e data
+      .set('page', '1')
+      .set('state', 'all');
+
     if (params.label && params.label !== 'Selecione um cliente') {
-      queryParams = queryParams.set('labels', params.label);  // Filtro de labels
+      queryParams = queryParams.set('labels', params.label);
     }
-  
+
     if (params.startDate && params.endDate) {
-      queryParams = queryParams.set('created_after', params.startDate);  // Filtro de data de criação após a data inicial
-      queryParams = queryParams.set('created_before', params.endDate);  // Filtro de data de criação antes da data final
+      queryParams = queryParams.set('created_after', params.startDate);
+      queryParams = queryParams.set('created_before', params.endDate);
     }
-  
-    return this.http.get<any[]>(`${this.apiUrl}/projects/${projectId}/issues`, {
+
+    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, {
       headers,
       observe: 'response',
       params: queryParams,
     }).pipe(
       mergeMap(response => {
-        const totalPages = Number(response.headers.get('X-Total-Pages'));  // Pega o total de páginas
+        const totalPages = Number(response.headers.get('X-Total-Pages'));
         const issues = response.body;
         const requests = [];
-  
-        // Paginação: buscando todas as páginas
+
         for (let page = 2; page <= totalPages; page++) {
           requests.push(
-            this.http.get<any[]>(`${this.apiUrl}/projects/${projectId}/issues`, {
+            this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, {
               headers,
-              params: queryParams.set('page', page.toString()),  // Atualizando o número da página
+              params: queryParams.set('page', page.toString()),
             })
           );
         }
-  
-        // Mesclando as respostas das várias páginas
+
         return forkJoin([of(issues), ...requests]).pipe(
-          map(results => results.flat())  // Unifica todas as páginas em um único array
+          map(results => results.flat())
         );
       }),
       map(issues => {
-        // Contagem de issues
         const opened = issues.filter(issue => issue.state === 'opened').length;
         const closed = issues.filter(issue => issue.state === 'closed').length;
         const overdue = issues.filter(issue =>
@@ -157,20 +171,24 @@ export class GitlabService {
           new Date(issue.due_date) < new Date() &&
           issue.state === 'opened'
         ).length;
-  
-        return { opened, closed, overdue };
+
+        const closedLate = issues.filter(issue =>
+          issue.due_date &&
+          new Date(issue.due_date) < new Date(issue.closed_at) &&
+          issue.state === 'closed'
+        ).length;
+
+        return { opened, closed, overdue, closedLate };
       }),
       catchError(error => {
         console.error('Erro ao buscar issues:', error);
-        return of({ opened: 0, closed: 0, overdue: 0 });  // Caso de erro, retorna valores padrão
+        return of({ opened: 0, closed: 0, overdue: 0, closedLate: 0 });
       })
     );
   }
-  
-  
-  
+
   getTaskDetails(projectId: number, taskId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/projects/${projectId}/issues/${taskId}`);
+    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues/${taskId}`);
   }
 
   getSubProjects(projectId: number): Observable<any[]> {
@@ -178,7 +196,7 @@ export class GitlabService {
       'Private-Token': this.token,
     });
 
-    return this.http.get<any[]>(`${this.apiUrl}/projects/${projectId}/subprojects`, { headers });
+    return this.getRequest(`${this.apiUrl}/projects/${projectId}/subprojects`, { headers });
   }
 
   getIssuesForProjectAndSubProjects(projectId: number): Observable<any[]> {

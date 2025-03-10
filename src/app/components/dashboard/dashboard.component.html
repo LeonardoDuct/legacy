@@ -26,13 +26,13 @@
               <h6 class="mb-1">Tarefas<br>Abertas</h6>
               <span class="fs-3 text-white fw-bold">{{ totalOpened }}</span>
             </div>
-
+        
             <!-- Tarefas Fechadas -->
             <div class="metric-card bg-card-body p-3 text-center flex-grow-1">
               <h6 class="mb-1">Tarefas<br>Fechadas</h6>
               <span class="fs-3 text-white fw-bold">{{ totalClosed }}</span>
             </div>
-
+        
             <!-- Tarefas Urgentes -->
             <div class="metric-card bg-urgente p-3 text-center flex-grow-1">
               <h6 class="mb-1">Tarefa<br>Urgentes</h6>
@@ -59,49 +59,74 @@
             <!-- Selects para Período -->
             <div class="d-flex align-items-center gap-2">
               <label class="text-white label-regular">Período:</label>
-              <input type="date" id="startDate" [(ngModel)]="startDate">
-
-              <label for="endDate">Data Final:</label>
-              <input type="date" id="endDate" [(ngModel)]="endDate">
-
-              <button (click)="applyFilters()">Aplicar Filtros</button>
+            
+              <!-- Select aparece apenas se NÃO for personalizado -->
+              <div *ngIf="!showCustomDateFields" class="flex-grow-1">
+                <select class="label-select w-100" id="periodoSelect" (change)="onPeriodoChange($event)">
+                  <option value="mes_anterior">Mês Anterior</option>
+                  <option value="ultimos_5">Últimos 5 dias</option>
+                  <option value="ultimos_15">Últimos 15 dias</option>
+                  <option value="ultimos_30">Últimos 30 dias</option>
+                  <option value="custom">Personalizado</option>
+                </select>
+              </div>
+            
+              <!-- Campos de Data + Botão de Voltar -->
+              <div *ngIf="showCustomDateFields" class="d-flex align-items-center gap-2 flex-grow-1">
+                <button class="btn btn-danger custom-back btn-sm d-flex align-items-center justify-content-center" (click)="voltarPeriodo()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H3.707l4.147-4.146a.5.5 0 0 0-.708-.708l-5 5a.5.5 0 0 0 0 .708l5 5a.5.5 0 0 0 .708-.708L3.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                  </svg>
+                </button>
+                
+                <input type="date" id="startDate" [(ngModel)]="startDate" class="custom-input label-select">
+                <span class="text-white label-regular">até</span>
+                <input type="date" id="endDate" [(ngModel)]="endDate" class="custom-input label-select">
+              </div>
+            
+              <button class="btn btn-primary custom-search-button" (click)="applyFilters()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-search" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
+        
       </div>
     </div>
   </div>
-</div>
 
-<!-- Cards de Categorias -->
-<div class="row mt-4">
-  <div *ngFor="let project of projects" class="col-md-4">
-    <div class="card card-custom">
-      <div class="header-card">
-        <h5 class="title-custom">{{ project.name }}</h5>
-        <p class="tarefas-abertas">Tarefas<br>abertas: {{ project.totalIssues }}</p>
-      </div>
-      <div class="separator"></div> <!-- Linha separadora -->
-      <div class="card-custom position-relative">
-        <ul class="list-group list-group-flush lista-custom">
-          <li class="list-group-item"><span class="bullet">•</span> Tarefas abertas dentro do prazo <span class="text-success">{{ project.openedOnTime }}</span></li>
-          <li class="list-group-item"><span class="bullet">•</span> Tarefas abertas fora do prazo <span class="text-danger">{{ project.overdue }}</span></li>
-          <li class="list-group-item"><span class="bullet">•</span> Tarefas fechadas dentro do prazo <span class="text-secondary">{{ project.closedOnTime }}</span></li>
-          <li class="list-group-item"><span class="bullet">•</span> Tarefas fechadas fora do prazo <span class="text-secondary">{{ project.overdue }}</span></li>
-        </ul>
-        <button class="btn detalhes-btn position-absolute">+ DETALHES</button>
-      </div>
+  <!-- Cards de Categorias -->
+  <div class="row mt-4">
+    <div *ngFor="let project of projects" class="col-md-4 ">
+        <div class="card card-custom">
+            <div class="header-card">
+                <h5 class="title-custom">{{ project.name }}</h5>
+                <p class="tarefas-abertas">Tarefas<br>abertas: {{ project.totalIssues }}</p>
+            </div>
+            <div class="separator"></div> <!-- Linha separadora -->
+            <div class="card-custom position-relative">
+                <ul class="list-group list-group-flush lista-custom">
+                    <li class="list-group-item"><span class="bullet">•</span> Tarefas abertas dentro do prazo <span class="text-success">{{ project.openedOnTime }}</span></li>
+                    <li class="list-group-item"><span class="bullet">•</span> Tarefas abertas fora do prazo <span class="text-danger">{{ project.overdue }}</span></li>
+                    <li class="list-group-item"><span class="bullet">•</span> Tarefas fechadas dentro do prazo <span class="text-secondary">{{ project.closedOnTime }}</span></li>
+                    <li class="list-group-item"><span class="bullet">•</span> Tarefas fechadas fora do prazo <span class="text-secondary">{{ project.closedLate }}</span></li>
+                </ul>
+                <button class="btn detalhes-btn position-absolute">+ DETALHES</button>
+            </div>
+        </div>
     </div>
   </div>
-</div>
 
-<!-- Rodapé -->
-<footer class="rodape">
-  <div class="versao">
-    <p>Versão 0.0.1 - Build: 20250207-0001 (Alpha)</p>
-  </div>
-  <div class="direitos">
-    <p>Todos os direitos reservados</p>
-    <img src="assets/images/logomini.png" alt="Logo de rodapé" class="logo-rodape mb-0" />
-  </div>
-</footer>
+  <!-- Rodapé -->
+  <footer class="rodape">
+    <div class="versao">
+      <p>Versão 0.0.1 - Build: 20250207-0003 (Alpha)</p>
+    </div>
+    <div class="direitos">
+      <p>Todos os direitos reservados</p>
+      <img src="assets/images/logomini.png" alt="Logo de rodapé" class="logo-rodape mb-0" />
+    </div>
+  </footer>
+</div>

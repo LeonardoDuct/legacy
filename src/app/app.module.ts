@@ -5,7 +5,6 @@ import { AppComponent } from './app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HttpClientModule} from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { NgChartsModule } from 'ng2-charts';
 import { TaskDetailsComponent } from './task-details/task-details.component';
 
 @NgModule({
@@ -18,8 +17,7 @@ import { TaskDetailsComponent } from './task-details/task-details.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule,
-    NgChartsModule
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
