@@ -37,7 +37,7 @@ export class TaskDetailsComponent implements OnInit {
 
   // Método para carregar os detalhes da task usando os parâmetros 'projectId' e 'taskId'
   loadTaskDetails(projectId: number, taskId: string): void {
-    this.gitlabService.getTaskDetails(projectId, taskId).subscribe(
+    this.gitlabService.obterDetalhesDaTarefa(projectId, taskId).subscribe(
       data => {
         console.log('Dados da task recebidos:', data); // Verifica se os dados estão chegando
         this.taskDetails = data;

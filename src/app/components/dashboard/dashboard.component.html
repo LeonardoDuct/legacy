@@ -9,12 +9,14 @@
             <img src="assets/images/logo.png" alt="Logo da Empresa" class="logo-img mb-0" />
           </div>
           <div class="dashboard-menu-container">
-            <h4 class="dashboard-title mb-1">DashBoard<br>/ Produção</h4>
-            <div class="menu-icon">
-              <span class="menu-line"></span>
-              <span class="menu-line"></span>
-              <span class="menu-line"></span>
-            </div>
+            <h4 class="dashboard-title">DashBoard<br>/ Produção</h4>
+            <div class="menu-icon" (click)="menuAberto = !menuAberto">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>            
           </div>
         </div>
 
@@ -49,21 +51,23 @@
 
             <!-- Select para Clientes -->
             <div class="d-flex align-items-center gap-2 mb-3">
-              <label class="text-white label-regular">Labels:</label>
-              <select class="custom-select flex-grow-1">
-                <option selected>Selecione um cliente</option>
-                <option value="1">Cliente 1</option>
+              <label for="labelSelect" class="text-white label-regular">Labels:</label>
+              <select id="labelSelect" name="labelSelect" class="custom-select flex-grow-1" >
+                <option value="">Selecione uma label</option>
+                <!-- <option *ngFor="let label of labels"  [style.color]="'#' + label.color">
+                  {{ label.name }}
+                </option> -->
               </select>
             </div>
 
             <!-- Selects para Período -->
             <div class="d-flex align-items-center gap-2">
-              <label class="text-white label-regular">Período:</label>
+              <label for="periodoSelect" class="text-white label-regular">Período:</label>
             
               <!-- Select aparece apenas se NÃO for personalizado -->
-              <div *ngIf="!showCustomDateFields" class="flex-grow-1">
-                <select class="label-select w-100" id="periodoSelect" (change)="onPeriodoChange($event)">
-                  <option value="mes_anterior">Mês Anterior</option>
+              <div *ngIf="!mostrarCamposDataPersonalizada" class="flex-grow-1">
+                <select id="periodoSelect" name="periodoSelect" class="label-select w-100" (change)="alterarPeriodo($event)">
+                  <option value="mes_atual">Selecione um Periodo</option>
                   <option value="ultimos_5">Últimos 5 dias</option>
                   <option value="ultimos_15">Últimos 15 dias</option>
                   <option value="ultimos_30">Últimos 30 dias</option>
@@ -72,19 +76,19 @@
               </div>
             
               <!-- Campos de Data + Botão de Voltar -->
-              <div *ngIf="showCustomDateFields" class="d-flex align-items-center gap-2 flex-grow-1">
+              <div *ngIf="mostrarCamposDataPersonalizada" class="d-flex align-items-center gap-2 flex-grow-1">
                 <button class="btn btn-danger custom-back btn-sm d-flex align-items-center justify-content-center" (click)="voltarPeriodo()">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H3.707l4.147-4.146a.5.5 0 0 0-.708-.708l-5 5a.5.5 0 0 0 0 .708l5 5a.5.5 0 0 0 .708-.708L3.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
                   </svg>
                 </button>
                 
-                <input type="date" id="startDate" [(ngModel)]="startDate" class="custom-input label-select">
+                <input type="date" id="dataInicio" name="dataInicio" [(ngModel)]="dataInicio" class="custom-input label-select">
                 <span class="text-white label-regular">até</span>
-                <input type="date" id="endDate" [(ngModel)]="endDate" class="custom-input label-select">
+                <input type="date" id="dataFim" name="dataFim" [(ngModel)]="dataFim" class="custom-input label-select">
               </div>
             
-              <button class="btn btn-primary custom-search-button" (click)="applyFilters()">
+              <button class="btn btn-primary custom-search-button" (click)="aplicarFiltros()">
                 <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-search" viewBox="0 0 16 16">
                   <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                 </svg>
@@ -103,7 +107,7 @@
         <div class="card card-custom">
             <div class="header-card">
                 <h5 class="title-custom">{{ project.name }}</h5>
-                <p class="tarefas-abertas">Tarefas<br>abertas: {{ project.totalIssues }}</p>
+                <p class="tarefas-abertas" title="Tarefas abertas"> {{ project.totalIssues }}</p>
             </div>
             <div class="separator"></div> <!-- Linha separadora -->
             <div class="card-custom position-relative">

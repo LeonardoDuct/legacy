@@ -32,7 +32,7 @@ export class GitlabService {
     }
   }
 
-  getIssues(projectId: number, page: number = 1, perPage: number = 50, state: string = ''): Observable<any> {
+  obterIssues(projectId: number, page: number = 1, perPage: number = 50, state: string = ''): Observable<any> {
     const headers = new HttpHeaders({
       'Private-Token': this.token,
     });
@@ -46,7 +46,7 @@ export class GitlabService {
     return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, { headers, params });
   }
 
-  getTotalIssues(projectId: number): Observable<number> {
+  obterTotalIssues(projectId: number): Observable<number> {
     const headers = new HttpHeaders({
       'Private-Token': this.token,
     });
@@ -60,7 +60,7 @@ export class GitlabService {
     );
   }
 
-  getTotalIssuesForMultipleProjects(projectIds: number[], state: string = ''): Observable<number> {
+  obterTotalIssuesParaVariosProjetos(projectIds: number[], state: string = ''): Observable<number> {
     const headers = new HttpHeaders({
       'Private-Token': this.token,
     });
@@ -87,7 +87,7 @@ export class GitlabService {
     );
   }
 
-  getTotalIssuesByState(projectId: number): Observable<{ opened: number; closed: number; overdue: number }> {
+  obterTotalIssuesPorEstado(projectId: number): Observable<{ opened: number; closed: number; overdue: number }> {
     const headers = new HttpHeaders({
       'Private-Token': this.token,
     });
@@ -122,7 +122,7 @@ export class GitlabService {
     );
   }
 
-  getTotalIssuesByStatefil(projectId: number, params: { label: string, startDate: string, endDate: string }): Observable<{ opened: number; closed: number; overdue: number; closedLate: number }> {
+  obterTotalIssuesFiltradas(projectId: number, params: { label: string, startDate: string, endDate: string }): Observable<{ opened: number; closed: number; overdue: number; closedLate: number }> {
     const headers = new HttpHeaders({
       'Private-Token': this.token,
     });
@@ -187,11 +187,11 @@ export class GitlabService {
     );
   }
 
-  getTaskDetails(projectId: number, taskId: string): Observable<any> {
+  obterDetalhesDaTarefa(projectId: number, taskId: string): Observable<any> {
     return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues/${taskId}`);
   }
 
-  getSubProjects(projectId: number): Observable<any[]> {
+  obterSubProjetos(projectId: number): Observable<any[]> {
     const headers = new HttpHeaders({
       'Private-Token': this.token,
     });
@@ -199,12 +199,12 @@ export class GitlabService {
     return this.getRequest(`${this.apiUrl}/projects/${projectId}/subprojects`, { headers });
   }
 
-  getIssuesForProjectAndSubProjects(projectId: number): Observable<any[]> {
-    return this.getSubProjects(projectId).pipe(
-      mergeMap(subProjects => {
-        const projectIds = [projectId, ...subProjects.map(sp => sp.id)];
+  obterIssuesParaProjetoESubProjetos(projectId: number): Observable<any[]> {
+    return this.obterSubProjetos(projectId).pipe(
+      mergeMap(subProjetos => {
+        const projectIds = [projectId, ...subProjetos.map(sp => sp.id)];
         return forkJoin(projectIds.map(id =>
-          this.getTotalIssuesByState(id)
+          this.obterTotalIssuesPorEstado(id)
         ));
       })
     );
