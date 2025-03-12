@@ -37,7 +37,7 @@
         
             <!-- Tarefas Urgentes -->
             <div class="metric-card bg-urgente p-3 text-center flex-grow-1">
-              <h6 class="mb-1">Tarefa<br>Urgentes</h6>
+              <h6 class="mb-1">Tarefas<br>Fora do Prazo</h6>
               <span class="fs-3 text-white fw-bold">{{ totalOverdue }}</span>
             </div>
           </div>
@@ -51,15 +51,31 @@
 
             <!-- Select para Clientes -->
             <div class="d-flex align-items-center gap-2 mb-3">
-              <label for="labelSelect" class="text-white label-regular">Labels:</label>
-              <select id="labelSelect" name="labelSelect" class="custom-select flex-grow-1" >
-                <option value="">Selecione uma label</option>
-                <!-- <option *ngFor="let label of labels"  [style.color]="'#' + label.color">
+              <label class="text-white label-regular">Labels:</label>
+              
+              <div class="d-flex">
+                <div *ngFor="let label of labels.slice(16, 18)" class="label-direct" [style.backgroundColor]="label.color" [style.color]="label.text_color">
                   {{ label.name }}
-                </option> -->
-              </select>
+                </div>
+              </div>
+              
+              <div class="d-flex align-items-center">
+                <!-- O select agora mostra apenas o número de labels restantes -->
+                <select id="labelSelect" name="labelSelect" class="custom-select flex-grow-1" [(ngModel)]="selectedLabel">
+                  <!-- Mostra o número de labels restantes como título (placeholder) -->
+                  <option value="" disabled selected>{{ labels.length - 2 }} +</option>
+                  
+                  <!-- Quando o select for aberto, mostra as opções normalmente -->
+                  <option *ngFor="let label of labels.slice(2)" [value]="label.name" [style.backgroundColor]="label.color" [style.color]="label.text_color">
+                    {{ label.name }}
+                  </option>
+                </select>
+              </div>
             </div>
-
+            
+            
+                   
+          
             <!-- Selects para Período -->
             <div class="d-flex align-items-center gap-2">
               <label for="periodoSelect" class="text-white label-regular">Período:</label>
@@ -108,6 +124,7 @@
             <div class="header-card">
                 <h5 class="title-custom">{{ project.name }}</h5>
                 <p class="tarefas-abertas" title="Tarefas abertas"> {{ project.totalIssues }}</p>
+                <!-- <p class="tarefas-abertas" title="Total Geral de Tarefas">{{ project.totalIssuesGeral }}</p> -->
             </div>
             <div class="separator"></div> <!-- Linha separadora -->
             <div class="card-custom position-relative">
@@ -126,7 +143,7 @@
   <!-- Rodapé -->
   <footer class="rodape">
     <div class="versao">
-      <p>Versão 0.0.1 - Build: 20250207-0003 (Alpha)</p>
+      <p>Versão 0.0.4 - Build: 20250207-0004 (Alpha)</p>
     </div>
     <div class="direitos">
       <p>Todos os direitos reservados</p>

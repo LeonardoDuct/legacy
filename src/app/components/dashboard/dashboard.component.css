@@ -136,7 +136,7 @@
   font-size: 12px;
   padding: 3px 9px;
   border: none;
-  width: auto;
+  width: 70px;
   appearance: none;
   background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http://www.w3.org/2000/svg%22%20viewBox%3D%220%200%2010%206%22%3E%3Cpath%20d%3D%22M1%200l4%204%204-4z%22%20fill%3D%22%23FFF%22/%3E%3C/svg%3E');
   background-repeat: no-repeat;
@@ -144,6 +144,34 @@
   background-size: 10px 10px;
   text-align: left;
 }
+
+/* Adicionando uma largura fixa ao select e uma altura ajustada para que o título (número de labels restantes) caiba bem */
+.custom-select option {
+  padding: 10px; /* Garantir que a opção seja legível */
+  font-size: 12px;
+}
+
+.label-direct {
+  background-color: #0B161E;
+  color: white;
+  border-radius: 100px;
+  font-size: 12px;
+  padding: 5px 12px;
+  width: 140px; /* A mesma largura do select */
+  text-align: center; /* Centraliza o texto no label */
+  display: inline-block; /* Permite que os labels fiquem lado a lado */
+  margin-right: 10px; /* Espaçamento entre os labels */
+}
+
+.label-direct {
+  background-color: #0B161E;
+  color: white;
+  border-radius: 10px;
+  font-size: 12px;
+  padding: 3px 9px;
+  margin-right: 5px; /* Adiciona um pouco de espaço entre as labels */
+}
+
 
 .custom-back {
   font-size: 12px;

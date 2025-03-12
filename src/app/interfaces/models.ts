@@ -4,6 +4,7 @@ export interface Project {
   name: string;
   subProjects?: SubProject[];
   totalIssues?: number;
+  totalIssuesGeral?: number;
   openedOnTime?: number;
   overdue?: number;
   closed?: number;
@@ -29,4 +30,12 @@ export interface Issue {
 export interface StatusCount {
   opened: number;
   closed: number;
+}
+
+export interface Label {
+  id: number;
+  name: string;
+  color: string;
+  text_color: string;
+  description?: string;
 }

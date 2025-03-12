@@ -172,11 +172,19 @@ export class GitlabService {
           issue.state === 'opened'
         ).length;
 
-        const closedLate = issues.filter(issue =>
-          issue.due_date &&
-          new Date(issue.due_date) < new Date(issue.closed_at) &&
-          issue.state === 'closed'
-        ).length;
+        const closedLate = issues.filter(issue => {
+          if (!issue.due_date || !issue.closed_at) return false; // Evita erros se algum dado estiver ausente
+          
+          const dueDate = new Date(issue.due_date);
+          const closedDate = new Date(issue.closed_at);
+        
+          // Normaliza as datas para ignorar a hora (mantendo apenas o ano, mês e dia)
+          dueDate.setHours(0, 0, 0, 0);
+          closedDate.setHours(0, 0, 0, 0);
+        
+          return closedDate > dueDate && issue.state === 'closed'; // Só conta como atrasado se fechou *depois* do dia limite
+        }).length;
+        
 
         return { opened, closed, overdue, closedLate };
       }),
@@ -207,6 +215,25 @@ export class GitlabService {
           this.obterTotalIssuesPorEstado(id)
         ));
       })
+    );
+  }
+
+  carregarLabels(projectIds: number[]): Observable<any[]> {
+    const headers = new HttpHeaders({
+      'Private-Token': this.token,
+    });
+  
+    const requests = projectIds.map(id =>
+      this.getRequest(`${this.apiUrl}/projects/${id}/labels`, { headers }).pipe(
+        catchError(error => {
+          console.error(`Erro ao carregar labels para o projeto ${id}:`, error);
+          return of([]); // Retorna um array vazio em caso de erro
+        })
+      )
+    );
+  
+    return forkJoin(requests).pipe(
+      map(responses => responses.flat().filter(label => label && label.name && label.color)),
     );
   }
 }
