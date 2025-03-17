@@ -65,11 +65,11 @@ export class DashboardComponent implements OnInit {
       { id: 25, name: 'cardcheck' },
       { id: 58, name: 'pyxis-ids' }
     ]},
-    { id: 315, name: 'Suporte' },
+    { id: 125, name: 'RNC' },
     
-    { id: 26, name: 'CMO', subProjects: [
-      { id: 44, name: 'Solicitações' }
-    ]},
+    // { id: 26, name: 'CMO', subProjects: [
+    //   { id: 44, name: 'Solicitações' }
+    // ]},
     
   ];
   page: number = 1;

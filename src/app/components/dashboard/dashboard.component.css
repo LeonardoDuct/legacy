@@ -443,6 +443,11 @@
     width: auto;
     height: auto;
   }
+
+  .total-resultado {
+    font-size: 5px !important; /* Ajuste conforme necessário */
+  }
+  
 }
 
 @media (max-width: 576px) {

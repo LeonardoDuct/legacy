@@ -123,7 +123,17 @@
         <div class="card card-custom">
             <div class="header-card">
                 <h5 class="title-custom">{{ project.name }}</h5>
-                <p class="tarefas-abertas" title="Tarefas abertas"> {{ project.totalIssues }}</p>
+                <p class="tarefas-abertas" title="Tarefas abertas">
+                  <span *ngIf="project.totalIssues" style="font-size: 0.5rem; line-height: 0.7rem; position: relative; left: -5px;">
+                    Total<br>Geral
+                  </span> 
+                  {{ project.totalIssuesGeral }}</p>
+                <p class="tarefas-abertas" title="Tarefas abertas">
+                  <span *ngIf="project.totalIssues" style="font-size: 0.5rem; line-height: 0.7rem; position: relative; left: -5px;">
+                    Total<br>Filtradas
+                  </span> 
+                  {{ project.totalIssues }}</p>
+                                
                 <!-- <p class="tarefas-abertas" title="Total Geral de Tarefas">{{ project.totalIssuesGeral }}</p> -->
             </div>
             <div class="separator"></div> <!-- Linha separadora -->
