@@ -54,18 +54,32 @@
 }
 
 .tarefas-abertas {
-  font-size: 2.1rem;
+  font-size: 2.1rem; /* Mantém o tamanho original */
   font-weight: 700;
   color: white;
-  text-align: center;
+  text-align: center; /* Centraliza horizontalmente */
   margin: 0;
-  width: 100px; /* Largura fixa para manter o espaço reservado */
-  height: 43px; /* Altura fixa para manter o espaço reservado */
-  line-height: 20px; /* Alinha verticalmente o texto */
+  width: 100px; /* Largura fixa */
+  height: 55px; /* Altura adaptável ao conteúdo */
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: center; /* Centraliza horizontalmente */
+  justify-content: center; /* Centraliza verticalmente */
 }
+
+.tarefas-abertas span {
+  font-size: 0.5rem; /* Mantém o tamanho original */
+  line-height: 14px; /* Mantém o alinhamento vertical */
+  margin: 0; /* Remove margens desnecessárias */
+}
+ 
+canvas {
+  max-width: 100%;
+  height: 400px;
+  margin: 0 auto;
+  background-color: white; /* Opcional, para evitar a "área preta" */
+}
+
 
 /* 🔹 Separador */
 .separator {
@@ -251,7 +265,7 @@
 
 .mb-1 {
   font-weight: 800;
-  font-size: 15px !important;
+  font-size: 18px !important;
   text-align: right; /* Alinhando o texto à direita */
 }
 
@@ -370,6 +384,57 @@
   font-size: 13px;
 }
 
+/* Container Geral para Gráficos */
+.chart-container, .bar-chart {
+  flex: 0 0 31.5%; /* Mesmo tamanho dos cards */
+  display: flex;
+  background-color: #1D2A3F;
+  justify-content: center;
+  align-items: center;
+  height: 304px; /* Altura uniforme para ambos os gráficos */
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 1px;
+  margin-left: 15px; /* Espaçamento uniforme */
+}
+
+/* Estilos Específicos para Gráficos */
+.bar-chart {
+  margin: auto; /* Centraliza o gráfico dentro do container */
+  margin-left: 25px;
+}
+
+/* Ajustes para o Gráfico Renderizado */
+.chart-container apx-chart{
+  width: 98% !important; /* Mantém a largura consistente */
+  height: 100% !important; /* Garante que o gráfico ocupe toda a altura do container */
+}
+
+.bar-chart apx-chart {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.bar-chart .apexcharts-legend {
+  position: relative;
+  bottom: 15px !important; /* Move a legenda para mais perto do gráfico */
+}
+
+.bar-chart .apexcharts-legend-series {
+  margin: 0 !important; /* Remove qualquer margem padrão das legendas */
+}
+
+
+
+.apexcharts-inner {
+  padding: 0 !important; /* Remove espaçamentos internos */
+}
+
+.chart-container:hover, .bar-chart:hover {
+  transform: scale(1.05); /* Leve aumento */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra maior no hover */
+  transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.6s ease; /* Suavidade refinada */
+}
 
 /* 🔹 Media Queries para Responsividade */
 @media (max-width: 1200px) {

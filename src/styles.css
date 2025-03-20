@@ -37,4 +37,9 @@ body {
     border-radius: 50%; /* Caso o ícone seja redondo */
   }
   
+  .apexcharts-legend text {
+    fill: #ffffff !important; /* Altere a cor do texto para branco */
+    font-size: 14px !important; /* Ajuste o tamanho da fonte */
+  }
+  
   

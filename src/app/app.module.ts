@@ -6,6 +6,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HttpClientModule} from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { TaskDetailsComponent } from './task-details/task-details.component';
+import { NgApexchartsModule } from "ng-apexcharts";
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { TaskDetailsComponent } from './task-details/task-details.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    NgApexchartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

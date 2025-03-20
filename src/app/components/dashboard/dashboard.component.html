@@ -71,10 +71,7 @@
                   </option>
                 </select>
               </div>
-            </div>
-            
-            
-                   
+            </div>                   
           
             <!-- Selects para Período -->
             <div class="d-flex align-items-center gap-2">
@@ -124,15 +121,14 @@
             <div class="header-card">
                 <h5 class="title-custom">{{ project.name }}</h5>
                 <p class="tarefas-abertas" title="Tarefas abertas">
-                  <span *ngIf="project.totalIssues" style="font-size: 0.5rem; line-height: 0.7rem; position: relative; left: -5px;">
-                    Total<br>Geral
-                  </span> 
-                  {{ project.totalIssuesGeral }}</p>
+                  <span *ngIf="project.totalIssues">Total<br>Geral</span>
+                  {{ project.totalIssuesGeral }}
+                </p>
                 <p class="tarefas-abertas" title="Tarefas abertas">
-                  <span *ngIf="project.totalIssues" style="font-size: 0.5rem; line-height: 0.7rem; position: relative; left: -5px;">
-                    Total<br>Filtradas
-                  </span> 
-                  {{ project.totalIssues }}</p>
+                  <span *ngIf="project.totalIssues">Total<br>Filtradas</span>
+                  {{ project.totalIssues }}
+                </p>
+                
                                 
                 <!-- <p class="tarefas-abertas" title="Total Geral de Tarefas">{{ project.totalIssuesGeral }}</p> -->
             </div>
@@ -148,12 +144,32 @@
             </div>
         </div>
     </div>
+    <div *ngIf="projects.length > 0" class="col-md-4 mb-4 chart-container">
+      <apx-chart
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [labels]="chartOptions.labels"
+        [colors]="chartOptions.colors"
+        [responsive]="chartOptions.responsive">
+      </apx-chart>
+    </div>
+    <div *ngIf="projects.length > 0" class="col-md-4 mb-4 chart-container bar-chart">
+      <apx-chart
+        [series]="columnChartOptions.series"
+        [chart]="columnChartOptions.chart"
+        [xaxis]="columnChartOptions.xaxis"
+        [colors]="columnChartOptions.colors"
+        [tooltip]="columnChartOptions.tooltip"
+        [responsive]="columnChartOptions.responsive">
+      </apx-chart>
+    </div>
   </div>
+  
 
   <!-- Rodapé -->
   <footer class="rodape">
     <div class="versao">
-      <p>Versão 0.0.4 - Build: 20250207-0004 (Alpha)</p>
+      <p>Versão 0.0.5 - Build: 20250207-0005 (Alpha)</p>
     </div>
     <div class="direitos">
       <p>Todos os direitos reservados</p>

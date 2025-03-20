@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { GitlabService } from '../../services/gitlab.service';
 import { Project, Issue, SubProject, Label } from '../../interfaces/models';  // Importando as interfaces
 import { forkJoin, of, Observable } from 'rxjs';
 import { tap, catchError, finalize } from 'rxjs/operators';
+import { ApexChart, ApexNonAxisChartSeries, ApexResponsive, ChartComponent } from "ng-apexcharts";
+import { style } from '@angular/animations';
+import { color } from 'echarts/core';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,6 +13,9 @@ import { tap, catchError, finalize } from 'rxjs/operators';
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
+  @ViewChild("chart") chart!: ChartComponent;
+  public chartOptions: any; 
+  public columnChartOptions: any;
 
   issues: Issue[] = [];
   totalIssues: number = 0;
@@ -85,14 +91,15 @@ export class DashboardComponent implements OnInit {
   constructor(private gitlabService: GitlabService) {}
 
   ngOnInit(): void {
+    this.carregarGrafico();
     this.periodoSelecionado = 'mes_atual'; // Define o período padrão como "Mês Atual"
     this.dataInicio = this.obterPrimeiroDiaDoMesAtual();
-    this.dataFim = this.obterUltimoDiaDoMesAtual();
-    
+    this.dataFim = this.obterUltimoDiaDoMesAtual();    
     // Carrega labels e issues em sequência
     this.carregarLabelsDeTodosProjetos().subscribe(() => {
       this.carregarIssues();
-      //this.carregarTotalIssuesGeral();
+      this.carregarTotalIssuesGeral();
+
     });
   }
 
@@ -174,47 +181,42 @@ export class DashboardComponent implements OnInit {
   carregarIssues(): void {
     const requests = this.projects.map(project => {
       const projectIds = project.subProjects ? project.subProjects.map(sp => sp.id) : [project.id];
-
+  
       const params = {
         label: this.selectedLabel,
         startDate: this.dataInicio || this.obterPrimeiroDiaDoMesAtual(),
         endDate: this.dataFim || this.obterUltimoDiaDoMesAtual(),
       };
-
+  
       return forkJoin(projectIds.map(id =>
         this.gitlabService.obterTotalIssuesFiltradas(id, params).pipe(
           catchError(error => {
             console.error(`Erro ao buscar issues para o projeto ${id}:`, error);
-            return of({ opened: 0, closed: 0, overdue: 0, closedLate: 0 }); // Caso de erro, retorna valores default
-          }),
-          tap((issues) => {
-            if (Array.isArray(issues) && issues.length === 0) {
-              console.warn(`Nenhuma issue encontrada para o projeto ${id} no intervalo definido.`)
-            }
+            return of({ opened: 0, closed: 0, overdue: 0, closedLate: 0 }); 
           })
         )
       ));
     });
-
+  
     forkJoin(requests).pipe(
       tap((responses) => {
         this.resetarTotais();
         responses.forEach((dataList, index) => {
-          if (dataList && dataList.length === 0) {
-            console.warn(`Projeto ${this.projects[index].name}: Nenhuma issue encontrada para o período.`);
-          }
           this.processarDadosProjeto(dataList, index);
         });
       }),
       catchError((error) => {
         console.error('Erro ao buscar o total de issues para os projetos:', error);
-        throw error; // Rethrow the error to propagate it further if needed
+        throw error;
       }),
       finalize(() => {
-        console.log('Processamento das issues finalizado');
+        console.log('Processamento das issues filtradas finalizado');
+        this.carregarTotalIssuesGeral(); // 🔥 Chama depois de concluir
+        this.carregarGrafico();
       })
     ).subscribe();
   }
+  
 
   carregarTotalIssuesGeral(): void {
     const requests = this.projects.map(project => {
@@ -222,10 +224,10 @@ export class DashboardComponent implements OnInit {
       
       return forkJoin(
         projectIds.map(id => 
-          this.gitlabService.obterTotalIssuesPorEstado(id).pipe(
+          this.gitlabService.obterTotalIssuesAbertas(id).pipe(
             catchError(error => {
-              console.error(`Erro ao buscar total geral de issues para o projeto ${id}:`, error);
-              return of({ total: 0 });  // Caso de erro, retornamos 0
+              console.error(`Erro ao buscar total geral de issues abertas para o projeto ${id}:`, error);
+              return of({ opened: 0 });  // Em caso de erro, retornamos 0 issues abertas
             })
           )
         )
@@ -234,20 +236,21 @@ export class DashboardComponent implements OnInit {
   
     forkJoin(requests).pipe(
       tap((responses) => {
-        this.resetarTotais();
         responses.forEach((dataList, index) => {
           this.processarDadosProjeto(dataList, index, false);  // Passa false para não usar filtro
         });
       }),
       catchError((error) => {
-        console.error('Erro ao buscar o total geral de issues para os projetos:', error);
+        console.error('Erro ao buscar o total geral de issues abertas para os projetos:', error);
         throw error;
       }),
       finalize(() => {
-        console.log('Processamento das issues gerais finalizado');
+        console.log('Processamento das issues abertas finalizado');
       })
     ).subscribe();
   }
+
+  
   
 
   carregarLabelsDeTodosProjetos(): Observable<any> {
@@ -288,41 +291,175 @@ export class DashboardComponent implements OnInit {
   }
 
   private processarDadosProjeto(dataList: any[], index: number, usarFiltro: boolean = true): void {
-  let opened = 0, closed = 0, overdue = 0, closedLate = 0;
-  let totalIssues = 0;
-
-  dataList.forEach(data => {
-    // Se não usar filtro, considera todas as issues
+    let opened = 0, closed = 0, overdue = 0, closedLate = 0;
+    let totalIssues = 0;
+  
+    dataList.forEach(data => {
+      if (usarFiltro) {
+        opened += data.opened;
+        closed += data.closed;
+        overdue += data.overdue;
+        closedLate += data.closedLate;
+        totalIssues += data.opened + data.closed;
+      } else {
+        totalIssues += data.opened + data.closed;
+      }
+    });
+  
+    // 🔹 Mantém os valores existentes se já foram definidos antes
     if (usarFiltro) {
-      opened += data.opened;
-      closed += data.closed;
-      overdue += data.overdue;
-      closedLate += data.closedLate;
-      totalIssues += data.opened + data.closed;
-    } else {
-      // Caso contrário, apenas soma o total de todas as issues (geral)
-      totalIssues += data.opened + data.closed;
+      this.projects[index].totalIssues = opened; // Total filtrado
+      this.projects[index].openedOnTime = opened - overdue;
+      this.projects[index].overdue = overdue;
+      this.projects[index].closed = closed;
+      this.projects[index].closedOnTime = closed - closedLate;
+      this.projects[index].closedLate = closedLate;
+  
+      this.totalOpened += opened;
+      this.totalClosed += closed;
+      this.totalOverdue += overdue;
+      this.totalClosedLate += closedLate;
+      this.totalIssues += totalIssues;
     }
-  });
+  
+    if (!usarFiltro) {
+      this.projects[index].totalIssuesGeral = dataList.reduce((total, data) => total + (data.opened || 0), 0); // Soma apenas as abertas
+      this.totalIssuesGeral = (this.totalIssuesGeral || 0) + (this.projects[index].totalIssuesGeral ?? 0);
 
-  this.projects[index].totalIssues = opened;
-  this.projects[index].openedOnTime = opened - overdue;
-  this.projects[index].overdue = overdue;
-  this.projects[index].closed = closed;
-  this.projects[index].closedOnTime = closed - closedLate;
-  this.projects[index].closedLate = closedLate;
-
-  this.totalOpened += opened;
-  this.totalClosed += closed;
-  this.totalOverdue += overdue;
-  this.totalClosedLate += closedLate;
-  this.totalIssues += totalIssues;
-
-  // Se não usar filtro, atualiza o total geral também
-  if (!usarFiltro) {
-    this.projects[index].totalIssuesGeral = totalIssues;
-    this.totalIssuesGeral += totalIssues;
+    }
+    
   }
-}
+
+  carregarGrafico(): void {
+    this.chartOptions = {
+      chart: {
+        type: "pie"
+      },
+      labels: ["Abertas", "Fechadas"],
+      series: [this.totalOpened, this.totalClosed],
+      colors: ["#009ec5", "#28a745"],
+      dataLabels: {
+        enabled: true,
+        style: {
+          colors: ["#fff"]  // Cor branca para os rótulos dentro do gráfico
+        },
+        formatter: (val: number, opts: any) => {
+          return val;  // Exibe o valor real no gráfico
+        }
+      },
+      tooltip: {
+        y: {
+          formatter: (val: number, opts: any) => {
+            const total = this.totalOpened + this.totalClosed;
+            const percentage = ((val / total) * 100).toFixed(2);
+            return `${percentage}%`;  // Exibe a porcentagem no tooltip
+          }
+        },
+        style: {
+          fontSize: '12px',
+          color: '#fff'
+        }
+      },
+      legend: {
+        labels: {
+          colors: '#fff',  // Define a cor branca para os nomes das legendas
+          fontSize: '14px'
+        },
+        markers: {
+          width: 12,
+          height: 12
+        },
+        useSeriesColors: false  // Desativa o uso das cores das séries na legenda
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: "bottom"
+            }
+          }
+        }
+      ]
+    };
+  
+    // Novo gráfico de barras empilhadas
+    this.columnChartOptions = {
+      chart: {
+        type: "bar",
+        height: 308,
+        toolbar: {
+          show: false, // Remove o menu do gráfico
+        },
+        stacked: true, // Ativa as barras empilhadas
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: "60%", // Largura das colunas ajustada para visualização melhor
+          endingShape: "rounded",
+        },
+      },
+      colors: ["#28a745", "#009ec5"], // Cores para as barras (Abertas e Fechadas)
+      series: [
+        {
+          name: "Tarefas Fechadas",
+          data: this.projects.map((project) => project.closedOnTime), // Dados para Fechadas
+        },
+        {
+          name: "Tarefas Abertas",
+          data: this.projects.map((project) => project.openedOnTime), // Dados para Abertas
+        },
+      ],
+      xaxis: {
+        categories: this.projects.map((project) => project.name), // Nomes dos projetos no eixo X
+        labels: {
+          style: {
+            colors: "#fff", // Cor das categorias no eixo X
+          },
+        },
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: "#fff", // Cor dos valores no eixo Y
+          },
+        },
+      },
+      legend: {
+        position: "relative", // Move a legenda para cima do gráfico
+        horizontalAlign: "center", // Centraliza a legenda na parte superior
+        offsetY: -10,
+        labels: {
+          colors: "#ffffff", // Cor branca para os nomes das legendas
+        },
+        markers: {
+          width: 12,
+          height: 12,
+        },
+      },
+      tooltip: {
+        enabled: true, // Ativa o tooltip
+        y: {
+          formatter: (val: number) => {
+            return val !== null && val !== undefined ? `${val} Tarefas` : "Nenhum dado disponível"; 
+            // Exibe o valor no tooltip ou uma mensagem padrão se não houver dados
+          },
+        },
+        theme: "dark", // Tema do tooltip (pode ser "dark" ou "light")
+        style: {
+          fontSize: "12px", // Ajusta o tamanho do texto no tooltip
+          colors: "#fff", // Cor do texto no tooltip
+        },
+      },      
+    };
+    
+    
+  }
 
 }
+
+//funciona

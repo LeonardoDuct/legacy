@@ -87,7 +87,7 @@ export class GitlabService {
     );
   }
 
-  obterTotalIssuesPorEstado(projectId: number): Observable<{ opened: number; closed: number; overdue: number }> {
+  obterTotalIssuesAbertas(projectId: number): Observable<{ opened: number }> {
     const headers = new HttpHeaders({
       'Private-Token': this.token,
     });
@@ -95,7 +95,7 @@ export class GitlabService {
     return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, {
       headers,
       observe: 'response',
-      params: new HttpParams().set('per_page', '100').set('page', '1').set('state', 'all'),
+      params: new HttpParams().set('per_page', '100').set('page', '1').set('state', 'opened'),
     }).pipe(
       mergeMap(response => {
         const totalPages = Number(response.headers.get('X-Total-Pages'));
@@ -105,7 +105,7 @@ export class GitlabService {
           requests.push(
             this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, {
               headers,
-              params: new HttpParams().set('per_page', '100').set('page', page.toString()).set('state', 'all'),
+              params: new HttpParams().set('per_page', '100').set('page', page.toString()).set('state', 'opened'),
             })
           );
         }
@@ -114,13 +114,12 @@ export class GitlabService {
         );
       }),
       map(issues => {
-        const opened = issues.filter(issue => issue.state === 'opened').length;
-        const closed = issues.filter(issue => issue.state === 'closed').length;
-        const overdue = issues.filter(issue => issue.due_date && new Date(issue.due_date) < new Date() && issue.state === 'opened').length;
-        return { opened, closed, overdue };
+        const opened = issues.length; // Apenas issues abertas estão sendo filtradas
+        return { opened };
       })
     );
   }
+
 
   obterTotalIssuesFiltradas(projectId: number, params: { label: string, startDate: string, endDate: string }): Observable<{ opened: number; closed: number; overdue: number; closedLate: number }> {
     const headers = new HttpHeaders({
@@ -212,7 +211,7 @@ export class GitlabService {
       mergeMap(subProjetos => {
         const projectIds = [projectId, ...subProjetos.map(sp => sp.id)];
         return forkJoin(projectIds.map(id =>
-          this.obterTotalIssuesPorEstado(id)
+          this.obterTotalIssuesAbertas(id)
         ));
       })
     );
