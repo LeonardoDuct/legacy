@@ -10,183 +10,101 @@ import { environment } from 'src/environments/environment';
 export class GitlabService {
   private apiUrl = environment.apiUrl;
   private token = environment.gitlabToken;
-  private cache: Map<string, any> = new Map(); // Cache para armazenar resultados
+  private cache: Map<string, any> = new Map();
 
   constructor(private http: HttpClient) {}
 
-  private getRequest(url: string, options?: any): Observable<any> {
-    const cacheKey = JSON.stringify({ url, options });
+  private createHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      'Private-Token': this.token,
+    });
+  }
+
+  private getRequest(url: string, params?: HttpParams, observe: any = 'body'): Observable<any> {
+    const cacheKey = JSON.stringify({ url, params, observe });
     if (this.cache.has(cacheKey)) {
-      return of(this.cache.get(cacheKey)); // Retorna do cache se disponível
+      return of(this.cache.get(cacheKey));
     } else {
-      return this.http.get(url, options).pipe(
+      return this.http.get(url, { headers: this.createHeaders(), params, observe }).pipe(
         map(response => {
-          this.cache.set(cacheKey, response); // Armazena no cache
+          this.cache.set(cacheKey, response);
           return response;
         }),
         catchError(error => {
-          console.error('Erro na requisição:', error);
-          return of(null); // Trata o erro e retorna null
+          console.error('Request error:', error);
+          return of(null);
         })
       );
     }
   }
 
   obterIssues(projectId: number, page: number = 1, perPage: number = 50, state: string = ''): Observable<any> {
-    const headers = new HttpHeaders({
-      'Private-Token': this.token,
-    });
-
     let params = new HttpParams().set('page', page.toString()).set('per_page', perPage.toString());
-
     if (state) {
       params = params.set('state', state);
     }
-
-    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, { headers, params });
+    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, params);
   }
 
   obterTotalIssues(projectId: number): Observable<number> {
-    const headers = new HttpHeaders({
-      'Private-Token': this.token,
-    });
-
-    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, {
-      headers,
-      observe: 'response',
-      params: new HttpParams().set('per_page', '1') // Solicita uma única issue para obter o cabeçalho
-    }).pipe(
+    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, new HttpParams().set('per_page', '1'), 'response').pipe(
       map(response => Number(response.headers.get('X-Total')))
     );
   }
 
   obterTotalIssuesParaVariosProjetos(projectIds: number[], state: string = ''): Observable<number> {
-    const headers = new HttpHeaders({
-      'Private-Token': this.token,
-    });
-
     const requests = projectIds.map(id => {
       let params = new HttpParams();
       if (state) {
         params = params.set('state', state);
       }
-      return this.getRequest(`${this.apiUrl}/projects/${id}/issues`, {
-        headers,
-        params,
-        observe: 'response'
-      });
+      return this.getRequest(`${this.apiUrl}/projects/${id}/issues`, params, 'response');
     });
 
     return forkJoin(requests).pipe(
-      map(responses => {
-        return responses.reduce((total, response) => {
-          const totalIssues = Number(response.headers.get('X-Total'));
-          return total + (totalIssues || 0);
-        }, 0);
-      })
+      map(responses => responses.reduce((total, response) => total + Number(response.headers.get('X-Total') || 0), 0))
     );
   }
 
   obterTotalIssuesAbertas(projectId: number): Observable<{ opened: number }> {
-    const headers = new HttpHeaders({
-      'Private-Token': this.token,
-    });
-
-    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, {
-      headers,
-      observe: 'response',
-      params: new HttpParams().set('per_page', '100').set('page', '1').set('state', 'opened'),
-    }).pipe(
+    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, new HttpParams().set('per_page', '100').set('page', '1').set('state', 'opened'), 'response').pipe(
       mergeMap(response => {
         const totalPages = Number(response.headers.get('X-Total-Pages'));
         const issues = response.body;
         const requests = [];
         for (let page = 2; page <= totalPages; page++) {
-          requests.push(
-            this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, {
-              headers,
-              params: new HttpParams().set('per_page', '100').set('page', page.toString()).set('state', 'opened'),
-            })
-          );
+          requests.push(this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, new HttpParams().set('per_page', '100').set('page', page.toString()).set('state', 'opened')));
         }
-        return forkJoin([of(issues), ...requests]).pipe(
-          map(results => results.flat())
-        );
+        return forkJoin([of(issues), ...requests]).pipe(map(results => results.flat()));
       }),
-      map(issues => {
-        const opened = issues.length; // Apenas issues abertas estão sendo filtradas
-        return { opened };
-      })
+      map(issues => ({ opened: issues.length }))
     );
   }
 
-
   obterTotalIssuesFiltradas(projectId: number, params: { label: string, startDate: string, endDate: string }): Observable<{ opened: number; closed: number; overdue: number; closedLate: number }> {
-    const headers = new HttpHeaders({
-      'Private-Token': this.token,
-    });
-
-    let queryParams = new HttpParams()
-      .set('page', '1')
-      .set('state', 'all');
-
+    let queryParams = new HttpParams().set('page', '1').set('state', 'all');
     if (params.label && params.label !== 'Selecione um cliente') {
       queryParams = queryParams.set('labels', params.label);
     }
-
     if (params.startDate && params.endDate) {
-      queryParams = queryParams.set('created_after', params.startDate);
-      queryParams = queryParams.set('created_before', params.endDate);
+      queryParams = queryParams.set('created_after', params.startDate).set('created_before', params.endDate);
     }
-
-    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, {
-      headers,
-      observe: 'response',
-      params: queryParams,
-    }).pipe(
+    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, queryParams, 'response').pipe(
       mergeMap(response => {
         const totalPages = Number(response.headers.get('X-Total-Pages'));
         const issues = response.body;
         const requests = [];
-
         for (let page = 2; page <= totalPages; page++) {
-          requests.push(
-            this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, {
-              headers,
-              params: queryParams.set('page', page.toString()),
-            })
-          );
+          requests.push(this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, queryParams.set('page', page.toString())));
         }
-
-        return forkJoin([of(issues), ...requests]).pipe(
-          map(results => results.flat())
-        );
+        return forkJoin([of(issues), ...requests]).pipe(map(results => results.flat()));
       }),
-      map(issues => {
-        const opened = issues.filter(issue => issue.state === 'opened').length;
-        const closed = issues.filter(issue => issue.state === 'closed').length;
-        const overdue = issues.filter(issue =>
-          issue.due_date &&
-          new Date(issue.due_date) < new Date() &&
-          issue.state === 'opened'
-        ).length;
-
-        const closedLate = issues.filter(issue => {
-          if (!issue.due_date || !issue.closed_at) return false; // Evita erros se algum dado estiver ausente
-          
-          const dueDate = new Date(issue.due_date);
-          const closedDate = new Date(issue.closed_at);
-        
-          // Normaliza as datas para ignorar a hora (mantendo apenas o ano, mês e dia)
-          dueDate.setHours(0, 0, 0, 0);
-          closedDate.setHours(0, 0, 0, 0);
-        
-          return closedDate > dueDate && issue.state === 'closed'; // Só conta como atrasado se fechou *depois* do dia limite
-        }).length;
-        
-
-        return { opened, closed, overdue, closedLate };
-      }),
+      map(issues => ({
+        opened: issues.filter(issue => issue.state === 'opened').length,
+        closed: issues.filter(issue => issue.state === 'closed').length,
+        overdue: issues.filter(issue => issue.due_date && new Date(issue.due_date) < new Date() && issue.state === 'opened').length,
+        closedLate: issues.filter(issue => issue.due_date && issue.closed_at && new Date(issue.closed_at) > new Date(issue.due_date) && issue.state === 'closed').length
+      })),
       catchError(error => {
         console.error('Erro ao buscar issues:', error);
         return of({ opened: 0, closed: 0, overdue: 0, closedLate: 0 });
@@ -199,40 +117,27 @@ export class GitlabService {
   }
 
   obterSubProjetos(projectId: number): Observable<any[]> {
-    const headers = new HttpHeaders({
-      'Private-Token': this.token,
-    });
-
-    return this.getRequest(`${this.apiUrl}/projects/${projectId}/subprojects`, { headers });
+    return this.getRequest(`${this.apiUrl}/projects/${projectId}/subprojects`);
   }
 
   obterIssuesParaProjetoESubProjetos(projectId: number): Observable<any[]> {
     return this.obterSubProjetos(projectId).pipe(
       mergeMap(subProjetos => {
         const projectIds = [projectId, ...subProjetos.map(sp => sp.id)];
-        return forkJoin(projectIds.map(id =>
-          this.obterTotalIssuesAbertas(id)
-        ));
+        return forkJoin(projectIds.map(id => this.obterTotalIssuesAbertas(id)));
       })
     );
   }
 
   carregarLabels(projectIds: number[]): Observable<any[]> {
-    const headers = new HttpHeaders({
-      'Private-Token': this.token,
-    });
-  
-    const requests = projectIds.map(id =>
-      this.getRequest(`${this.apiUrl}/projects/${id}/labels`, { headers }).pipe(
-        catchError(error => {
-          console.error(`Erro ao carregar labels para o projeto ${id}:`, error);
-          return of([]); // Retorna um array vazio em caso de erro
-        })
-      )
-    );
-  
+    const requests = projectIds.map(id => this.getRequest(`${this.apiUrl}/projects/${id}/labels`).pipe(
+      catchError(error => {
+        console.error(`Erro ao carregar labels para o projeto ${id}:`, error);
+        return of([]);
+      })
+    ));
     return forkJoin(requests).pipe(
-      map(responses => responses.flat().filter(label => label && label.name && label.color)),
+      map(responses => responses.flat().filter(label => label && label.name && label.color))
     );
   }
 }

@@ -37,9 +37,23 @@ body {
     border-radius: 50%; /* Caso o ícone seja redondo */
   }
   
-  .apexcharts-legend text {
-    fill: #ffffff !important; /* Altere a cor do texto para branco */
-    font-size: 14px !important; /* Ajuste o tamanho da fonte */
-  }
+  .apexcharts-legend-text {
+  color: #fff !important; /* Define a cor branca para os textos das legendas */
+  font-size: 14px !important; /* Define o tamanho da fonte */
+  font-weight: 400 !important; /* Define o peso da fonte */
+  font-family: Helvetica, Arial, sans-serif !important; /* Define a fonte */
+}
   
-  
+  /* Outros estilos globais da aplicação */
+
+/* Define a cor branca para os textos dos rótulos do eixo Y e dados */
+.apexcharts-yaxis-texts-g text,
+.apexcharts-yaxis-texts-g tspan,
+.apexcharts-yaxis-label text,
+.apexcharts-yaxis-label tspan {
+  fill: #fff !important; /* Define a cor branca */
+  color: #fff !important; /* Define a cor branca */
+  font-size: 14px !important; /* Define o tamanho da fonte */
+  font-weight: 400 !important; /* Define o peso da fonte */
+  font-family: Helvetica, Arial, sans-serif !important; /* Define a fonte */
+}

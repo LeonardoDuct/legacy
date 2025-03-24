@@ -50,28 +50,35 @@
             <h6 class="text-white label-extrabold mb-3">Filtros</h6>
 
             <!-- Select para Clientes -->
-            <div class="d-flex align-items-center gap-2 mb-3">
-              <label class="text-white label-regular">Labels:</label>
-              
-              <div class="d-flex">
-                <div *ngFor="let label of labels.slice(16, 18)" class="label-direct" [style.backgroundColor]="label.color" [style.color]="label.text_color">
-                  {{ label.name }}
-                </div>
-              </div>
-              
-              <div class="d-flex align-items-center">
-                <!-- O select agora mostra apenas o número de labels restantes -->
-                <select id="labelSelect" name="labelSelect" class="custom-select flex-grow-1" [(ngModel)]="selectedLabel">
-                  <!-- Mostra o número de labels restantes como título (placeholder) -->
-                  <option value="" disabled selected>{{ labels.length - 2 }} +</option>
-                  
-                  <!-- Quando o select for aberto, mostra as opções normalmente -->
-                  <option *ngFor="let label of labels.slice(2)" [value]="label.name" [style.backgroundColor]="label.color" [style.color]="label.text_color">
-                    {{ label.name }}
-                  </option>
-                </select>
-              </div>
-            </div>                   
+            <!-- 
+<div class="d-flex align-items-center gap-2 mb-3">
+  <label class="text-white label-regular">Labels:</label>
+
+  <div class="d-flex">
+    <div *ngFor="let label of labels.slice(16, 18)" 
+         class="label-direct" 
+         [style.backgroundColor]="label.color" 
+         [style.color]="label.text_color">
+      {{ label.name }}
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center">
+    <select id="labelSelect" name="labelSelect" class="custom-select flex-grow-1" [(ngModel)]="selectedLabel">
+      <option value="" disabled selected>{{ labels.length - 2 }} +</option>
+      <option *ngFor="let label of labels.slice(2)" 
+              [value]="label.name" 
+              [style.backgroundColor]="label.color" 
+              [style.color]="label.text_color">
+        {{ label.name }}
+      </option>
+    </select>
+  </div>
+</div>
+-->
+
+
+                   
           
             <!-- Selects para Período -->
             <div class="d-flex align-items-center gap-2">
