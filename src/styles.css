@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap/dist/css/bootstrap.min.css";
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
 /* Estilos gerais */
 body {
@@ -56,4 +56,38 @@ body {
   font-size: 14px !important; /* Define o tamanho da fonte */
   font-weight: 400 !important; /* Define o peso da fonte */
   font-family: Helvetica, Arial, sans-serif !important; /* Define a fonte */
+}
+
+/* 🔹 Estilo para o rodapé */
+.rodape {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.versao {
+  text-align: left;
+  font-size: 14px;
+}
+
+.direitos {
+  text-align: right;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espaço entre o texto e a imagem */
+  font-size: 14px;
+}
+
+.direitos p {
+  margin: 0; /* Remove o espaçamento padrão ao redor do parágrafo */
+  margin-right: 5px; /* Espaçamento entre o texto e a imagem */
+}
+
+.logo-rodape {
+  height: 30px; /* Ajuste o tamanho da logo conforme necessário */
 }

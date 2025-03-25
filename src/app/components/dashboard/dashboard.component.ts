@@ -4,13 +4,13 @@ import { Project, Issue, SubProject, Label } from '../../interfaces/models';  //
 import { forkJoin, of, Observable } from 'rxjs';
 import { tap, catchError, finalize } from 'rxjs/operators';
 import { ApexChart, ApexNonAxisChartSeries, ApexResponsive, ChartComponent } from "ng-apexcharts";
-import { style } from '@angular/animations';
 import { color } from 'echarts/core';
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css'],
+    selector: 'app-dashboard',
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.css'],
+    standalone: false
 })
 export class DashboardComponent implements OnInit {
   @ViewChild("chart") chart!: ChartComponent;

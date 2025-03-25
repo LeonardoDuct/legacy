@@ -3,8 +3,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { HttpClientModule} from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';  // Adicionado
 import { TaskDetailsComponent } from './task-details/task-details.component';
 import { NgApexchartsModule } from "ng-apexcharts";
 
@@ -12,13 +13,14 @@ import { NgApexchartsModule } from "ng-apexcharts";
   declarations: [
     AppComponent,
     DashboardComponent,
-    TaskDetailsComponent
+    TaskDetailsComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule,
+    CommonModule,
     FormsModule,
+    HttpClientModule,
     NgApexchartsModule
   ],
   providers: [],

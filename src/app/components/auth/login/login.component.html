@@ -1,0 +1,70 @@
+<div class="login-container">
+    <h2 *ngIf="!mustChangePassword">Login</h2>
+    <h2 *ngIf="mustChangePassword">Alterar Senha</h2>
+    
+    <form *ngIf="!mustChangePassword" (ngSubmit)="onLogin()">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+                id="email" 
+                type="email" 
+                class="form-control" 
+                [(ngModel)]="email" 
+                name="email" 
+                required 
+                placeholder="Digite seu email"
+            />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Senha</label>
+            <input 
+                id="password" 
+                type="password" 
+                class="form-control" 
+                [(ngModel)]="password" 
+                name="password" 
+                required 
+                placeholder="Digite sua senha"
+            />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Entrar</button>
+
+        <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+        </div>
+    </form>
+
+    <!-- Formulário para alteração de senha -->
+    <form *ngIf="mustChangePassword" (ngSubmit)="onChangePassword()">
+        <div class="form-group">
+            <label for="newPassword">Nova Senha</label>
+            <input 
+                id="newPassword" 
+                type="password" 
+                class="form-control" 
+                [(ngModel)]="newPassword" 
+                name="newPassword" 
+                required 
+                placeholder="Digite sua nova senha"
+            />
+        </div>
+
+        <button type="submit" class="btn btn-success">Alterar Senha</button>
+
+        <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+        </div>
+    </form>
+</div>
+
+<footer class="rodape">
+    <div class="versao">
+      <p>Versão 0.0.5 - Build: 20250207-0005 (Alpha)</p>
+    </div>
+    <div class="direitos">
+      <p>Todos os direitos reservados</p>
+      <img src="assets/images/logomini.png" alt="Logo de rodapé" class="logo-rodape mb-0" />
+    </div>
+</footer>
