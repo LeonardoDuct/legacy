@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'tasks/:id', component: TaskDetailsComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },
-  { path: 'configuracoes', component: UserManagementComponent, canActivate: [AuthGuard] },
+  { path: 'cadastro', component: UserManagementComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' }
 ];
 

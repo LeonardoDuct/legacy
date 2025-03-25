@@ -8,6 +8,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';  // Adicionado
 import { TaskDetailsComponent } from './task-details/task-details.component';
 import { NgApexchartsModule } from "ng-apexcharts";
+import { FontAwesomeModule, FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { faHome, faThLarge, faCog } from '@fortawesome/free-solid-svg-icons';
 
 @NgModule({
   declarations: [
@@ -21,9 +23,14 @@ import { NgApexchartsModule } from "ng-apexcharts";
     CommonModule,
     FormsModule,
     HttpClientModule,
-    NgApexchartsModule
+    NgApexchartsModule,
+    FontAwesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule { 
+  constructor(library: FaIconLibrary) {
+    library.addIcons(faHome, faThLarge, faCog);
+  }
+}

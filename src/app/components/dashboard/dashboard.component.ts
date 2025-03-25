@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener  } from '@angular/core';
 import { GitlabService } from '../../services/gitlab.service';
 import { Project, Issue, SubProject, Label } from '../../interfaces/models';  // Importando as interfaces
 import { forkJoin, of, Observable } from 'rxjs';
@@ -459,6 +459,27 @@ export class DashboardComponent implements OnInit {
     
     
   }
+
+  toggleMenu(event: MouseEvent) {
+    event.stopPropagation(); // Impede que o clique se propague
+    event.preventDefault(); // Previne comportamentos padrão indesejados
+    this.menuAberto = !this.menuAberto;
+  }
+
+  @HostListener('document:click', ['$event'])
+  handleDocumentClick(event: MouseEvent) {
+    if (!this.menuAberto) return;
+    
+    const target = event.target as HTMLElement;
+    const menu = document.querySelector('.expansible-menu');
+    const icon = document.querySelector('.menu-icon');
+    
+    // Fecha o menu apenas se o clique foi fora do menu e do ícone
+    if (!menu?.contains(target) && !icon?.contains(target)) {
+      this.menuAberto = false;
+    }
+  }
+  
 
 }
 

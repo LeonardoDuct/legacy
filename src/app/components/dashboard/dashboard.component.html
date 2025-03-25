@@ -3,23 +3,24 @@
   <div class="card shadow-sm mb-4">
     <div class="card-body p-0">
       <div class="row g-0">
-        <!-- Primeiro Bloco: Logo e Descrição -->
+        <!-- Primeiro Bloco: Logo e Menu -->
         <div class="col-4 border-end d-flex align-items-center">
           <div class="logo-container">
             <img src="assets/images/logo.png" alt="Logo da Empresa" class="logo-img mb-0" />
           </div>
           <div class="dashboard-menu-container">
             <h4 class="dashboard-title">DashBoard<br>/ Produção</h4>
-            <div class="menu-icon" (click)="menuAberto = !menuAberto">
+            <div class="menu-icon" (click)="toggleMenu($event)">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-            </div>            
+            </div>
+                        
           </div>
         </div>
-
+        
         <!-- Segundo Bloco: Painel de Métricas -->
         <div class="col-4">
           <div class="d-flex justify-content-around">
@@ -46,45 +47,39 @@
         <!-- Terceiro Bloco: Filtros -->
         <div class="col-4">
           <div class="p-1">
-            <!-- Título "Filtros" -->
             <h6 class="text-white label-extrabold mb-3">Filtros</h6>
 
-            <!-- Select para Clientes -->
+            <!-- Seção de Labels (comentada para uso futuro) -->
             <!-- 
-<div class="d-flex align-items-center gap-2 mb-3">
-  <label class="text-white label-regular">Labels:</label>
-
-  <div class="d-flex">
-    <div *ngFor="let label of labels.slice(16, 18)" 
-         class="label-direct" 
-         [style.backgroundColor]="label.color" 
-         [style.color]="label.text_color">
-      {{ label.name }}
-    </div>
-  </div>
-
-  <div class="d-flex align-items-center">
-    <select id="labelSelect" name="labelSelect" class="custom-select flex-grow-1" [(ngModel)]="selectedLabel">
-      <option value="" disabled selected>{{ labels.length - 2 }} +</option>
-      <option *ngFor="let label of labels.slice(2)" 
-              [value]="label.name" 
-              [style.backgroundColor]="label.color" 
-              [style.color]="label.text_color">
-        {{ label.name }}
-      </option>
-    </select>
-  </div>
-</div>
--->
-
-
-                   
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <label class="text-white label-regular">Labels:</label>
+              <div class="d-flex">
+                <div *ngFor="let label of labels.slice(16, 18)" 
+                     class="label-direct" 
+                     [style.backgroundColor]="label.color" 
+                     [style.color]="label.text_color">
+                  {{ label.name }}
+                </div>
+              </div>
+              <div class="d-flex align-items-center">
+                <select id="labelSelect" name="labelSelect" class="custom-select flex-grow-1" [(ngModel)]="selectedLabel">
+                  <option value="" disabled selected>{{ labels.length - 2 }} +</option>
+                  <option *ngFor="let label of labels.slice(2)" 
+                          [value]="label.name" 
+                          [style.backgroundColor]="label.color" 
+                          [style.color]="label.text_color">
+                    {{ label.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            -->
           
-            <!-- Selects para Período -->
+            <!-- Seção de Período -->
             <div class="d-flex align-items-center gap-2">
               <label for="periodoSelect" class="text-white label-regular">Período:</label>
             
-              <!-- Select aparece apenas se NÃO for personalizado -->
+              <!-- Select de Período -->
               <div *ngIf="!mostrarCamposDataPersonalizada" class="flex-grow-1">
                 <select id="periodoSelect" name="periodoSelect" class="label-select w-100" (change)="alterarPeriodo($event)">
                   <option value="mes_atual">Selecione um Periodo</option>
@@ -95,7 +90,7 @@
                 </select>
               </div>
             
-              <!-- Campos de Data + Botão de Voltar -->
+              <!-- Campos de Data Personalizada -->
               <div *ngIf="mostrarCamposDataPersonalizada" class="d-flex align-items-center gap-2 flex-grow-1">
                 <button class="btn btn-danger custom-back btn-sm d-flex align-items-center justify-content-center" (click)="voltarPeriodo()">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
@@ -116,41 +111,73 @@
             </div>
           </div>
         </div>
-        
       </div>
     </div>
   </div>
 
-  <!-- Cards de Categorias -->
-  <div class="row mt-4">
-    <div *ngFor="let project of projects" class="col-md-4 ">
-        <div class="card card-custom">
-            <div class="header-card">
-                <h5 class="title-custom">{{ project.name }}</h5>
-                <p class="tarefas-abertas" title="Tarefas abertas">
-                  <span *ngIf="project.totalIssues">Total<br>Geral</span>
-                  {{ project.totalIssuesGeral }}
-                </p>
-                <p class="tarefas-abertas" title="Tarefas abertas">
-                  <span *ngIf="project.totalIssues">Total<br>Filtradas</span>
-                  {{ project.totalIssues }}
-                </p>
-                
-                                
-                <!-- <p class="tarefas-abertas" title="Total Geral de Tarefas">{{ project.totalIssuesGeral }}</p> -->
-            </div>
-            <div class="separator"></div> <!-- Linha separadora -->
-            <div class="card-custom position-relative">
-                <ul class="list-group list-group-flush lista-custom">
-                    <li class="list-group-item"><span class="bullet">•</span> Tarefas abertas dentro do prazo <span class="text-success">{{ project.openedOnTime }}</span></li>
-                    <li class="list-group-item"><span class="bullet">•</span> Tarefas abertas fora do prazo <span class="text-danger">{{ project.overdue }}</span></li>
-                    <li class="list-group-item"><span class="bullet">•</span> Tarefas fechadas dentro do prazo <span class="text-secondary">{{ project.closedOnTime }}</span></li>
-                    <li class="list-group-item"><span class="bullet">•</span> Tarefas fechadas fora do prazo <span class="text-secondary">{{ project.closedLate }}</span></li>
-                </ul>
-                <button class="btn detalhes-btn position-absolute">+ DETALHES</button>
-            </div>
+  <div class="expansible-menu" [ngClass]="{'aberto': menuAberto}">
+    <div class="menu-content">
+      <div class="menu-item" (click)="toggleMenu($event)">
+        <fa-icon [icon]="['fas', 'home']"></fa-icon> HOME
+      </div>
+      <div class="menu-item" (click)="toggleMenu($event)">
+        <fa-icon [icon]="['fas', 'th-large']"></fa-icon> DASHBOARD
+      </div>
+      <div class="menu-item">
+        <fa-icon [icon]="['fas', 'cog']"></fa-icon> PREFERÊNCIAS
+        <div class="sub-menu">
+          <div class="sub-menu-item" [routerLink]="'/cadastro'">
+            CADASTRO
+          </div>
         </div>
+      </div>
     </div>
+</div>  
+  
+  <!-- Seção de Cards de Projetos e Gráficos -->
+  <div class="row mt-4">
+    <!-- Cards de Projetos -->
+    <div *ngFor="let project of projects" class="col-md-4">
+      <div class="card card-custom">
+        <div class="header-card">
+          <h5 class="title-custom">{{ project.name }}</h5>
+          <p class="tarefas-abertas" title="Tarefas abertas">
+            <span *ngIf="project.totalIssues">Total<br>Geral</span>
+            {{ project.totalIssuesGeral }}
+          </p>
+          <p class="tarefas-abertas" title="Tarefas abertas">
+            <span *ngIf="project.totalIssues">Total<br>Filtradas</span>
+            {{ project.totalIssues }}
+          </p>
+        </div>
+        
+        <div class="separator"></div>
+        
+        <div class="card-custom position-relative">
+          <ul class="list-group list-group-flush lista-custom">
+            <li class="list-group-item">
+              <span class="bullet">•</span> Tarefas abertas dentro do prazo 
+              <span class="text-success">{{ project.openedOnTime }}</span>
+            </li>
+            <li class="list-group-item">
+              <span class="bullet">•</span> Tarefas abertas fora do prazo 
+              <span class="text-danger">{{ project.overdue }}</span>
+            </li>
+            <li class="list-group-item">
+              <span class="bullet">•</span> Tarefas fechadas dentro do prazo 
+              <span class="text-secondary">{{ project.closedOnTime }}</span>
+            </li>
+            <li class="list-group-item">
+              <span class="bullet">•</span> Tarefas fechadas fora do prazo 
+              <span class="text-secondary">{{ project.closedLate }}</span>
+            </li>
+          </ul>
+          <button class="btn detalhes-btn position-absolute">+ DETALHES</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
     <div *ngIf="projects.length > 0" class="col-md-4 mb-4 chart-container">
       <apx-chart
         [series]="chartOptions.series"
@@ -160,6 +187,7 @@
         [responsive]="chartOptions.responsive">
       </apx-chart>
     </div>
+    
     <div *ngIf="projects.length > 0" class="col-md-4 mb-4 chart-container bar-chart">
       <apx-chart
         [series]="columnChartOptions.series"
@@ -172,7 +200,6 @@
     </div>
   </div>
   
-
   <!-- Rodapé -->
   <footer class="rodape">
     <div class="versao">

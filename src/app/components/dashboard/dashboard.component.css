@@ -1,6 +1,6 @@
 /* 🔹 Container Principal */
 .container {
-  max-width: 1450px;
+  max-width: 1449px;
   padding: 0;
   margin: 0 auto;
 }
@@ -10,10 +10,11 @@
   transition: transform 0.3s ease-in-out;
   cursor: pointer;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible;
   border: none;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .card:hover {
@@ -79,7 +80,6 @@ canvas {
   margin: 0 auto;
   background-color: white; /* Opcional, para evitar a "área preta" */
 }
-
 
 /* 🔹 Separador */
 .separator {
@@ -354,6 +354,95 @@ canvas {
   font-weight: 600;
 }
 
+/* CONTAINER PRINCIPAL funcional */
+/* CONTAINER PRINCIPAL */
+
+/* MENU EXPANSÍVEL */
+.bloco-1 {
+  position: relative; /* Cria um contexto de posicionamento */
+}
+
+/* Container do menu (fora do card, mas posicionado relativamente) */
+.expansible-menu-wrapper {
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+/* Menu Expansível */
+.expansible-menu {
+  position: absolute;
+  top: 145px;
+  left: 36px;
+  width: 482px;
+  z-index: 1001;
+  opacity: 0;
+  transform: translateY(-20px) scale(1);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+  visibility: hidden;
+}
+
+/* Menu Aberto */
+.expansible-menu.aberto {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1.05); /* Aplica o mesmo efeito de hover do card */
+}
+
+/* Efeito Scale ao passar o mouse */
+.expansible-menu.aberto:hover {
+  transform: translateY(0) scale(1.02); /* Um leve aumento ao passar o mouse */
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Itens do menu */
+.menu-item {
+  padding: 12px 25px;
+  color: white;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s;
+  display: block;
+  align-items: center;
+  gap: 10px;
+  
+  /* Gradiente da primeira versão */
+  background: linear-gradient(90deg, #1D2A3F 1%, #009ec5 40%);
+}
+
+.menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Estilo para os ícones dentro do menu */
+.menu-item fa-icon {
+  width: 16px;
+  text-align: center;
+}
+/* Ícone de menu hambúrguer */
+.menu-icon {
+  margin-top: flex; /* Espaçamento entre o texto e o menu */
+  color: #ffffff;
+  position: static;
+}
+
+.menu-item {
+  position: relative;
+}
+
+.sub-menu {
+  display: block; /* Sempre visível */
+  padding-left: 20px; /* Indenta para diferenciar dos itens principais */
+  margin-top: 5px; /* Espaço extra entre os subitens e o item principal */
+}
+
+.sub-menu-item {
+  padding: 8px 25px;
+  color: white;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Linha separadora para visual clean */
+}
+
 /* Container que alinha o texto e o menu à direita */
 .dashboard-menu-container {
   display: flex;
@@ -371,13 +460,6 @@ canvas {
   line-height: 13px;
   font-weight: 800;
   font-size: 8px !important;
-}
-
-
-/* Ícone de menu hambúrguer */
-.menu-icon {
-  margin-top: flex; /* Espaçamento entre o texto e o menu */
-  color: #ffffff;
 }
 
 .mb-3 {
