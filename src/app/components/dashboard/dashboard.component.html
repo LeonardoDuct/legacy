@@ -1,25 +1,45 @@
 <div class="container mt-4">
   <!-- Header como Card -->
-  <div class="card shadow-sm mb-4">
+  <div class="card shadow-sm mb-4" [ngClass]="{ 'menu-aberto': menuAberto }">
     <div class="card-body p-0">
       <div class="row g-0">
         <!-- Primeiro Bloco: Logo e Menu -->
-        <div class="col-4 border-end d-flex align-items-center">
-          <div class="logo-container">
-            <img src="assets/images/logo.png" alt="Logo da Empresa" class="logo-img mb-0" />
-          </div>
-          <div class="dashboard-menu-container">
-            <h4 class="dashboard-title">DashBoard<br>/ Produção</h4>
-            <div class="menu-icon" (click)="toggleMenu($event)">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-                        
+<div class="col-4 border-end d-flex align-items-center ">
+  <div class="logo-container">
+    <img src="assets/images/logo.png" alt="Logo da Empresa" class="logo-img mb-0" />
+  </div>
+  <div class="dashboard-menu-container">
+    <h4 class="dashboard-title">DashBoard<br>/ Produção</h4>
+    <div class="menu-icon" (click)="toggleMenu($event)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Menu Expansível dentro do Bloco 1 -->
+  <div class="expansible-menu" [ngClass]="{'aberto': menuAberto}">
+    <div class="menu-content">
+      <div class="menu-item" (click)="toggleMenu($event)">
+        <fa-icon [icon]="['fas', 'home']"></fa-icon> HOME
+      </div>
+      <div class="menu-item" (click)="toggleMenu($event)">
+        <fa-icon [icon]="['fas', 'th-large']"></fa-icon> DASHBOARD
+      </div>
+      <div class="menu-item">
+        <fa-icon [icon]="['fas', 'cog']"></fa-icon> PREFERÊNCIAS
+        <div class="sub-menu">
+          <div class="sub-menu-item" [routerLink]="'/cadastro'">
+            CADASTRO
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
         
         <!-- Segundo Bloco: Painel de Métricas -->
         <div class="col-4">
@@ -115,25 +135,7 @@
     </div>
   </div>
 
-  <div class="expansible-menu" [ngClass]="{'aberto': menuAberto}">
-    <div class="menu-content">
-      <div class="menu-item" (click)="toggleMenu($event)">
-        <fa-icon [icon]="['fas', 'home']"></fa-icon> HOME
-      </div>
-      <div class="menu-item" (click)="toggleMenu($event)">
-        <fa-icon [icon]="['fas', 'th-large']"></fa-icon> DASHBOARD
-      </div>
-      <div class="menu-item">
-        <fa-icon [icon]="['fas', 'cog']"></fa-icon> PREFERÊNCIAS
-        <div class="sub-menu">
-          <div class="sub-menu-item" [routerLink]="'/cadastro'">
-            CADASTRO
-          </div>
-        </div>
-      </div>
-    </div>
-</div>  
-  
+
   <!-- Seção de Cards de Projetos e Gráficos -->
   <div class="row mt-4">
     <!-- Cards de Projetos -->
@@ -153,7 +155,7 @@
         
         <div class="separator"></div>
         
-        <div class="card-custom position-relative">
+        <div class="card-custom">
           <ul class="list-group list-group-flush lista-custom">
             <li class="list-group-item">
               <span class="bullet">•</span> Tarefas abertas dentro do prazo 

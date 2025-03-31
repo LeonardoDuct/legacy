@@ -465,6 +465,7 @@ export class DashboardComponent implements OnInit {
     event.preventDefault(); // Previne comportamentos padrão indesejados
     this.menuAberto = !this.menuAberto;
   }
+  
 
   @HostListener('document:click', ['$event'])
   handleDocumentClick(event: MouseEvent) {

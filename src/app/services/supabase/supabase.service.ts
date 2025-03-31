@@ -22,16 +22,29 @@ export class SupabaseService {
   }
 
   async getUser() {
-    const { data, error } = await this.supabase.auth.getUser();
-
-    // Verificar se ocorreu algum erro
-    if (error) {
-      throw new Error(error.message);
+    console.log("Chamando getUser()");
+  
+    // Forçar o Supabase a recuperar a sessão
+    await this.supabase.auth.refreshSession();  // Tenta forçar a sessão a ser atualizada
+  
+    const { data: sessionData, error: sessionError } = await this.supabase.auth.getSession();
+  
+    if (sessionError || !sessionData?.session) {
+      console.error("Erro ao restaurar sessão:", sessionError?.message || "Nenhuma sessão ativa encontrada");
+      return null;
     }
-
-    // Garantir que data.user não seja nulo antes de retornar
-    return data?.user || null;
-  }  
+  
+    const { data, error } = await this.supabase.auth.getUser();
+  
+    if (error) {
+      console.error("Erro ao obter usuário:", error.message);
+      return null;
+    }
+  
+    console.log("Usuário encontrado:", data.user);
+    return data.user;
+  }
+   
 
   async logout() {
     const { error } = await this.supabase.auth.signOut();

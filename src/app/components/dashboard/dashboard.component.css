@@ -17,7 +17,7 @@
   position: relative;
 }
 
-.card:hover {
+.card:not(.menu-aberto):hover {
   transform: scale(1.05);
 }
 
@@ -26,13 +26,14 @@
   background-color: #1D2A3F;
   color: #ffffff;
   border-radius: 15px;
-  overflow: hidden;
+  overflow: visible;
   min-height: 205px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin-bottom: 20px;
   border: none;
+  position: relative;
 }
 
 /* 🔹 Cabeçalho do Card */
@@ -93,6 +94,7 @@ canvas {
   background: linear-gradient(90deg, #1D2A3F 1%, #009ec5 40%);
   padding: 0.01px;
   flex-grow: 1;
+  border-radius: 5px;
 }
 
 /* 🔹 Estilização da Lista */
@@ -337,7 +339,7 @@ canvas {
 /* 🔹 Estilo específico para a última coluna */
 .col-4:last-child {
   background-color: #1D2A3F;
-  border-radius: 0;
+  border-radius: 1px;
 }
 
 /* 🔹 Botão de Detalhes */
@@ -354,72 +356,60 @@ canvas {
   font-weight: 600;
 }
 
-/* CONTAINER PRINCIPAL funcional */
-/* CONTAINER PRINCIPAL */
-
-/* MENU EXPANSÍVEL */
-.bloco-1 {
-  position: relative; /* Cria um contexto de posicionamento */
-}
-
-/* Container do menu (fora do card, mas posicionado relativamente) */
-.expansible-menu-wrapper {
+/* Garante que o bloco 1 seja a referência para posicionamento */
+.col-4 {
   position: relative;
-  width: 0;
-  height: 0;
+  z-index: 10; /* Garante que fique acima dos outros blocos */
 }
 
-/* Menu Expansível */
+/* Estiliza o menu expansível */
 .expansible-menu {
   position: absolute;
-  top: 145px;
-  left: 36px;
-  width: 482px;
-  z-index: 1001;
+  top: 100%; /* Faz o menu expandir para baixo */
+  left: 0;
+  width: 100%; /* Para ocupar toda a largura do bloco 1 */
+  background: linear-gradient(90deg, #1D2A3F 1%, #009ec5 40%); /* Reintroduz o gradiente */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-10px);
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
   opacity: 0;
-  transform: translateY(-20px) scale(1);
-  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-  visibility: hidden;
+  z-index: 1050; /* Mantém o menu sobreposto */
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
 }
 
-/* Menu Aberto */
+/* Quando o menu estiver aberto */
 .expansible-menu.aberto {
+  transform: translateY(0);
   opacity: 1;
-  visibility: visible;
-  transform: translateY(0) scale(1.05); /* Aplica o mesmo efeito de hover do card */
 }
 
-/* Efeito Scale ao passar o mouse */
-.expansible-menu.aberto:hover {
-  transform: translateY(0) scale(1.02); /* Um leve aumento ao passar o mouse */
-  transition: transform 0.3s ease-in-out;
+/* Estiliza os itens do menu */
+.menu-content {
+  padding: 13px;
 }
 
-/* Itens do menu */
 .menu-item {
-  padding: 12px 25px;
-  color: white;
+  padding: 18px;
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.2s;
-  display: block;
+  color: white;
+  display: fixed;
   align-items: center;
-  gap: 10px;
-  
-  /* Gradiente da primeira versão */
-  background: linear-gradient(90deg, #1D2A3F 1%, #009ec5 40%);
+  gap: 8px;
+  background: transparent; /* Mantém o plano de fundo transparente para o gradiente do menu */
 }
 
 .menu-item:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Estilo para os ícones dentro do menu */
 .menu-item fa-icon {
   width: 16px;
   text-align: center;
 }
-/* Ícone de menu hambúrguer */
+
 .menu-icon {
   margin-top: flex; /* Espaçamento entre o texto e o menu */
   color: #ffffff;
@@ -431,16 +421,20 @@ canvas {
 }
 
 .sub-menu {
-  display: block; /* Sempre visível */
-  padding-left: 20px; /* Indenta para diferenciar dos itens principais */
-  margin-top: 5px; /* Espaço extra entre os subitens e o item principal */
+  display: block; /* Sempre visível e organizado verticalmente */
+  padding-left: 20px; /* Indenta para diferenciar do item principal */
+  margin-top: 5px; /* Espaçamento entre o item principal e o submenu */
 }
 
 .sub-menu-item {
   padding: 8px 25px;
   color: white;
   cursor: pointer;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Linha separadora para visual clean */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Linha separadora */
+}
+
+.sub-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Realce ao passar o mouse */
 }
 
 /* Container que alinha o texto e o menu à direita */
