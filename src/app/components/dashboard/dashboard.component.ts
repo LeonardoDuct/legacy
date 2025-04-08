@@ -1,10 +1,9 @@
-import { Component, OnInit, ViewChild, HostListener  } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { GitlabService } from '../../services/gitlab.service';
-import { Project, Issue, SubProject, Label } from '../../interfaces/models';  // Importando as interfaces
+import { Project, Issue, SubProject, Label } from '../../interfaces/models';
 import { forkJoin, of, Observable } from 'rxjs';
 import { tap, catchError, finalize } from 'rxjs/operators';
-import { ApexChart, ApexNonAxisChartSeries, ApexResponsive, ChartComponent } from "ng-apexcharts";
-import { color } from 'echarts/core';
+import { ChartComponent } from "ng-apexcharts";
 
 @Component({
     selector: 'app-dashboard',
@@ -14,23 +13,27 @@ import { color } from 'echarts/core';
 })
 export class DashboardComponent implements OnInit {
   @ViewChild("chart") chart!: ChartComponent;
-  public chartOptions: any; 
+
+  public chartOptions: any;
   public columnChartOptions: any;
 
   issues: Issue[] = [];
-  totalIssues: number = 0;
-  totalIssuesGeral: number = 0;
-  selectedProjectId: number = 0;
-  selectedIssueState: string = 'all';
-  filtroAtrasado: boolean = false;  // Filtro de atraso
-  selectedLabel: string = '';  // Filtro de label
-  dataInicio: string = '';  // Filtro de data inicial
-  dataFim: string = '';    // Filtro de data final
-  periodoSelecionado: string = 'mes_anterior'; // Período selecionado
-  menuAberto: boolean = false;
-  mostrarCamposDataPersonalizada: boolean = false; // Controle de exibição dos campos de data
-  labels: any[] = []; // Armazena as labels do projeto
+  totalIssues = 0;
+  totalIssuesGeral = 0;
+
+  selectedProjectId = 0;
+  selectedIssueState = 'all';
+  filtroAtrasado = false;
+  selectedLabel = '';
+  dataInicio = '';
+  dataFim = '';
+  periodoSelecionado = 'mes_anterior';
+  menuAberto = false;
+  mostrarCamposDataPersonalizada = false;
+
+  labels: any[] = [];
   filteredLabels: any[] = [];
+
   projects: Project[] = [
     { id: 109, name: 'Sustentação' },
     { id: 32, name: 'Processos', subProjects: [
@@ -45,16 +48,14 @@ export class DashboardComponent implements OnInit {
       { id: 107, name: 'Especificação' },
       { id: 110, name: 'QA quality assurance' }
     ]},
-    { id: 108, name: 'Projetos' , subProjects: [
+    { id: 108, name: 'Projetos', subProjects: [
       { id: 123, name: 'BI' },
-      { id: 124, name: 'Sistemas Pro'}
+      { id: 124, name: 'Sistemas Pro' }
     ]},
-
     { id: 328, name: 'Produtos', subProjects: [
       { id: 130, name: 'Design' },
       { id: 129, name: 'Sistemas' }
     ]},
-
     { id: 3, name: 'Desenvolvimento', subProjects: [
       { id: 1, name: 'Pyxis - SFP' },
       { id: 2, name: 'Pyxis - WEB' },
@@ -69,20 +70,20 @@ export class DashboardComponent implements OnInit {
       { id: 86, name: 'Flamengo API' },
       { id: 80, name: 'read-card-api' },
       { id: 25, name: 'cardcheck' },
-      { id: 58, name: 'pyxis-ids' }
+      { id: 58, name: 'pyxis-ids' },
+      { id: 65, name: 'pyxis-db' },
+      { id: 66, name: 'integration-gitlab' }
     ]},
-    { id: 125, name: 'RNC' },
-    
-    // { id: 26, name: 'CMO', subProjects: [
-    //   { id: 44, name: 'Solicitações' }
-    // ]},
-    
+    { id: 125, name: 'RNC' }
   ];
-  page: number = 1;
-  perPage: number = 50;
+
+  page = 1;
+  perPage = 50;
+
   hoveredProject: any;
   selectedProject: any;
-  selectedSubProjectId: number = 0;
+  selectedSubProjectId = 0;
+
   totalOpened = 0;
   totalClosed = 0;
   totalClosedLate = 0;
@@ -92,33 +93,32 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarGrafico();
-    this.periodoSelecionado = 'mes_atual'; // Define o período padrão como "Mês Atual"
+    this.periodoSelecionado = 'mes_atual';
     this.dataInicio = this.obterPrimeiroDiaDoMesAtual();
-    this.dataFim = this.obterUltimoDiaDoMesAtual();    
-    // Carrega labels e issues em sequência
+    this.dataFim = this.obterUltimoDiaDoMesAtual();
+
     this.carregarLabelsDeTodosProjetos().subscribe(() => {
       this.carregarIssues();
       this.carregarTotalIssuesGeral();
-
     });
   }
 
   aplicarFiltros(): void {
-    // Aplica os filtros quando clicado
     this.carregarIssues();
   }
 
   alterarPeriodo(event: any): void {
     const selectValue = event.target.value;
 
-    if(selectValue === '') {
+    if (selectValue === '') {
       this.voltarPeriodo();
       return;
     }
-    
-    this.periodoSelecionado = event.target.value;
-    this.mostrarCamposDataPersonalizada = (this.periodoSelecionado === 'custom');
-    switch (this.periodoSelecionado) {
+
+    this.periodoSelecionado = selectValue;
+    this.mostrarCamposDataPersonalizada = (selectValue === 'custom');
+
+    switch (selectValue) {
       case 'mes_atual':
         this.dataInicio = this.obterPrimeiroDiaDoMesAtual();
         this.dataFim = this.obterUltimoDiaDoMesAtual();
@@ -143,17 +143,16 @@ export class DashboardComponent implements OnInit {
   }
 
   voltarPeriodo(): void {
-    this.mostrarCamposDataPersonalizada = false; // Oculta os campos de data
-    this.periodoSelecionado = 'mes_atual'; // Define o período padrão como "Mês Atual"
+    this.mostrarCamposDataPersonalizada = false;
+    this.periodoSelecionado = 'mes_atual';
     this.dataInicio = this.obterPrimeiroDiaDoMesAtual();
     this.dataFim = this.obterUltimoDiaDoMesAtual();
-    this.carregarIssues(); // Recarrega as issues do mês atual
+    this.carregarIssues();
   }
 
   obterPrimeiroDiaDoMesAtual(): string {
     const date = new Date();
     date.setDate(1);
-    date.setHours(0, 0, 0, 0);
     return date.toISOString().split('T')[0];
   }
 
@@ -161,27 +160,22 @@ export class DashboardComponent implements OnInit {
     const date = new Date();
     date.setMonth(date.getMonth() + 1);
     date.setDate(0);
-    date.setHours(23, 59, 59, 999);
     return date.toISOString().split('T')[0];
   }
 
   obterDataAtual(): string {
-    const date = new Date();
-    date.setHours(0, 0, 0, 0);
-    return date.toISOString().split('T')[0];
+    return new Date().toISOString().split('T')[0];
   }
 
   obterDataDeDiasAtras(dias: number): string {
     const date = new Date();
     date.setDate(date.getDate() - dias);
-    date.setHours(0, 0, 0, 0);
     return date.toISOString().split('T')[0];
   }
 
   carregarIssues(): void {
     const requests = this.projects.map(project => {
       const projectIds = project.subProjects ? project.subProjects.map(sp => sp.id) : [project.id];
-  
       const params = {
         label: this.selectedLabel,
         startDate: this.dataInicio || this.obterPrimeiroDiaDoMesAtual(),
@@ -191,7 +185,7 @@ export class DashboardComponent implements OnInit {
       return forkJoin(projectIds.map(id =>
         this.gitlabService.obterTotalIssuesFiltradas(id, params).pipe(
           catchError(error => {
-            console.error(`Erro ao buscar issues para o projeto ${id}:`, error);
+            console.error(`❌ Erro ao buscar issues para o projeto ${id}:`, error);
             return of({ opened: 0, closed: 0, overdue: 0, closedLate: 0 }); 
           })
         )
@@ -206,17 +200,15 @@ export class DashboardComponent implements OnInit {
         });
       }),
       catchError((error) => {
-        console.error('Erro ao buscar o total de issues para os projetos:', error);
+        console.error('❌ Erro ao buscar o total de issues para os projetos:', error);
         throw error;
       }),
       finalize(() => {
-        console.log('Processamento das issues filtradas finalizado');
         this.carregarTotalIssuesGeral(); // 🔥 Chama depois de concluir
         this.carregarGrafico();
       })
     ).subscribe();
-  }
-  
+  }  
 
   carregarTotalIssuesGeral(): void {
     const requests = this.projects.map(project => {
@@ -250,24 +242,19 @@ export class DashboardComponent implements OnInit {
     ).subscribe();
   }
 
-  
-  
-
   carregarLabelsDeTodosProjetos(): Observable<any> {
-    const projectIds = [1, 2, 3]; // IDs de projetos de exemplo
+    const projectIds = [1, 2, 3]; // IDs de projetos de exemplo, projetos de desenvolvimento
     return this.gitlabService.carregarLabels(projectIds).pipe(
       tap(labels => {
-        this.labels = labels; // Atribui as labels carregadas ao array
-        console.log('Labels obtidas:', labels); // Log para verificar as labels carregadas
+        this.labels = labels;
       }),
       catchError(error => {
         console.error('Erro ao carregar labels', error);
-        return of([]); // Retorna um array vazio em caso de erro
+        return of([]);
       })
     );
   }
 
-  // Método para filtrar as labels baseadas na seleção
   onLabelSelect(): void {
     if (this.selectedLabel) {
       this.filteredLabels = this.labels.filter(label => label.name === this.selectedLabel);
@@ -278,8 +265,7 @@ export class DashboardComponent implements OnInit {
 
   selecionarProjeto(projectId: number): void {
     this.selectedProjectId = projectId;
-    console.log(`Projeto selecionado ID: ${projectId}`);
-    this.carregarIssues(); // Carrega as issues quando um projeto é selecionado
+    this.carregarIssues();
   }
 
   private resetarTotais(): void {
@@ -291,45 +277,43 @@ export class DashboardComponent implements OnInit {
   }
 
   private processarDadosProjeto(dataList: any[], index: number, usarFiltro: boolean = true): void {
+    console.log(`🔧 Dados brutos recebidos para o projeto ${this.projects[index].name}:`, dataList);
+  
     let opened = 0, closed = 0, overdue = 0, closedLate = 0;
     let totalIssues = 0;
   
     dataList.forEach(data => {
       if (usarFiltro) {
-        opened += data.opened;
-        closed += data.closed;
-        overdue += data.overdue;
-        closedLate += data.closedLate;
-        totalIssues += data.opened + data.closed;
-      } else {
-        totalIssues += data.opened + data.closed;
+        opened += data.opened || 0;
+        closed += data.closed || 0;
+        overdue += data.overdue || 0; 
+        closedLate += data.closedLate || 0;
+    
+        totalIssues += data.closed || 0;
       }
     });
   
-    // 🔹 Mantém os valores existentes se já foram definidos antes
     if (usarFiltro) {
-      this.projects[index].totalIssues = opened; // Total filtrado
-      this.projects[index].openedOnTime = opened - overdue;
-      this.projects[index].overdue = overdue;
-      this.projects[index].closed = closed;
-      this.projects[index].closedOnTime = closed - closedLate;
-      this.projects[index].closedLate = closedLate;
+      this.projects[index].totalIssues = opened; 
+      this.projects[index].openedOnTime = opened - overdue; 
+      this.projects[index].overdue = overdue; 
+      this.projects[index].closed = closed; 
+      this.projects[index].closedOnTime = closed - closedLate; 
+      this.projects[index].closedLate = closedLate; 
   
       this.totalOpened += opened;
       this.totalClosed += closed;
       this.totalOverdue += overdue;
       this.totalClosedLate += closedLate;
-      this.totalIssues += totalIssues;
+      this.totalIssues += opened + closed; 
     }
   
     if (!usarFiltro) {
-      this.projects[index].totalIssuesGeral = dataList.reduce((total, data) => total + (data.opened || 0), 0); // Soma apenas as abertas
-      this.totalIssuesGeral = (this.totalIssuesGeral || 0) + (this.projects[index].totalIssuesGeral ?? 0);
-
+      this.projects[index].totalIssuesGeral = dataList.reduce((total, data) => total + (data.opened || 0), 0); // Soma apenas abertas
+      this.totalIssuesGeral = (this.totalIssuesGeral || 0) + (this.projects[index].totalIssuesGeral ?? 0); // Soma geral apenas para abertas
     }
-    
   }
-
+  
   carregarGrafico(): void {
     this.chartOptions = {
       chart: {
@@ -407,11 +391,11 @@ export class DashboardComponent implements OnInit {
       series: [
         {
           name: "Tarefas Fechadas",
-          data: this.projects.map((project) => project.closedOnTime), // Dados para Fechadas
+          data: this.projects.map((project) => project?.closedOnTime ?? 0), // Dados para Fechadas
         },
         {
           name: "Tarefas Abertas",
-          data: this.projects.map((project) => project.openedOnTime), // Dados para Abertas
+          data: this.projects.map((project) => project?.openedOnTime ?? 0), // Dados para Abertas
         },
       ],
       xaxis: {
@@ -449,24 +433,21 @@ export class DashboardComponent implements OnInit {
             // Exibe o valor no tooltip ou uma mensagem padrão se não houver dados
           },
         },
-        theme: "dark", // Tema do tooltip (pode ser "dark" ou "light")
+        theme: "dark", 
         style: {
-          fontSize: "12px", // Ajusta o tamanho do texto no tooltip
-          colors: "#fff", // Cor do texto no tooltip
+          fontSize: "12px",
+          colors: "#fff",
         },
       },      
-    };
-    
-    
+    }; 
   }
 
   toggleMenu(event: MouseEvent) {
-    event.stopPropagation(); // Impede que o clique se propague
-    event.preventDefault(); // Previne comportamentos padrão indesejados
+    event.stopPropagation(); 
+    event.preventDefault();
     this.menuAberto = !this.menuAberto;
   }
   
-
   @HostListener('document:click', ['$event'])
   handleDocumentClick(event: MouseEvent) {
     if (!this.menuAberto) return;
@@ -475,13 +456,8 @@ export class DashboardComponent implements OnInit {
     const menu = document.querySelector('.expansible-menu');
     const icon = document.querySelector('.menu-icon');
     
-    // Fecha o menu apenas se o clique foi fora do menu e do ícone
     if (!menu?.contains(target) && !icon?.contains(target)) {
       this.menuAberto = false;
     }
   }
-  
-
 }
-
-//funciona

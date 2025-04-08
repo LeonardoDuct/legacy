@@ -82,7 +82,6 @@ body {
     margin-top: 10px;
 }
 
-
 /* 🔹 Estilo para o rodapé */
 .rodape {
     position: absolute;
@@ -93,26 +92,44 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  
-  .versao {
+}
+
+.versao {
     text-align: left;
     font-size: 14px;
-  }
-  
-  .direitos {
+}
+
+.direitos {
     text-align: right;
     display: flex;
     align-items: center;
     gap: 10px; /* Espaço entre o texto e a imagem */
     font-size: 14px;
-  }
-  
-  .direitos p {
-    margin: 0; /* Remove o espaçamento padrão ao redor do parágrafo */
-    margin-right: 5px; /* Espaçamento entre o texto e a imagem */
-  }
-  
-  .logo-rodape {
-    height: 30px; /* Ajuste o tamanho da logo conforme necessário */
-  }
+}
+
+.direitos p {
+    margin: 0;
+    margin-right: 5px;
+}
+
+.logo-rodape {
+    height: 30px;
+}
+
+/* Ajustes específicos para telas maiores */
+@media (min-width: 2560px) {
+    .login-container {
+        width: 50%; /* Ajuste a largura conforme necessário */
+        padding: 3rem;
+    }
+
+    .form-group input {
+        font-size: 18px; /* Aumente o tamanho da fonte */
+        padding: 15px;
+    }
+
+    .btn-primary {
+        font-size: 18px; /* Aumente o tamanho da fonte */
+        padding: 15px;
+    }
+}
