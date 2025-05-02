@@ -61,27 +61,38 @@
     <!-- Quadros -->
     <section class="quadros-container">
         <div class="quadro" *ngFor="let projeto of projetos">
-            <!-- Parte 1: Nome do Projeto e Status -->
             <div class="quadro-header">
-                <div class="projeto-nome">{{ projeto.nome }}</div>
-                <div class="projeto-status" [ngClass]="projeto.status">{{ projeto.status | uppercase }}</div>
-            </div>
-
-            <!-- Parte 2: Pendentes e Atrasadas -->
-            <div class="quadro-indicadores">
-                <div class="indicador">
+                <!-- Lado esquerdo: nome e status -->
+                <div class="projeto-info">
+                  <div class="projeto-nome">{{ projeto.nome }}</div>
+                  <div class="projeto-status" [ngClass]="projeto.status">
+                    {{ projeto.status | uppercase }}
+                  </div>
+                </div>
+              
+                <!-- Lado direito: indicadores -->
+                <div class="quadro-indicadores">
+                  <!-- Pendentes -->
+                  <div class="indicador">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icone">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3"/>
                     </svg>
                     <span>{{ projeto.fechadasDentro + projeto.fechadasFora }}</span>
-                </div>
-                <div class="indicador borda-esquerda">
+                  </div>
+
+                <div class="linha-separadora"></div>
+
+              
+                  <!-- Atrasadas -->
+                  <div class="indicador">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icone">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
                     </svg>
                     <span>{{ projeto.fechadasFora }}</span>
+                  </div>
                 </div>
-            </div>
+              </div>
+              
 
             <!-- Parte 3: Tabela -->
             <div class="quadro-tabela">
