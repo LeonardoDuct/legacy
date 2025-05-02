@@ -1,93 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
 @import "bootstrap/dist/css/bootstrap.min.css";
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
-/* Estilos gerais */
-body {
-  background-color: #03080c; /* Fundo geral da página */
-  color: #FFF; /* Texto branco */
-  font-family: 'Montserrat';
+
+:root {
+  --cor-fundo: #223348;
+  --cor-texto-claro: #f5f9ff;
+  --cor-acento: #0C6CE9;
+  --cor-sucesso: #0FF56F1A;
+  --cor-sucesso-texto: #0FF56F;
+  --cor-erro: #E0241A;
+  --cor-borda: rgba(173, 200, 235, 0.14);
+  --border-radius: 8px;
+  --font-size-padrao: 14px;
+  --font-size-titulo: 18px;
+}
+
+/* Reset básico */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-.brand-title {
-    font-family: 'Montserrat'; /* Usando uma fonte moderna */
-    font-size: 3rem; /* Tamanho grande */
-    font-weight: bold; /* Negrito para o nome */
-    color: #0096c7; /* Cor azul para o "JALL" */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .brand-icon {
-    width: 50px; /* Tamanho do ícone */
-    height: 50px; /* Tamanho do ícone */
-    margin-right: 15px; /* Espaçamento entre ícone e texto */
-  }
-  
-  .brand-name {
-    color: #000; /* Cor preta para o "CARD" */
-    font-weight: normal; /* Normal para o "CARD" */
-  }
-  
-  /* Adicionando estilo ao ícone */
-  .brand-icon {
-    border-radius: 50%; /* Caso o ícone seja redondo */
-  }
-  
-  .apexcharts-legend-text {
-  color: #fff !important; /* Define a cor branca para os textos das legendas */
-  font-size: 14px !important; /* Define o tamanho da fonte */
-  font-weight: 400 !important; /* Define o peso da fonte */
-  font-family: Helvetica, Arial, sans-serif !important; /* Define a fonte */
-}
-  
-  /* Outros estilos globais da aplicação */
-
-/* Define a cor branca para os textos dos rótulos do eixo Y e dados */
-.apexcharts-yaxis-texts-g text,
-.apexcharts-yaxis-texts-g tspan,
-.apexcharts-yaxis-label text,
-.apexcharts-yaxis-label tspan {
-  fill: #fff !important; /* Define a cor branca */
-  color: #fff !important; /* Define a cor branca */
-  font-size: 14px !important; /* Define o tamanho da fonte */
-  font-weight: 400 !important; /* Define o peso da fonte */
-  font-family: Helvetica, Arial, sans-serif !important; /* Define a fonte */
-}
-
-/* 🔹 Estilo para o rodapé */
-.rodape {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.versao {
-  text-align: left;
-  font-size: 14px;
-}
-
-.direitos {
-  text-align: right;
-  display: flex;
-  align-items: center;
-  gap: 10px; /* Espaço entre o texto e a imagem */
-  font-size: 14px;
-}
-
-.direitos p {
-  margin: 0; /* Remove o espaçamento padrão ao redor do parágrafo */
-  margin-right: 5px; /* Espaçamento entre o texto e a imagem */
-}
-
-.logo-rodape {
-  height: 30px; /* Ajuste o tamanho da logo conforme necessário */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #2B3D52; /* Fundo geral da página */
 }
