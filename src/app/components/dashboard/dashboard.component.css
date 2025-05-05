@@ -260,16 +260,30 @@
 .quadro-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    height: 60px;
-    border-bottom: 1px solid rgba(173, 200, 235, 0.14);
-    padding: 0 16px;
+    align-items: center; /* Alinha verticalmente todos os elementos */
+    max-width: 438.67px; /* Define o tamanho fixo do quadro */
+    height: 78px; /* Define a altura fixa */
+    border: 1px solid rgba(173, 200, 235, 0.14);
+    padding: 0; /* Remove o padding externo */
+    position: relative;
+    overflow: hidden; /* Garante que nada saia dos limites */
+}
+
+.projeto-info {
+    flex: 1; /* Ocupa metade do espaço */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    min-width: 160px; /* Garante um tamanho mínimo */
+    border-right: 1px solid rgba(173, 200, 235, 0.14); /* Adiciona a linha divisória */
+    justify-content: center; /* Centraliza verticalmente */
 }
 
 .projeto-nome {
-    width: 309.67px;
-    font-size: 18px;
+    font-size: 16px;
     color: #fff;
+    font-weight: 500;
 }
 
 .projeto-status {
@@ -283,7 +297,6 @@
     font-weight: 500;
     font-size: 14px;
 }
-
 /* Estável */
 .projeto-status.estavel {
     background: var(--semantic-colors-success-10, #0FF56F1A);
@@ -304,36 +317,47 @@
 
 
 .quadro-indicadores {
+    flex: 1; /* Ocupa a outra metade do espaço */
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-evenly; /* Espaçamento uniforme entre os indicadores */
     height: 60px;
-    position: relative; /* Para que o `::after` funcione corretamente */
+    position: relative;
     padding: 0 20px;
     color: white;
     margin-bottom: 8px; /* ou 12px, se quiser mais espaço */
-
+    
 }
 
 .quadro-indicadores::after {
     content: "";
-    display: block;
+    position: absolute;
+    bottom: -12px;
+    left: 0;
     width: 100%;
     height: 5px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    display: block;
     background: linear-gradient(to right, #0C6CE9 50%, #E0241A 50%);
-    z-index: 1; /* Certifica-se de que fica acima do conteúdo */
+    z-index: 1;
 }
+
+.quadro-indicadores::before {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 115%; /* altura maior */
+    position: absolute;
+    top: -0.5%; /* empurra para cima para compensar a altura extra */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(173, 200, 235, 0.14);
+}
+
 
 .indicador {
     display: flex;
     align-items: center;
     gap: 8px;
-    height: 55px;
-    width: 219.33px;
-    z-index: 2; /* Certifica-se de que os ícones e números ficam acima da linha */
 }
 
 .indicador svg.icone {
@@ -343,13 +367,8 @@
 }
 
 .borda-esquerda {
-    border-left: 1px solid rgba(173, 200, 235, 0.14);
+    padding-left: 16px;
 }
-
-.indicador.borda-esquerda {
-    padding-left: 16px; /* ou ajuste como preferir */
-}
-
 
 .quadro-tabela {
     height: 214px;
