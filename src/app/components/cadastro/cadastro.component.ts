@@ -1,16 +1,32 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
+import { FormsModule } from '@angular/forms';
+
+interface DadoCategoria {
+  classificacao: string;
+  descricao: string;
+  score: number;
+}
+
+interface Categoria {
+  id: string;
+  titulo: string;
+  porcentagem: number;
+  expandida: boolean;
+  editando?: boolean;
+  dados: DadoCategoria[];
+}
 
 @Component({
   selector: 'app-cadastro',
   templateUrl: './cadastro.component.html',
   styleUrls: ['./cadastro.component.css'],
   standalone: true,
-  imports: [CommonModule, CabecalhoComponent],
+  imports: [CommonModule, CabecalhoComponent, FormsModule],
 })
 export class CadastroComponent {
-  categorias = [
+  categorias: Categoria[] = [
     {
       id: 'cliente',
       titulo: 'Cliente',
@@ -75,6 +91,10 @@ export class CadastroComponent {
 
   sortColumn: string = '';
   sortDirection: boolean = true;
+  modalAberto: boolean = false;
+  modalNovaCategoriaAberto: boolean = false;
+  novaCategoriaNome: string = '';
+  novaCategoriaPeso: number = 0;
 
   toggleCategoria(id: string) {
     const categoria = this.categorias.find((cat) => cat.id === id);
@@ -90,10 +110,82 @@ export class CadastroComponent {
     this.sortDirection = this.sortColumn === column ? !this.sortDirection : true;
     this.sortColumn = column;
 
-    categoria.dados.sort((a: any, b: any) => {
-      if (a[column] < b[column]) return this.sortDirection ? -1 : 1;
-      if (a[column] > b[column]) return this.sortDirection ? 1 : -1;
+    categoria.dados.sort((a, b) => {
+      if (a[column as keyof DadoCategoria] < b[column as keyof DadoCategoria]) return this.sortDirection ? -1 : 1;
+      if (a[column as keyof DadoCategoria] > b[column as keyof DadoCategoria]) return this.sortDirection ? 1 : -1;
       return 0;
     });
+  }
+
+  abrirModal() {
+    this.modalAberto = true;
+  }
+
+  fecharModal() {
+    this.modalAberto = false;
+  }
+
+  ordenarModal(coluna: string) {
+    this.sortDirection = this.sortColumn === coluna ? !this.sortDirection : true;
+    this.sortColumn = coluna;
+  
+    this.categorias.sort((a, b) => {
+      const aValue = a[coluna as keyof Categoria] ?? '';
+      const bValue = b[coluna as keyof Categoria] ?? '';
+  
+      if (aValue < bValue) return this.sortDirection ? -1 : 1;
+      if (aValue > bValue) return this.sortDirection ? 1 : -1;
+      return 0;
+    });
+  }
+  
+
+  calcularPesoTotal(): number {
+    return this.categorias.reduce((total, categoria) => total + categoria.porcentagem, 0);
+  }
+
+  gravarCategorias() {
+    console.log('Categorias gravadas:', this.categorias);
+    this.fecharModal();
+  }
+
+  editarCategoria(categoria: Categoria) {
+    console.log('Editar categoria:', categoria);
+  }
+
+  habilitarEdicao(categoria: Categoria) {
+    this.categorias.forEach((cat) => (cat.editando = false));
+    categoria.editando = true;
+  }
+
+  salvarEdicao(categoria: Categoria) {
+    categoria.editando = false;
+  }
+
+  excluirCategoria(id: string) {
+    this.categorias = this.categorias.filter((categoria) => categoria.id !== id);
+  }
+
+  novaCategoria() {
+    this.modalNovaCategoriaAberto = true;
+  }
+
+  fecharModalNovaCategoria() {
+    this.modalNovaCategoriaAberto = false;
+  }
+
+  gravarNovaCategoria(nome: string, peso: number) {
+    const nova: Categoria = {
+      id: `categoria-${this.categorias.length + 1}`,
+      titulo: nome,
+      porcentagem: peso,
+      expandida: false,
+      dados: [
+        { classificacao: '', descricao: '', score: 0 },
+      ],
+    };
+
+    this.categorias.push(nova);
+    this.fecharModalNovaCategoria();
   }
 }

@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-cabecalho',
   templateUrl: './cabecalho.component.html',
   styleUrls: ['./cabecalho.component.css'],
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
 })
 export class CabecalhoComponent implements OnInit {
   isMenuOpen = false;

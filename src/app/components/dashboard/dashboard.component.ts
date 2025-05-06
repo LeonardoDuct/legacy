@@ -1,6 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import flatpickr from 'flatpickr'; // Importação do flatpickr
+import flatpickr from 'flatpickr';
 import { Portuguese } from 'flatpickr/dist/l10n/pt';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 
@@ -8,7 +8,7 @@ interface Projeto {
   nome: string;
   fechadasDentro: number;
   fechadasFora: number;
-  status?: string; // Adiciona o status como opcional
+  status?: string; 
 }
 
 @Component({

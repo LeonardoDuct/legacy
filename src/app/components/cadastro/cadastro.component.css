@@ -17,7 +17,7 @@
     align-items: flex-start;
     justify-content: center;
     width: auto;
-    min-width: 320px;
+    min-width: 720px;
     height: 148px;
     padding: 32px;
     color: #f5f9ff;
@@ -28,69 +28,132 @@
 .bloco-tecnologia .conteudo {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 1px;
     width: 296px;
 }
 
 .bloco-tecnologia .titulo {
-    font-weight: 600;
-    font-size: 22px;
+    font-weight: 400;
+    font-size: 16px;
     line-height: 125%;
-    color: white;
+    color: #D9E8FCB0;
 }
 
 .bloco-tecnologia .status {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 8px;
     width: 86px;
     height: 29px;
-    border-radius: 8px;
-    background: var(--semantic-colors-success-10, #0FF56F1A);
-    color: #0FF56F;
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: 600px;
+    font-size: 22px;
 }
 
 /* ====================== */
 /* BLOCO FILTRO */
 /* ====================== */
 .bloco-filtro {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 32px 88px 16px 32px;
-    width: auto;
-    height: 148px;
-    color: #f5f9ff;
-    border-bottom: 1px solid rgba(173, 200, 235, 0.14);
-    border-radius: 0;
-  }
-  
-  .titulo-filtro {
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 125%;
-    letter-spacing: 3%;
-    color: #D9E8FCB0;
-    text-align: left;
-    margin: 0 0 8px 0;
-  }
-  
-  .campos-data {
-    display: flex;
-    justify-content: space-between;
-    gap: 19px;
-  }
-  
+  width: 720px;
+  height: 152px;
+  min-width: 500px;
+  padding: 32px;
+  gap: 16px;
+  background: #223348;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Título do Filtro */
+.titulo-filtro {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+/* Container dos filtros */
+.filtro-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Dropdown para selecionar a categoria */
+.dropdown-wrapper {
+  width: 656px;
+  height: 36px;
+  min-width: 320px;
+  display: flex;
+  gap: 12px;
+}
+
+.dropdown {
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  background: #2E3B4E;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Input de pesquisa */
+.input-wrapper {
+  width: 656px;
+  height: 36px;
+  min-width: 320px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+/* Campo de texto */
+.input-text {
+  width: 596px;
+  height: 36px;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  background: #2E3B4E;
+  color: #fff;
+  font-size: 14px;
+}
+
+.input-text::placeholder {
+  color: #90A1B9;
+}
+
+/* Botão de pesquisa */
+.btn-search {
+  width: 44px;
+  height: 36px; /* Altura igual ao campo de texto */
+  border-radius: 6px; /* Border/Border radius M */
+  background: #0C6CE9;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px; /* Component sizes/Button/Button horizontal padding */
+}
+
+.btn-search:hover {
+  background: #095BB5;
+}
+
+.icon-search {
+  width: 20px;
+  height: 20px;
+  color: #fff;
+}
 /* ====================== */
 /* BLOCO CATEGORIA */
 /* ====================== */
 
 .categorias {
-    max-width: 1348px;
-    margin: auto;
+    margin: 20px;
   }
   
   .acoes {
@@ -120,6 +183,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
   }
   
   .btn-editar-categorias {
@@ -133,6 +197,17 @@
     color: white;
     width: 197px;
   }
+
+  .btn-editar-categorias:hover {
+    transform: scale(1.05); /* Aumenta levemente o tamanho */
+    background: #C0D5F20F; /* Muda o fundo para azul mais claro */
+}
+
+.btn-nova-classificacao:hover {
+    transform: scale(1.05); /* Aumenta levemente o tamanho */
+    background: #095BB5; /* Cor de fundo mais escura para destacar */
+    color: #EAF4FF; /* Texto com leve contraste */
+}
   
   .btn-editar-categorias svg,
   .btn-nova-classificacao svg {
@@ -151,7 +226,15 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
+    margin-left: 5px;
+    transition: transform 0.2s ease, color 0.2s ease;
   }
+
+.btn-editar:hover,
+.btn-excluir:hover {
+    transform: scale(1.1); /* Aumenta levemente o tamanho */
+    color: #FFFFFF; /* Muda a cor para branco */
+}
   
   .btn-editar svg,
   .btn-excluir svg {
@@ -184,12 +267,30 @@
     height: 60px;
   }
   
-  .categoria-titulo {
-    color: #F5F9FF;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 125%;
-  }
+
+  /* Estilo para a seta ao lado do título */
+.seta-icone {
+  width: 16px; /* Tamanho da seta */
+  height: 16px;
+  margin-right: 8px; /* Espaçamento entre a seta e o título */
+  stroke: #D1E3FA94; /* Cor da seta */
+  transition: transform 0.3s ease; /* Animação suave para o giro */
+}
+
+/* Girar a seta para baixo quando expandida */
+.seta-icone.expanded {
+  transform: rotate(90deg); /* Gira a seta para baixo */
+}
+
+/* Estilo para o título da categoria */
+.categoria-titulo {
+  display: flex;
+  align-items: center; /* Centraliza a seta e o texto verticalmente */
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+  cursor: pointer; /* Ícone e texto clicáveis */
+}
   
   .categoria-detalhes {
     padding: 16px;
@@ -208,6 +309,20 @@
     font-size: 14px;
     color: #EBF4FF;
   }
+
+  .categoria-detalhes th {
+    color: #EBF4FFE5 !important;
+    font-size: 13px !important;
+  }
+
+  .categoria-detalhes th:last-child {
+    text-align: right;
+}
+
+/* Alinha o conteúdo da coluna "AÇÕES" (os botões) para a direita */
+.categoria-detalhes td:last-child {
+    text-align: right;
+}
 
   .indicador {
     display: flex;
@@ -231,19 +346,17 @@
   }
   
   .icone-ancora .ancora-svg {
-    width: 22px;
-    height: 22px;
+    width: 16px;
+    height: 16px;
     color: white;
     fill: currentColor;
   }
   
   .porcentagem {
     color: white;
-    font-size: 1.1rem;
+    font-size: 18px;
     font-weight: 600;
   }
-  
-  
   
   .nivel {
     font-style: normal;
@@ -305,3 +418,492 @@
   .sort-icon.desc {
     transform: rotate(0deg); /* Ícone apontando para baixo */
   }
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #223348;
+  border-radius: 16px; /* Bordas arredondadas */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Contorno externo */
+  padding: 0; /* Remove espaçamento interno para alinhar o rodapé */
+  width: 100%; /* Largura total */
+  max-width: 900px;
+  box-sizing: border-box; /* Inclui padding no cálculo de largura */
+  display: flex;
+  flex-direction: column; /* Garante que o rodapé fique na parte inferior */
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: none;
+}
+
+.modal-title {
+  font-weight: bold;
+  font-size: 18pxpx;
+  color: white;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Tabela dentro do modal */
+.tabela-categorias {
+  width: 100%;
+  border-collapse: separate; /* Use separate para suportar bordas arredondadas */
+  border-spacing: 0; /* Garante que não haja espaçamento entre células */
+  border-radius: 7px; /* Adiciona bordas arredondadas */
+  overflow: hidden; /* Garante que o arredondamento seja aplicado */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Contorno externo da tabela */
+}
+
+.tabela-categorias th,
+.tabela-categorias td {
+  padding: 10px;
+  text-align: left;
+}
+
+/* Cabeçalho da tabela */
+.tabela-categorias th {
+  color: #EBF4FFE5;
+  font-weight: bold;
+  font-size: 13px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Linha horizontal abaixo do cabeçalho */
+}
+
+/* Alinha o último cabeçalho (AÇÕES) à direita */
+.tabela-categorias th:last-child {
+  text-align: right;
+}
+
+/* Células */
+.tabela-categorias td {
+  color: #EBF4FFE5;
+  position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Linha horizontal abaixo das células */
+  font-size: 16px;
+  font-weight: 400;
+}
+
+/* Remove a linha horizontal da última linha */
+.tabela-categorias tr:last-child td {
+  border-bottom: none;
+}
+
+/* Contorno externo */
+.tabela-categorias {
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Apenas o contorno externo */
+}
+
+/* Ações no modal - alinhadas à direita e com espaçamento reduzido */
+.btn-acoes {
+  display: flex;
+  justify-content: flex-end; /* Alinha os botões à direita */
+  align-items: center;
+}
+
+.btn-acoes button {
+  margin: 0; /* Remove possíveis margens dos botões */
+  padding: 0; /* Reduz o preenchimento interno */
+  width: 24px; /* Ajusta o tamanho do botão com base no ícone */
+  height: 24px; /* Ajusta o tamanho do botão com base no ícone */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nova-categoria-container {
+  margin-top: 20px; /* Espaço acima do botão */
+  display: flex; /* Habilita flexbox */
+  justify-content: flex-end; /* Alinha o botão à direita */
+  width: 100%; /* Garante que o contêiner ocupe toda a largura disponível */
+}
+
+.btn-categoria {
+  width: 169px; /* Largura do botão */
+  height: var(--field-height, 40px); /* Altura ajustada com variável de design */
+  gap: 8px; /* Espaço interno entre elementos */
+  border-radius: var(--border-radius-m, 8px); /* Bordas arredondadas */
+  padding: 8px var(--button-horizontal-padding, 16px); /* Espaçamento interno */
+  background: var(--Semantic-colors-Primary, #0C6CE9); /* Fundo azul padrão */
+  color: white; /* Cor do texto */
+  font-size: 14px; /* Tamanho da fonte */
+  font-weight: bold; /* Texto destacado */
+  border: none; /* Remove bordas */
+  display: flex; /* Alinha conteúdo interno */
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center; /* Centraliza verticalmente */
+  cursor: pointer; /* Mostra o cursor de clique */
+  transition: background-color 0.3s ease; /* Transição para hover */
+}
+
+.btn-categoria:hover {
+  background: #0A5BC7; /* Fundo mais escuro no hover */
+}
+
+.btn-categoria:active {
+  background: #084BA3; /* Fundo ainda mais escuro no clique */
+}
+
+.peso-input {
+  width: 50px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #2E3B4E;
+  color: white;
+  border-radius: 4px;
+}
+
+.peso-total {
+  margin-top: 10px;
+  color: #D9E8FCB0;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left; /* Alinha o texto inicial à esquerda */
+  display: flex;
+  flex-direction: column; /* Coloca o título e o resultado em coluna */
+  gap: 4px; /* Espaço entre o título e o resultado */
+  min-height: 40px;
+}
+
+.resultado-container {
+  display: flex; /* Habilita flexbox para organizar os itens horizontalmente */
+  align-items: center; /* Centraliza verticalmente os itens */
+  gap: 8px; /* Espaço entre os elementos (ícone, número e %) */
+  border: 2px dashed rgba(255, 255, 255, 0.5); /* Borda tracejada */
+  padding: 8px; /* Espaçamento interno */
+  border-radius: 8px; /* Bordas arredondadas */
+  color: white; /* Cor do texto */
+  position: relative;
+}
+
+/* Resultado (número) */
+.resultado {
+  font-size: 16px; /* Tamanho da fonte do número */
+  font-weight: 500; /* Destaca o número */
+  color: #EBF4FFE5;
+}
+
+/* Símbolo de porcentagem */
+.porcentagem {
+  font-size: 14px; /* Tamanho da fonte do símbolo % */
+  color: #EBF4FFE5;
+}
+
+.icone-ancora,
+.icone-porcentagem {
+  display: flex;
+  align-items: center; /* Centraliza os ícones verticalmente */
+  justify-content: center;
+}
+
+.ancora-resultado-svg,
+.porcentagem-svg {
+  width: 16px; /* Largura do ícone */
+  height: 16px; /* Altura do ícone */
+  fill: #EBF4FFE5; /* Cor do ícone */
+}
+.icone-porcentagem {
+  position: absolute; /* Posiciona o ícone independentemente */
+  right: 8px; /* Alinha o ícone de porcentagem à extrema direita */
+  top: 50%; /* Centraliza verticalmente */
+  transform: translateY(-50%); /* Ajusta para centralizar com precisão */
+}
+
+.error-text {
+  color: #E75D55; /* Cor do texto do erro */
+  font-size: 14px;
+  opacity: 0; /* Invisível por padrão */
+  transition: opacity 0.3s ease; /* Transição suave para aparecer/desaparecer */
+  height: 0; /* Não ocupa espaço visual quando invisível */
+  overflow: hidden; /* Garante que o texto oculto não afete o layout */
+}
+
+.peso-total.exibe-erro .error-text {
+  opacity: 1; /* Torna o texto visível */
+  height: auto; /* Permite que o texto ocupe espaço */
+}
+
+.modal-footer {
+  width: 100%; /* Garante que o rodapé ocupe toda a largura do modal */
+  padding: 16px 20px; /* Espaço interno */
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* Borda fina no topo */
+  background: var(--shades-base-contrast-5, #2B3D52); /* Fundo escuro */
+  display: flex; /* Habilita o flexbox */
+  justify-content: flex-end; /* Alinha os botões à direita */
+  align-items: center; /* Centraliza verticalmente os botões */
+  gap: 16px; /* Espaço entre os botões */
+  border-radius: 0 0 16px 16px; /* Bordas arredondadas no canto inferior */
+  box-sizing: border-box; /* Inclui padding no cálculo de largura */
+}
+
+.btn-cancelar {
+  width: 97px; /* Largura do botão */
+  height: var(--field-height, 40px); /* Altura padrão do campo (pode ser ajustada) */
+  gap: 8px; /* Espaço entre elementos dentro do botão */
+  border-radius: var(--border-radius-m, 8px); /* Raio da borda */
+  padding: 8px var(--button-horizontal-padding, 16px); /* Padding vertical e horizontal */
+  background: rgba(192, 213, 242, 0.1); /* Fundo */
+  color: #90BDF9; /* Cor do texto */
+  border: none; /* Sem borda */
+  cursor: pointer; /* Cursor de clique */
+}
+
+.btn-cancelar:hover {
+  background: rgba(192, 213, 242, 0.2); /* Fundo mais claro no hover */
+}
+
+.btn-gravar {
+  width: 80px; /* Largura do botão */
+  height: var(--field-height, 40px); /* Altura padrão do campo */
+  gap: 8px; /* Espaço entre elementos dentro do botão */
+  border-radius: var(--border-radius-m, 8px); /* Raio da borda */
+  padding: 8px var(--button-horizontal-padding, 16px); /* Padding vertical e horizontal */
+  background: #0C6CE9; /* Fundo */
+  color: white; /* Cor do texto */
+  border: none; /* Sem borda */
+  cursor: pointer; /* Cursor de clique */
+}
+
+.btn-gravar:hover {
+  background: #0A5BC7; /* Fundo mais escuro no hover */
+}
+
+.btn-gravar:disabled {
+  background: rgba(12, 108, 233, 0.5); /* Fundo desabilitado */
+  cursor: not-allowed; /* Cursor não permitido */
+}
+
+.btn-fechar {
+  position: static; /* Posiciona no canto superior direito */
+  top: 16px; /* Distância do topo */
+  right: 16px; /* Distância da direita */
+  background: none; /* Remove o fundo padrão */
+  border: none; /* Remove bordas */
+  color: white; /* Cor do ícone */
+  font-size: 24px; /* Tamanho do ícone */
+  cursor: pointer; /* Mostra o cursor de clique */
+  padding: 8px; /* Adiciona área para toque */
+  border-radius: 50%; /* Torna o botão circular */
+  transition: background-color 0.3s ease; /* Animação ao passar o mouse */
+}
+
+.btn-fechar:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Adiciona uma leve cor de fundo no hover */
+}
+
+.icon-close {
+  width: 24px; /* Tamanho do ícone */
+  height: 24px; /* Tamanho do ícone */
+}
+
+/* ========================
+   Modal Secundário
+======================== */
+
+/* Estrutura Principal */
+.modal-content-secundario {
+  background-color: #223348; /* Fundo do modal */
+  border-radius: 16px !important; /* Bordas arredondadas */
+  border: 1px solid rgba(255, 255, 255, 0.2) !important; /* Borda visível */
+  padding: 0px;
+  display: flex;
+  width: auto;
+  flex-direction: column;
+  box-sizing: border-box; /* Inclui padding no tamanho total */
+}
+
+.modal-content-secundario .modal-body {
+  padding: 16px 30px; /* Espaçamento interno do corpo */
+  flex: 1; /* Faz o corpo ocupar o espaço restante */
+  box-sizing: border-box; /* Inclui padding no cálculo de largura */
+  min-height: 100px; /* Define uma altura mínima para o corpo */
+
+}
+
+/* Rodapé do Modal Secundário */
+.modal-content-secundario .modal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* Linha separadora */
+  background: var(--shades-base-contrast-5, #2B3D52); /* Fundo escuro */
+  border-radius: 0 0 16px 16px; /* Bordas arredondadas no rodapé */
+  display: flex;
+  justify-content: flex-end; /* Botões alinhados à direita */
+  align-items: center;
+  padding: 16px 20px; /* Espaçamento interno reduzido */
+  box-sizing: border-box; /* Inclui padding no tamanho total */
+}
+
+.modal-content-secundario input {
+  width: 310px !important;
+  height: 36px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important; /* Borda visível */
+  border-radius: 4px !important; /* Bordas arredondadas */
+  padding: 0 10px; /* Espaçamento interno */
+  font-size: 14px;
+  color: #EBF4FFE5; /* Cor do texto */
+  background: var(--Components-Field-background, #ADC8EB24); /* Fundo */
+  outline: none; /* Remove borda azul padrão */
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.modal-content-secundario input:focus {
+  border-color: #0C6CE9; /* Destaque ao focar */
+  background: rgba(12, 108, 233, 0.1); /* Fundo mais claro */
+}
+
+.modal-content-secundario input[type="number"] {
+  text-align: center; /* Centraliza texto nos inputs numéricos */
+}
+
+.modal-content-secundario label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #D9E8FCB0; /* Cor do texto */
+  margin-bottom: 5px; /* Espaço abaixo do label */
+  display: block;
+}
+
+/* ========================
+   Botões
+======================== */
+
+.modal-content-secundario .btn-cancelar,
+.modal-content-secundario .btn-gravar {
+  height: var(--field-height, 40px); /* Altura padrão */
+  border-radius: 8px; /* Bordas arredondadas */
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none; /* Sem borda */
+  transition: background-color 0.3s ease; /* Animação de hover */
+}
+
+.modal-content-secundario .btn-cancelar {
+  background: rgba(192, 213, 242, 0.1); /* Fundo */
+  color: #90BDF9; /* Texto */
+}
+
+.modal-content-secundario .btn-cancelar:hover {
+  background: rgba(192, 213, 242, 0.2); /* Fundo mais claro no hover */
+}
+
+.modal-content-secundario .btn-gravar {
+  background: #0C6CE9; /* Fundo azul */
+  color: white; /* Texto branco */
+}
+
+.modal-content-secundario .btn-gravar:disabled {
+  background: rgba(12, 108, 233, 0.5); /* Fundo desabilitado */
+  cursor: not-allowed;
+}
+
+.modal-content-secundario .btn-gravar:hover:enabled {
+  background: #0A5BC7; /* Fundo mais escuro no hover */
+}
+
+/* ========================
+   Layout e Organização
+======================== */
+
+/* Corpo do Modal */
+.modal-content-secundario .modal-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Grupo de Inputs */
+.modal-content-secundario .modal-body .input-group {
+  display: flex;
+  justify-content: space-between; /* Inputs igualmente espaçados */
+  gap: 10px;
+}
+
+.modal-content-secundario .modal-body .input-group > div {
+  flex: 1;
+}
+
+/* Ícone de âncora no modal secundário */
+.icone-ancora-secundario {
+  position: absolute;
+  left: 8px; /* Espaço à esquerda do input */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d9e8fcb0; /* Cor do ícone */
+}
+
+.icone-ancora-secundario .ancora-resultado-svg {
+  width: 16px; /* Tamanho do ícone */
+  height: 16px;
+  fill: currentColor; /* Usa a cor definida no parent */
+}
+
+/* Ícone de porcentagem no modal secundário */
+.icone-porcentagem-secundario {
+  position: absolute;
+  right: 8px; /* Espaço à direita do input */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d9e8fcb0; /* Cor do ícone */
+}
+
+.icone-porcentagem-secundario .porcentagem-svg {
+  width: 16px; /* Tamanho do ícone */
+  height: 16px;
+  fill: currentColor; /* Usa a cor definida no parent */
+}
+
+/* Ajuste no input do modal secundário */
+#pesoCategoria {
+  padding-left: 32px; /* Espaço para o ícone à esquerda */
+  padding-right: 32px; /* Espaço para o ícone à direita */
+}
+
+/* Remove spinner padrão do input[type="number"] no Chrome, Edge e outros navegadores baseados no WebKit */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.error-text-secundario {
+  color: #e74c3c; /* Vermelho para indicar o erro */
+  font-size: 12px; /* Tamanho da fonte */
+  margin-top: 5px; /* Espaço acima */
+  display: block; /* Garante que o texto seja exibido */
+  visibility: visible; /* Certifique-se de que está visível */
+  opacity: 1; /* Garante que não está transparente */
+}
+
+
+.modal-body.exibe-erro .error-text-secundario {
+  opacity: 1; /* Torna o texto visível */
+  height: auto; /* Permite que o texto ocupe espaço */
+}
+
