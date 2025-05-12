@@ -1,14 +1,18 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { GitlabService } from '../../services/gitlab.service';
 import flatpickr from 'flatpickr';
 import { Portuguese } from 'flatpickr/dist/l10n/pt';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
+import { RouterModule } from '@angular/router';
 
 interface Projeto {
-  nome: string;
+  nome: string; // Agora usamos "nome" em vez de "projeto_principal"
   fechadasDentro: number;
   fechadasFora: number;
-  status?: string; 
+  abertas: number;
+  abertas_com_atraso: number; // 🔹 Adicionando a propriedade para evitar erro
+  status?: string;
 }
 
 @Component({
@@ -16,46 +20,47 @@ interface Projeto {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   standalone: true,
-  imports: [CommonModule, CabecalhoComponent],
+  imports: [CommonModule, CabecalhoComponent, RouterModule],
 })
-export class DashboardComponent implements AfterViewInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
   isMenuOpen = false;
   subMenuStates: { [key: string]: boolean } = {
     cadastro: true,
     configuracoes: true,
   };
 
-  // Dados fictícios para os projetos, incluindo "Fechadas Dentro do Prazo" e "Fechadas Fora do Prazo"
-  projetos: Projeto[] = [
-    {
-      nome: 'Sustentação',
-      fechadasDentro: 78,
-      fechadasFora: 1,
-    },
-    {
-      nome: 'Desenvolvimento',
-      fechadasDentro: 50,
-      fechadasFora: 0,
-    },
-    {
-      nome: 'QA',
-      fechadasDentro: 30,
-      fechadasFora: 10,
-    }
-  ];
+  projetos: Projeto[] = []; // Agora vamos buscar os projetos via API
 
-  // Método para determinar o status do projeto
+  constructor(private gitlabService: GitlabService) {}
+
+  ngOnInit(): void {
+    this.carregarProjetos();
+  }
+
+  carregarProjetos(): void {
+    this.gitlabService.obterIssuesPorProjeto().subscribe((dados: any[]) => {
+      this.projetos = dados.map(projeto => ({
+        nome: projeto.projeto_principal,
+        abertas: Number(projeto.abertas), 
+        fechadas: Number(projeto.fechadas), 
+        fechadasDentro: Number(projeto.fechadas) - Number(projeto.fechadas_com_atraso), // 🔹 Ajustado
+        fechadasFora: Number(projeto.fechadas_com_atraso), // 🔹 Mantendo o valor correto
+        abertas_com_atraso: Number(projeto.abertas_com_atraso), // 🔹 Mantendo o valor correto
+        status: this.obterStatus(Number(projeto.fechadasDentro), Number(projeto.fechadasFora)), // 🔹 Corrigindo lógica do status
+      }));
+    });
+  }
+
   obterStatus(fechadasDentro: number, fechadasFora: number): string {
     if (fechadasFora === 0) {
-      return 'estavel';  // Estável se não houver fechadas fora do prazo
+      return 'estavel';
     } else if (fechadasFora / (fechadasDentro + fechadasFora) > 0.2) {
-      return 'critico';  // Crítico se mais de 20% estiverem fora do prazo
+      return 'critico';
     } else {
-      return 'instavel';  // Instável se menos de 20% estiverem fora do prazo
+      return 'instavel';
     }
   }
 
-  // Método para obter a quantidade de pendências
   obterPendencias(fechadasDentro: number, fechadasFora: number): number {
     return fechadasDentro + fechadasFora;
   }
@@ -68,27 +73,23 @@ export class DashboardComponent implements AfterViewInit {
     this.subMenuStates[menu] = !this.subMenuStates[menu];
   }
 
+  calcularTotalAbertasComAtraso(): number {
+    return this.projetos.reduce((sum, projeto) => sum + (projeto.abertas_com_atraso || 0), 0);
+  }
+
   ngAfterViewInit(): void {
-    // Atrasar a inicialização do flatpickr até a renderização completa
     setTimeout(() => {
       flatpickr('#data-de', {
         dateFormat: 'd/m/Y',
         allowInput: false,
         locale: Portuguese,
       });
-  
+
       flatpickr('#data-ate', {
         dateFormat: 'd/m/Y',
         allowInput: false,
         locale: Portuguese,
       });
     }, 0);
-  
-    // Aplique o status dinamicamente aos projetos
-    this.projetos.forEach(projeto => {
-      const status = this.obterStatus(projeto.fechadasDentro, projeto.fechadasFora);
-      projeto.status = status; // Adiciona o status ao objeto do projeto
-    });
   }
-  
 }

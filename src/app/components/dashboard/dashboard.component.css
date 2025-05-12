@@ -61,10 +61,19 @@
 .bloco-tecnologia .conteudo {
     display: flex;
     flex-direction: column;
-    gap: 8px;
     width: 296px;
 }
 
+/* Breadcrumb */
+.bloco-tecnologia .breadcrumb {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 125%;
+    color: rgba(245, 249, 255, 0.7); /* Cor com transparência */
+    display: block; /* Garante que o breadcrumb fique em sua própria linha */
+}
+
+/* Título */
 .bloco-tecnologia .titulo {
     font-weight: 600;
     font-size: 22px;
@@ -72,12 +81,13 @@
     color: white;
 }
 
+/* Status */
 .bloco-tecnologia .status {
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 4px 8px;
-    width: 86px;
+    width: 86px; /* Mantém o tamanho correto */
     height: 29px;
     border-radius: 8px;
     background: var(--semantic-colors-success-10, #0FF56F1A);
@@ -426,7 +436,7 @@
     padding: 16px;
 }
 
-.pendencias-botao {
+.btn-detalhes {
     width: 117px;
     height: 36px;
     border-radius: var(--Border-Radius-M, 8px);
@@ -434,9 +444,16 @@
     font-size: 16px;
     cursor: pointer;
     padding: 8px 16px;
-    background-color: rgba(173, 200, 235, 0.14); /* Ajuste de cor */
-    color: #90BDF9; /* Texto branco */
-}
+    background-color: rgba(173, 200, 235, 0.14);
+    color: #90BDF9;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .btn-detalhes:hover {
+    background-color: rgba(173, 200, 235, 0.25); /* um pouco mais forte */
+    transform: scale(1.03);
+  }
+  
 
 @media (min-width: 1200px) {
     .quadros-container {

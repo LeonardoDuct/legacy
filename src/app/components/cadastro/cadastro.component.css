@@ -127,22 +127,7 @@
 }
 
 /* Botão de pesquisa */
-.btn-search {
-  width: 44px;
-  height: var(--height-small);
-  border-radius: var(--border-radius-sm);
-  background: var(--primary-blue);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-xs) var(--spacing-sm);
-}
 
-.btn-search:hover {
-  background: var(--hover-blue);
-}
 
 .icon-search {
   width: var(--icon-size);
@@ -179,75 +164,7 @@
 }
 
 /* Botões principais */
-.btn-editar-categorias,
-.btn-nova-classificacao {
-  height: var(--height-medium);
-  color: var(--text-primary);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-xs);
-  transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
-}
 
-.btn-editar-categorias {
-  background: var(--shades-contrast-5, #C0D5F20F);
-  color: var(--placeholder-text);
-  width: 182px;
-}
-
-.btn-nova-classificacao {
-  background: var(--Semantic-colors-Primary, #0C6CE9);
-  color: var(--text-primary);
-  width: 197px;
-}
-
-.btn-editar-categorias:hover {
-  transform: scale(1.05);
-  background: var(--shades-contrast-5, #C0D5F20F);
-}
-
-.btn-nova-classificacao:hover {
-  transform: scale(1.05);
-  background: var(--hover-blue, #095BB5);
-  color: var(--text-secondary);
-}
-
-/* Ícones dos botões */
-.btn-editar-categorias svg,
-.btn-nova-classificacao svg {
-  width: var(--icon-size);
-  height: var(--icon-size);
-}
-
-/* Botões de ação (editar e excluir) */
-.btn-editar,
-.btn-excluir {
-  background: none;
-  color: var(--placeholder-text);
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  margin-left: 5px;
-  transition: transform var(--transition-fast), color var(--transition-fast);
-}
-
-.btn-editar:hover,
-.btn-excluir:hover {
-  transform: scale(1.1);
-  color: var(--text-primary);
-}
-
-.btn-editar svg,
-.btn-excluir svg {
-  width: var(--icon-size);
-  height: var(--icon-size);
-  stroke-width: 1.5;
-}
 
 /* Categoria container */
 .categoria {
@@ -508,21 +425,7 @@
 }
 
 /* Ações no modal - alinhadas à direita e com espaçamento reduzido */
-.btn-acoes {
-  display: flex;
-  justify-content: flex-end; /* Alinha os botões à direita */
-  align-items: center;
-}
 
-.btn-acoes button {
-  margin: 0; /* Remove possíveis margens dos botões */
-  padding: 0; /* Reduz o preenchimento interno */
-  width: 24px; /* Ajusta o tamanho do botão com base no ícone */
-  height: 24px; /* Ajusta o tamanho do botão com base no ícone */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .nova-categoria-container {
   margin-top: 20px; /* Espaço acima do botão */
@@ -531,32 +434,6 @@
   width: 100%; /* Garante que o contêiner ocupe toda a largura disponível */
 }
 
-.btn-categoria {
-  width: 169px; /* Largura do botão */
-  height: var(--field-height, 40px); /* Altura ajustada com variável de design */
-  gap: 8px; /* Espaço interno entre elementos */
-  border-radius: var(--border-radius-m, 8px); /* Bordas arredondadas */
-  padding: 8px var(--button-horizontal-padding, 16px); /* Espaçamento interno */
-  background: var(--Semantic-colors-Primary, #0C6CE9); /* Fundo azul padrão */
-  color: white; /* Cor do texto */
-  font-size: 14px; /* Tamanho da fonte */
-  font-weight: bold; /* Texto destacado */
-  border: none; /* Remove bordas */
-  display: flex; /* Alinha conteúdo interno */
-  justify-content: center; /* Centraliza horizontalmente */
-  align-items: center; /* Centraliza verticalmente */
-  cursor: pointer; /* Mostra o cursor de clique */
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.btn-categoria:hover {
-  transform: scale(1.05); /* Aumenta levemente o tamanho */
-  background: #0A5BC7; /* Fundo mais escuro no hover */
-}
-
-.btn-categoria:active {
-  background: #084BA3; /* Fundo ainda mais escuro no clique */
-}
 
 .peso-input {
   width: 50px;
@@ -657,64 +534,6 @@
   border-radius: 0 0 16px 16px;
 }
 
-.btn-cancelar {
-  width: 97px; /* Largura do botão */
-  height: var(--field-height, 40px); /* Altura padrão do campo (pode ser ajustada) */
-  gap: 8px; /* Espaço entre elementos dentro do botão */
-  border-radius: var(--border-radius-m, 8px); /* Raio da borda */
-  padding: 8px var(--button-horizontal-padding, 16px); /* Padding vertical e horizontal */
-  background: rgba(192, 213, 242, 0.1); /* Fundo */
-  color: #90BDF9; /* Cor do texto */
-  border: none; /* Sem borda */
-  cursor: pointer; /* Cursor de clique */
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.btn-cancelar:hover {
-  transform: scale(1.05); /* Aumenta levemente o tamanho */
-  background: rgba(192, 213, 242, 0.2); /* Fundo mais claro no hover */
-}
-
-.btn-gravar {
-  width: 80px; /* Largura do botão */
-  height: var(--field-height, 40px); /* Altura padrão do campo */
-  gap: 8px; /* Espaço entre elementos dentro do botão */
-  border-radius: var(--border-radius-m, 8px); /* Raio da borda */
-  padding: 8px var(--button-horizontal-padding, 16px); /* Padding vertical e horizontal */
-  background: #0C6CE9; /* Fundo */
-  color: white; /* Cor do texto */
-  border: none; /* Sem borda */
-  cursor: pointer; /* Cursor de clique */
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.btn-gravar:hover {
-  transform: scale(1.05); /* Aumenta levemente o tamanho */
-  background: #0A5BC7; /* Fundo mais escuro no hover */
-}
-
-.btn-gravar:disabled {
-  background: rgba(12, 108, 233, 0.5); /* Fundo desabilitado */
-  cursor: not-allowed; /* Cursor não permitido */
-}
-
-.btn-fechar {
-  position: static; /* Posiciona no canto superior direito */
-  top: 16px; /* Distância do topo */
-  right: 16px; /* Distância da direita */
-  background: none; /* Remove o fundo padrão */
-  border: none; /* Remove bordas */
-  color: white; /* Cor do ícone */
-  font-size: 24px; /* Tamanho do ícone */
-  cursor: pointer; /* Mostra o cursor de clique */
-  padding: 8px; /* Adiciona área para toque */
-  border-radius: 50%; /* Torna o botão circular */
-  transition: background-color 0.3s ease; /* Animação ao passar o mouse */
-}
-
-.btn-fechar:hover {
-  background-color: rgba(255, 255, 255, 0.1); /* Adiciona uma leve cor de fundo no hover */
-}
 
 .icon-close {
   width: 24px; /* Tamanho do ícone */
@@ -989,32 +808,197 @@ input#classificacao {
   text-align: center; /* Centralizar o texto */
 }
 
-.btn-cancelar,
-.btn-confirmar {
-  width: 100px; /* Padronizei o tamanho dos botões */
-  padding: 10px;
+
+/* ====================== */
+/* BOTÃO BASE */
+/* ====================== */
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-normal);
+  padding: var(--spacing-xs);
   border: none;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: var(--border-radius-md);
   cursor: pointer;
-  text-align: center;
+  transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
 }
 
+/* Estados genéricos */
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn:disabled {
+  background: rgba(12, 108, 233, 0.5); /* Exemplo para botões desabilitados */
+  cursor: not-allowed;
+}
+
+/* ====================== */
+/* VARIAÇÕES DE BOTÕES */
+/* ====================== */
+
+/* Botão de pesquisa */
+.btn-search {
+  width: 44px;
+  height: var(--height-small);
+  background: var(--primary-blue);
+}
+
+.btn-search:hover {
+  background: var(--hover-blue);
+}
+
+.icon-search {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: var(--text-primary);
+}
+
+/* Botões principais */
+.btn-editar-categorias {
+  background: var(--shades-contrast-5, #C0D5F20F);
+  color: var(--placeholder-text);
+  width: 182px;
+}
+
+.btn-editar-categorias:hover {
+  background: var(--shades-contrast-5);
+}
+
+.btn-nova-classificacao {
+  background: var(--Semantic-colors-Primary, #0C6CE9);
+  color: var(--text-primary);
+  width: 197px;
+}
+
+.btn-nova-classificacao:hover {
+  background: var(--hover-blue, #095BB5);
+  color: var(--text-secondary);
+}
+
+/* Botão Categoria */
+.btn-categoria {
+  width: 169px;
+  height: var(--field-height, 40px);
+  gap: 8px;
+  border-radius: var(--border-radius-md);
+  padding: 8px var(--button-horizontal-padding, 16px);
+  background: var(--Semantic-colors-Primary, #0C6CE9);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-categoria:hover {
+  background: #0A5BC7; /* Fundo mais escuro no hover */
+}
+
+.btn-categoria:active {
+  background: #084BA3;
+}
+
+/* Botões de ação */
+.btn-editar,
+.btn-excluir {
+  background: none;
+  color: var(--placeholder-text);
+  padding: 4px;
+  margin-left: 5px; /* Mantém o espaçamento entre os botões */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-editar:hover,
+.btn-excluir:hover {
+  transform: scale(1.1);
+  color: var(--text-primary);
+}
+
+.btn-editar svg,
+.btn-excluir svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  stroke-width: 1.5;
+}
+
+/* Botão Confirmar e Cancelar */
 .btn-cancelar {
-  background-color: #C0D5F20F;
+  background: rgba(192, 213, 242, 0.1);
   color: #90BDF9;
 }
 
 .btn-cancelar:hover {
-  background: var(--shades-contrast-5, #C0D5F20F);
+  background: rgba(192, 213, 242, 0.2);
 }
 
+.btn-gravar {
+  background: #0C6CE9;
+  color: white;
+}
+
+.btn-gravar:hover {
+  background: #0A5BC7;
+}
+
+/* Botão Fechar */
+.btn-fechar {
+  background: none;
+  color: white;
+  font-size: 24px;
+}
+
+.btn-fechar:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ====================== */
+/* POSICIONAMENTOS ESPECÍFICOS */
+/* ====================== */
+
+/* Botões de ação no modal */
+.btn-acoes {
+  display: flex;
+  justify-content: flex-end; /* Alinha os botões à direita */
+  align-items: center;
+}
+
+.btn-acoes button {
+  margin: 0;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ====================== */
+/* ICONES */
+/* ====================== */
+
+.btn svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.btn-confirmar,
+.btn-cancelar{
+  width: 100px;
+}
+/* Botão Confirmar */
 .btn-confirmar {
-  background-color: #d32f2f;
+  background-color: #d32f2f; /* Vermelho padrão */
   color: #fff;
 }
 
 .btn-confirmar:hover {
-  transform: scale(1.05);
-  background-color: #c62828;
+  background-color: #c62828; /* Vermelho mais escuro no hover */
+  transform: scale(1.05); /* Aumenta levemente o tamanho */
 }

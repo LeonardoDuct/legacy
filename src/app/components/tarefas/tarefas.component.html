@@ -1,3 +1,218 @@
 <section class="tarefas">
     <app-cabecalho></app-cabecalho>
+
+    <!-- Cabeçalho inferior -->
+    <section class="header-bottom">
+        <!-- Bloco de Tecnologia -->
+        <article class="bloco-tecnologia">
+            <div class="conteudo">
+              <div class="topo-bloco">
+                <button class="btn-voltar" (click)="voltar()">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                       stroke-width="1.5" stroke="currentColor" class="icone-voltar">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                  </svg>
+                </button>
+                <div class="info-projeto">
+                  <span class="breadcrumb">Dashboard / Tarefas</span>
+                  <div class="linha-titulo">
+                    <h2 class="titulo">{{ nomeProjeto }}</h2>
+                    <span class="status">Estável</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+                   
+
+        <!-- Bloco de Indicadores -->
+        <article class="bloco-indicadores">
+            <div class="pendente">
+                <div class="icon">
+                    <!-- Ícone Pendente -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3"/>
+                    </svg>
+                </div>
+                <div class="texto-numero">
+                    <div class="texto">Pendentes</div>
+                    <div class="numero">141</div>
+                </div>
+            </div>
+
+            <!-- Linha Separadora -->
+            <div class="linha-separadora"></div>
+
+            <div class="atrasadas">
+                <div class="icon">
+                    <!-- Ícone Atrasadas -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
+                    </svg>
+                </div>
+                <div class="texto-numero">
+                    <div class="texto">Atrasadas</div>
+                    <div class="numero">33</div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Bloco de Filtros -->
+        <aside class="bloco-filtro">
+            <div class="filtro-container">
+                <!-- Dropdown -->
+                <div class="dropdown-wrapper">
+                    <select id="tipo-filtro" class="dropdown">
+                        <option value="" disabled selected>Selecione uma categoria</option>
+                        <option value="classificacao">Classificação</option>
+                        <option value="descricao">Descrição</option>
+                        <option value="score">Score</option>
+                    </select>
+                </div>
+      
+                <!-- Input de texto -->
+                <div class="input-wrapper">
+                    <input type="text" id="filtro-descricao" class="input-text" placeholder="Digitar filtro de descrição" />
+                    <button class="btn btn-search">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-search">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </section>
+
 </section>
+
+<section class="tabela-container">
+    <div class="tabela-scroll">
+      <table class="tabela-tarefas">
+        <thead>
+          <tr>
+            <th (click)="sortTable('prioridade')">
+              <span class="titulo-coluna">
+                Prioridade
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'prioridade' && sortDirection === true,
+                    'descending': sortColumn === 'prioridade' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('scoreTotal')">
+              <span class="titulo-coluna">
+                Score Total
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'scoreTotal' && sortDirection === true,
+                    'descending': sortColumn === 'scoreTotal' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('codigo')">
+              <span class="titulo-coluna">
+                Código IS
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'codigo' && sortDirection === true,
+                    'descending': sortColumn === 'codigo' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('repositorio')">
+              <span class="titulo-coluna">
+                Repositório
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'repositorio' && sortDirection === true,
+                    'descending': sortColumn === 'repositorio' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('cliente')">
+              <span class="titulo-coluna">
+                Cliente
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'cliente' && sortDirection === true,
+                    'descending': sortColumn === 'cliente' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('status')">
+              <span class="titulo-coluna">
+                Status
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'status' && sortDirection === true,
+                    'descending': sortColumn === 'status' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('prazo')">
+              <span class="titulo-coluna">
+                Prazo
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'prazo' && sortDirection === true,
+                    'descending': sortColumn === 'prazo' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('responsavel')">
+              <span class="titulo-coluna">
+                Responsável
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'responsavel' && sortDirection === true,
+                    'descending': sortColumn === 'responsavel' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tarefa of tarefas">
+            <td>{{ tarefa.prioridade }}</td>
+            <td><span class="texto-score" [ngClass]="getScoreClass(tarefa.scoreTotal)">{{ tarefa.scoreTotal }}</span></td>
+            <td>#{{ tarefa.codigo }}</td>
+            <td>{{ tarefa.repositorio }}</td>
+            <td class="coluna-cliente"><span class="texto-cliente">{{ tarefa.cliente }}</span></td>
+            <td><span class="texto-status">{{ tarefa.status }}</span></td>
+            <td>{{ tarefa.prazo | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ tarefa.responsavel }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  
+  
+  
+

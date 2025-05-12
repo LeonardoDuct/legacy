@@ -7,7 +7,7 @@ import { TarefasComponent } from './components/tarefas/tarefas.component';
 const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'cadastro', component: CadastroComponent},
-  {path : 'tarefas', component: TarefasComponent},
+  { path: 'dashboard/:projeto', component: TarefasComponent },
   { path: '**', redirectTo: '' }
 ];
 

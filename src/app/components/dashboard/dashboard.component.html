@@ -7,7 +7,8 @@
         <!-- Bloco de Tecnologia -->
         <article class="bloco-tecnologia">
             <div class="conteudo">
-                <h2 class="titulo">TECNOLOGIA</h2>
+                <span class="breadcrumb">Dashboard / Tarefas</span>
+                <h2 class="titulo">Geral</h2>
                 <span class="status">Estável</span>
             </div>
         </article>
@@ -127,7 +128,8 @@
 
             <!-- Parte 4: Pendências -->
             <div class="quadro-rodape">
-                <button class="pendencias-botao">+ Detalhes</button>
+                <button class="btn btn-detalhes" type="button" [routerLink]="['/dashboard', projeto.nome]">+ Detalhes</button>
+
             </div>
         </div>
     </section>
