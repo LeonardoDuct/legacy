@@ -18,7 +18,9 @@
                   <span class="breadcrumb">Dashboard / Tarefas</span>
                   <div class="linha-titulo">
                     <h2 class="titulo">{{ nomeProjeto }}</h2>
-                    <span class="status">Estável</span>
+                    <span class="projeto-status" [ngClass]="removerAcentos(statusGeral)">
+                        {{ statusGeral }}
+                      </span>
                   </div>
                 </div>
               </div>
@@ -37,7 +39,7 @@
                 </div>
                 <div class="texto-numero">
                     <div class="texto">Pendentes</div>
-                    <div class="numero">141</div>
+                    <div class="numero">{{ pendentesTotal }}</div>
                 </div>
             </div>
 
@@ -53,7 +55,7 @@
                 </div>
                 <div class="texto-numero">
                     <div class="texto">Atrasadas</div>
-                    <div class="numero">33</div>
+                    <div class="numero">{{ atrasadasTotal }}</div>
                 </div>
             </div>
         </article>
@@ -201,7 +203,7 @@
           <tr *ngFor="let tarefa of tarefas">
             <td>{{ tarefa.prioridade }}</td>
             <td><span class="texto-score" [ngClass]="getScoreClass(tarefa.scoreTotal)">{{ tarefa.scoreTotal }}</span></td>
-            <td>#{{ tarefa.codigo }}</td>
+            <td>#{{ tarefa.codigo_issue }}</td>
             <td>{{ tarefa.repositorio }}</td>
             <td class="coluna-cliente"><span class="texto-cliente">{{ tarefa.cliente }}</span></td>
             <td><span class="texto-status">{{ tarefa.status }}</span></td>

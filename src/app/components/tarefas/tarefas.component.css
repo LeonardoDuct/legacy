@@ -45,18 +45,33 @@
 }
 
 /* Status */
-.bloco-tecnologia .status {
+.projeto-status {
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 4px 8px;
-    width: 86px; /* Mantém o tamanho correto */
+    width: 86px;
     height: 29px;
     border-radius: 8px;
-    background: var(--semantic-colors-success-10, #0FF56F1A);
-    color: #0FF56F;
     font-weight: 500;
     font-size: 14px;
+}
+/* Estável */
+.projeto-status.estavel {
+    background: var(--semantic-colors-success-10, #0FF56F1A);
+    color: #0FF56F;
+}
+
+/* Crítico */
+.projeto-status.critico {
+    background: var(--semantic-colors-error-10, #E75D5524);
+    color: #E75D55;
+}
+
+/* Instável */
+.projeto-status.instavel {
+    background: var(--semantic-colors-warning-10, #FFAA0033);
+    color: #FFAA00;
 }
 
 .topo-bloco {
@@ -129,9 +144,10 @@
 .bloco-indicadores .pendente,
 .bloco-indicadores .atrasadas {
     display: flex;
-    align-items: center;
+    flex-direction: column; /* 🔹 Organiza os itens na vertical */
+    align-items: flex-start; /* 🔹 Alinha os elementos à esquerda */
     justify-content: center;
-    gap: 16px;
+    gap: 8px;
     width: 180px;
     height: 100%;
     padding: 16px;
@@ -146,11 +162,11 @@
 .texto-numero {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-start; /* 🔹 Alinha os textos à esquerda */
     justify-content: center;
     width: 104px;
     height: 54px;
-    gap: 16px;
+    gap: 4px;
 }
 
 .texto-numero .texto {

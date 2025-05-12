@@ -7,14 +7,9 @@ import issueRoutes from './routes/index';
 dotenv.config();
 const app = express();
 
-app.use(cors()); // Permitir requisições do frontend
-app.use(express.json()); // Permitir envio de JSON
+app.use(cors());
+app.use(express.json());
 
-app.use('/api', issueRoutes); // Agora está alinhado com `server.ts`
-
-// 🔹 Adicionar rota raiz para evitar "Cannot GET /"
-app.get('/', (_req, res) => {
-  res.send('🚀 Backend Ticket Hub está rodando!');
-});
+app.use('/api', issueRoutes);
 
 export default app;

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Issue } from '../interfaces/models';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -32,4 +33,9 @@ export class GitlabService {
   obterIssuesPorProjetoNome(nomeProjeto: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/issues/detalhes/${nomeProjeto}`);
   }
+
+  obterIssuesPorPeriodo(projeto: string, dataInicio: string, dataFim: string): Observable<Issue[]> {
+    return this.http.get<Issue[]>(`${this.apiUrl}/issues/${projeto}?dataInicio=${dataInicio}&dataFim=${dataFim}`);
+  }
+  
 }
