@@ -34,8 +34,8 @@ export class GitlabService {
     return this.http.get(`${this.apiUrl}/issues/detalhes/${nomeProjeto}`);
   }
 
-  obterIssuesPorPeriodo(projeto: string, dataInicio: string, dataFim: string): Observable<Issue[]> {
-    return this.http.get<Issue[]>(`${this.apiUrl}/issues/${projeto}?dataInicio=${dataInicio}&dataFim=${dataFim}`);
-  }
+  obterIssuesPorPeriodo(dataInicio: string, dataFim: string): Observable<Issue[]> {
+  return this.http.get<Issue[]>(`${this.apiUrl}/issues/filtrar?dataInicio=${dataInicio}&dataFim=${dataFim}`);
+}
   
 }

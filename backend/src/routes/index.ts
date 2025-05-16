@@ -36,22 +36,34 @@ router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Respo
     const projetoPrincipal = req.params.projetoPrincipal;
 
     const result = await pool.query(`
-      SELECT 
+     SELECT 
     i.numero_is AS codigo_issue,
-    r.nome AS projeto_principal,  -- 🔹 Agora vinculamos corretamente ao projeto principal
+    r.nome AS projeto_principal,
     p.nome AS repositorio,
     i.sigla_cliente AS cliente,
-    i.labels AS status,
-    i.prazo AS prazo,
-    i.responsavel AS responsavel,
+    i.labels,
+    COALESCE(
+        (
+            SELECT l
+            FROM unnest(i.labels) AS l
+            WHERE l ~ '[A-Za-z]'
+            LIMIT 1
+        ),
+        'Labels não definidas'
+    ) AS status,
+    i.prazo,
+    COALESCE(NULLIF(i.responsavel, ''), 'Indefinido') AS responsavel,
     NULL AS prioridade,
-    NULL AS score_total
+    NULL AS score_total,
+    i.link AS link 
 FROM issues i
 JOIN projeto p ON i.id_projeto = p.id
-JOIN repositorio r ON p.id_repositorio = r.id  -- 🔹 Relacionamos projetos corretamente aos repositórios
+JOIN repositorio r ON p.id_repositorio = r.id
 WHERE i.status = 'opened'
-AND r.nome = $1  -- 🔹 Agora filtramos diretamente pelo nome do projeto principal
-ORDER BY i.prazo ASC;
+AND r.nome = $1
+ORDER BY i.prazo ASC NULLS LAST;
+
+
     `, [projetoPrincipal]);
 
     res.json(result.rows);
@@ -61,23 +73,23 @@ ORDER BY i.prazo ASC;
 });
 
 router.get('/issues/filtrar', async (req: Request, res: Response) => {
-    try {
-      const { dataInicio, dataFim } = req.query; // 🔹 Captura os parâmetros da URL
-  
-      let query = `
-        SELECT * FROM issues
-      `;
-  
-      if (dataInicio && dataFim) {
-        query += ` WHERE data_abertura BETWEEN '${dataInicio} 00:00:00' AND '${dataFim} 23:59:59'`;
-      }
-  
-      const result = await pool.query(query);
-      res.json(result.rows);
-    } catch (error) {
-      console.error('Erro ao buscar issues filtradas:', error);
-      res.status(500).json({ message: 'Erro interno ao buscar issues filtradas', error });
+  try {
+    const { dataInicio, dataFim } = req.query; // 🔹 Captura os parâmetros da URL
+
+    let query = `
+      SELECT * FROM issues
+    `;
+
+    if (dataInicio && dataFim) {
+      query += ` WHERE data_abertura BETWEEN '${dataInicio} 00:00:00' AND '${dataFim} 23:59:59'`;
     }
-  });
+
+    const result = await pool.query(query);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Erro ao buscar issues filtradas:', error);
+    res.status(500).json({ message: 'Erro interno ao buscar issues filtradas', error });
+  }
+});
 
 export default router;

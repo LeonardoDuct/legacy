@@ -22,17 +22,11 @@ export class CabecalhoComponent implements OnInit {
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
-      console.log('Evento de navegação detectado:', event); // Verifica se está capturando eventos
-  
       if (event instanceof NavigationEnd) {
-        console.log('URL após redirecionamento:', event.urlAfterRedirects); // Confirma se chegou ao NavigationEnd
-        
         this.caminho = event.urlAfterRedirects
           .split('/')
           .filter(p => p)
           .map(p => this.capitalize(p));
-  
-        console.log('Caminho atualizado:', this.caminho); // Mostra a transformação da URL
       }
     });
   }

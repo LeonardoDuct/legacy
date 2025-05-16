@@ -64,6 +64,7 @@ export class TarefasComponent implements OnInit {
     );
   }
 
+
   obterStatusGeral(pendentesTotal: number, atrasadasTotal: number): string {
     if (pendentesTotal === 0) return 'Estável'; 
     if (atrasadasTotal === 0) return 'Estável'; 

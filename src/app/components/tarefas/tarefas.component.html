@@ -158,7 +158,7 @@
                 </svg>
               </span>
             </th>
-            <th (click)="sortTable('status')">
+            <th (click)="sortTable('status')" class="coluna-status">
               <span class="titulo-coluna">
                 Status
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
@@ -184,7 +184,7 @@
                 </svg>
               </span>
             </th>
-            <th (click)="sortTable('responsavel')">
+            <th (click)="sortTable('responsavel')" class="cabecalho-responsavel">
               <span class="titulo-coluna">
                 Responsável
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
@@ -203,12 +203,12 @@
           <tr *ngFor="let tarefa of tarefas">
             <td>{{ tarefa.prioridade }}</td>
             <td><span class="texto-score" [ngClass]="getScoreClass(tarefa.scoreTotal)">{{ tarefa.scoreTotal }}</span></td>
-            <td>#{{ tarefa.codigo_issue }}</td>
+            <td><a [href]="tarefa.link" target="_blank">#{{ tarefa.codigo_issue }}</a></td>
             <td>{{ tarefa.repositorio }}</td>
             <td class="coluna-cliente"><span class="texto-cliente">{{ tarefa.cliente }}</span></td>
             <td><span class="texto-status">{{ tarefa.status }}</span></td>
-            <td>{{ tarefa.prazo | date: 'dd/MM/yyyy' }}</td>
-            <td>{{ tarefa.responsavel }}</td>
+            <td>{{ tarefa.prazo ? (tarefa.prazo | date: 'dd/MM/yyyy') : 'Indefinido' }}</td>
+            <td class="coluna-responsavel">{{ tarefa.responsavel }}</td>
           </tr>
         </tbody>
       </table>

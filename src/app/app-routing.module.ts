@@ -8,7 +8,7 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'cadastro', component: CadastroComponent},
   { path: 'dashboard/:projeto', component: TarefasComponent },
-  { path: '**', redirectTo: '' }
+  { path: '**', redirectTo: 'dashboard' }
 ];
 
 @NgModule({

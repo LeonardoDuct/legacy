@@ -280,12 +280,10 @@
   }
 
   .tabela-container {
-    width: 100%;
     margin: 0 auto;
     padding: 1rem;
   }
   
-  /* Tabela dentro do modal */
   .tabela-tarefas {
     width: 100%;
     border-collapse: separate; /* Use separate para suportar bordas arredondadas */
@@ -297,56 +295,59 @@
   }
   
   .tabela-tarefas th,
-  .tabela-tarefas td {
-    padding: 10px;
-    text-align: left;
-  }
-  
-  /* Cabeçalho da tabela */
-  .tabela-tarefas th {
-    color: #EBF4FFE5;
-    font-weight: var(--font-weight-bold) !important; /* Font weight 600 para o título */
-    font-size: var(--font-small);
-    text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Linha horizontal abaixo do cabeçalho */
-  }
-  
-  /* Alinha o último cabeçalho (AÇÕES) à direita */
-  .tabela-tarefas th:last-child {
-    text-align: right;
-    padding-right: 15px; /* Ajuste suave do valor para não ficar tão à direita */
-  }
-  
-  /* Células */
-  .tabela-tarefas td {
-    color: #EBF4FFE5;
-    position: relative;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Linha horizontal abaixo das células */
-    font-size: var(--font-normal) !important;
-    font-weight: var(--font-weight-light) !important; 
-    
-  }
-  
-  /* Remove a linha horizontal da última linha */
-  .tabela-tarefas tr:last-child td {
-    border-bottom: none;
-  }
-  
-  /* Ajusta o alinhamento da última coluna */
-  .tabela-tarefas td:last-child {
-    text-align: right;
-    padding-right: 15px; /* Ajuste suave do valor para não ficar tão à direita */
-  }
-  
-  th:last-child,
-  td:last-child {
-    padding-left: 10px; /* Ajuste conforme necessário */
-  }
+.tabela-tarefas td {
+  padding: 10px;
+  text-align: inherit;
+}
 
+/* Cabeçalho da tabela */
+.tabela-tarefas th {
+  color: #EBF4FFE5;
+  font-weight: var(--font-weight-bold) !important; /* Font weight 600 para o título */
+  font-size: var(--font-small);
+}
+
+/* Linhas da tabela */
+.tabela-tarefas tr {
+  position: relative; /* Necessário para posicionar o pseudo-elemento */
+}
+
+.tabela-tarefas tr:after {
+  content: '';
+  position: absolute;
+  bottom: 0; /* Alinha no final da linha */
+  left: 10px; /* Define o início da linha */
+  right: 10px; /* Define o final da linha antes da borda */
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2); /* Cor da linha */
+}
+
+.tabela-tarefas td {
+  color: #EBF4FFE5;
+  font-size: var(--font-normal) !important;
+  font-weight: var(--font-weight-light) !important;
+  border-bottom: none; /* Remove a borda padrão entre as células */
+}
+
+.cabecalho-responsavel {
+    align-items: center;
+    padding-right: 16px;        /* Padding adequado à direita */
+    padding-left: 0;            /* Garante que não empurre da esquerda */
+    height: 100%;
+  }
+  
+  /* CÉLULA: conteúdo do responsável */
+  .coluna-responsavel {
+    text-align: right;          /* Alinha conteúdo à direita */
+    padding-right: 16px;        /* Padding à direita */
+    padding-left: 0;            /* Remove padding à esquerda */
+  }
+  
   .titulo-coluna {
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    height: 35px;
   }
   
   .icone-seta {
@@ -380,6 +381,11 @@
     text-align: center;
     min-width: 80px; /* Define um tamanho mínimo */
 }
+
+.coluna-status {
+    width: 280px; /* Defina uma largura fixa */
+    text-align: center; /* Centraliza o título */
+  }
 
 .score.verde {
     color: #2ecc71;

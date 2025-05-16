@@ -54,36 +54,53 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   atualizarFiltro() {
-    if (this.periodoSelecionado !== 'personalizado') {
-      const hoje = new Date();
-      const dataInicial = new Date();
-      dataInicial.setDate(hoje.getDate() - Number(this.periodoSelecionado));
+    const hoje = new Date();
+    const dataInicial = new Date();
   
+    if (this.periodoSelecionado !== 'personalizado') {
+      dataInicial.setDate(hoje.getDate() - Number(this.periodoSelecionado));
       this.dataInicio = dataInicial.toISOString().split('T')[0];
       this.dataFim = hoje.toISOString().split('T')[0];
-  
-      // 🔹 Agora garantimos que a lista de tarefas seja atualizada corretamente
-      this.carregarTarefasPorData(this.nomeProjeto, this.dataInicio, this.dataFim);
     }
+  
+    console.log("Filtro aplicado ao clicar no botão:", this.periodoSelecionado, this.dataInicio, this.dataFim);
+  
+    // 🔹 Agora aplicamos apenas a filtragem das tarefas!
+    this.carregarTarefasPorData(this.dataInicio, this.dataFim);
   }
 
-  carregarTarefasPorData(projeto: string, dataInicio: string, dataFim: string) {
-    this.gitlabService.obterIssuesPorPeriodo(projeto, dataInicio, dataFim).subscribe(
-      (dados) => {
-        this.tarefas = dados;
-      },
-      (erro) => {
-        console.error('Erro ao carregar tarefas:', erro);
-      }
-    );
-  }
+ carregarTarefasPorData(dataInicio: string, dataFim: string) {
+  console.log("Filtrando tarefas entre:", dataInicio, dataFim);
+
+  this.gitlabService.obterIssuesPorPeriodo(dataInicio, dataFim).subscribe((dados: Issue[]) => {
+    console.log("🔹 Total de tarefas recebidas da API:", dados.length);
+
+    // 🔹 Atualizando os projetos já carregados com os dados filtrados
+    this.projetos.forEach(projeto => {
+      const tarefasFiltradas = dados.filter(tarefa => tarefa.sigla_cliente === projeto.nome);
+
+      console.log(`🔍 Projeto: ${projeto.nome} | Tarefas filtradas: ${tarefasFiltradas.length}`);
+
+      projeto.abertas = tarefasFiltradas.length;
+      projeto.abertasDentroPrazo = tarefasFiltradas.filter(tarefa => tarefa.prazo && new Date(tarefa.prazo) >= new Date()).length;
+      projeto.abertasForaPrazo = tarefasFiltradas.filter(tarefa => tarefa.prazo && new Date(tarefa.prazo) < new Date()).length;
+      projeto.fechadas = tarefasFiltradas.filter(tarefa => tarefa.status === "closed").length;
+      projeto.fechadasDentroPrazo = tarefasFiltradas.filter(tarefa => tarefa.status === "closed" && tarefa.data_fechamento && tarefa.prazo && new Date(tarefa.data_fechamento) <= new Date(tarefa.prazo)).length;
+      projeto.fechadasForaPrazo = tarefasFiltradas.filter(tarefa => tarefa.status === "closed" && tarefa.data_fechamento && tarefa.prazo && new Date(tarefa.data_fechamento) > new Date(tarefa.prazo)).length;
+      projeto.abertas_com_atraso = projeto.abertasForaPrazo;
+      projeto.status = this.obterStatus(projeto.abertasDentroPrazo, projeto.abertasForaPrazo);
+    });
+
+    console.log("🔹 Projetos atualizados após filtragem:", this.projetos);
+  });
+}
   
   carregarProjetos(): void {
-    this.gitlabService.obterIssuesPorPeriodo(this.nomeProjeto, this.dataInicio, this.dataFim).subscribe((dados: any[]) => {
+    this.gitlabService.obterIssuesPorProjeto().subscribe((dados: any[]) => {
       this.projetos = dados.map(projeto => {
         const abertasDentroPrazo = Number(projeto.abertas_dentro_prazo) || 0;
         const abertasForaPrazo = Number(projeto.abertas_com_atraso) || 0;
-  
+
         return {
           nome: projeto.projeto_principal,
           abertas: Number(projeto.abertas) || 0,
@@ -98,7 +115,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           status: this.obterStatus(abertasDentroPrazo, abertasForaPrazo),
         };
       });
-  
+
       this.pendentesTotal = this.projetos.reduce((total, projeto) => total + projeto.abertas, 0);
       this.atrasadasTotal = this.projetos.reduce((total, projeto) => total + projeto.abertasForaPrazo, 0);
       this.statusGeral = this.obterStatusGeral(this.pendentesTotal, this.atrasadasTotal);
