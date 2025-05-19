@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
+import { GitlabService } from 'src/app/services/gitlab.service';
 
 // Interfaces
 interface DadoCategoria {
@@ -26,70 +27,16 @@ interface Categoria {
   templateUrl: './cadastro.component.html',
   styleUrls: ['./cadastro.component.css'],
 })
-export class CadastroComponent {
+export class CadastroComponent implements OnInit {
 
-  categorias: Categoria[] = [
-    {
-      id: 'cliente',
-      titulo: 'Cliente',
-      porcentagem: 30,
-      expandida: false,
-      dados: [
-        { classificacao: 'Baixo', descricao: 'Complexidade rotineira', score: 2.5 },
-        { classificacao: 'Médio', descricao: 'Complexidade moderada', score: 5.0 },
-        { classificacao: 'Alto', descricao: 'Complexidade desafiadora', score: 7.5 },
-        { classificacao: 'Crítico', descricao: 'Conhecimento externo', score: 10.0 },
-      ],
-    },
-    {
-      id: 'prazo',
-      titulo: 'Prazo',
-      porcentagem: 30,
-      expandida: false,
-      dados: [
-        { classificacao: 'Baixo', descricao: 'Entrega com prazo superior a 30 dias', score: 2.0 },
-        { classificacao: 'Médio', descricao: 'Entrega entre 15 e 30 dias', score: 5.0 },
-        { classificacao: 'Alto', descricao: 'Entrega entre 7 e 14 dias', score: 7.5 },
-        { classificacao: 'Crítico', descricao: 'Entrega em menos de 7 dias', score: 10.0 },
-      ],
-    },
-    {
-      id: 'urgencia',
-      titulo: 'Urgência',
-      porcentagem: 20,
-      expandida: false,
-      dados: [
-        { classificacao: 'Baixo', descricao: 'Pode ser planejado com calma', score: 2.0 },
-        { classificacao: 'Médio', descricao: 'Necessita atenção moderada', score: 5.0 },
-        { classificacao: 'Alto', descricao: 'Necessita atenção imediata', score: 7.5 },
-        { classificacao: 'Crítico', descricao: 'Demanda ação urgente e priorizada', score: 10.0 },
-      ],
-    },
-    {
-      id: 'complexidade',
-      titulo: 'Complexidade',
-      porcentagem: 15,
-      expandida: false,
-      dados: [
-        { classificacao: 'Baixo', descricao: 'Tarefa simples com poucas variáveis', score: 2.0 },
-        { classificacao: 'Médio', descricao: 'Envolve múltiplas etapas e validações', score: 5.0 },
-        { classificacao: 'Alto', descricao: 'Integrações ou lógica de negócio complexa', score: 7.5 },
-        { classificacao: 'Crítico', descricao: 'Alta interdependência e riscos técnicos', score: 10.0 },
-      ],
-    },
-    {
-      id: 'impacto',
-      titulo: 'Impacto',
-      porcentagem: 5,
-      expandida: false,
-      dados: [
-        { classificacao: 'Baixo', descricao: 'Impacto limitado a um pequeno grupo', score: 2.0 },
-        { classificacao: 'Médio', descricao: 'Impacto moderado na operação', score: 5.0 },
-        { classificacao: 'Alto', descricao: 'Afeta diretamente áreas críticas', score: 7.5 },
-        { classificacao: 'Crítico', descricao: 'Impacto em toda a organização ou clientes', score: 10.0 },
-      ],
-    },
-  ];
+  categorias: Categoria[] = [];
+
+  constructor(private gitlabService: GitlabService) {} 
+
+  ngOnInit() {
+    this.carregarCategorias();
+  }
+
 
   novaClassificacao = {
     categoria: '',
@@ -112,6 +59,47 @@ export class CadastroComponent {
   selectedCategoria: Categoria | undefined;
   modoEdicao = false;
   classificacaoAtual: DadoCategoria | null = null; // Referência para a classificação atual durante a edição
+
+  carregarCategorias() {
+    this.gitlabService.obterCategorias().subscribe(
+      (dados) => {
+        this.categorias = dados.map((categoria: any) => {
+          const nomeCorrigido = categoria.nome_categoria.toLowerCase().includes('urgenc') ? 'Urgência' : categoria.nome_categoria;
+  
+          const mapDados = (classificacao: string, descricao: string, score: string) =>
+            classificacao && descricao && score
+              ? classificacao.split('\n').map((_, index) => ({
+                  classificacao: classificacao.split('\n')[index],
+                  descricao: descricao.split('\n')[index],
+                  score: parseFloat(score.split('\n')[index]) || 0,
+                }))
+              : [];
+  
+          return {
+            id: categoria.nome_categoria.toLowerCase(),
+            titulo: nomeCorrigido, // 🔹 Agora o nome aparece corretamente com acento!
+            porcentagem: categoria.peso,
+            expandida: false,
+            dados:
+              nomeCorrigido === 'Cliente'
+                ? mapDados(categoria.classificacao_cliente, categoria.descricao_cliente, categoria.score_cliente)
+                : nomeCorrigido === 'Prazo'
+                ? mapDados(categoria.classificacao_prazo, categoria.descricao_prazo, categoria.score_prazo)
+                : nomeCorrigido === 'Impacto'
+                ? mapDados(categoria.classificacao_impacto, categoria.descricao_impacto, categoria.score_impacto)
+                : nomeCorrigido === 'Urgência' // 🔹 Agora pegamos corretamente os dados de Urgência
+                ? mapDados(categoria.classificacao_urgencia, categoria.descricao_urgencia, categoria.score_urgencia)
+                : nomeCorrigido === 'Complexidade'
+                ? mapDados(categoria.classificacao_complexidade, categoria.descricao_complexidade, categoria.score_complexidade)
+                : [],
+          };
+        });
+      },
+      (error) => {
+        console.error('Erro ao carregar categorias:', error);
+      }
+    );
+  }
 
   toggleCategoria(id: string) {
     const categoria = this.categorias.find(cat => cat.id === id);
@@ -219,44 +207,52 @@ export class CadastroComponent {
   editarClassificacao(categoria: Categoria, dado: DadoCategoria) {
     this.modoEdicao = true;
     this.modalNovaClassificacaoAberto = true;
-
+  
     this.novaClassificacao = {
       categoria: categoria.titulo,
       classificacao: dado.classificacao,
       score: dado.score,
       descricao: dado.descricao,
     };
-
+  
     this.selectedCategoria = categoria;
     this.classificacaoAtual = dado;
   }
-
+  
   gravarClassificacao() {
-    if (!this.selectedCategoria) return;
-
-    if (this.modoEdicao && this.classificacaoAtual) {
-      this.classificacaoAtual.descricao = this.novaClassificacao.descricao;
-      this.classificacaoAtual.score = this.novaClassificacao.score;
-    } else {
-      const nova = {
-        classificacao: this.novaClassificacao.classificacao,
-        descricao: this.novaClassificacao.descricao,
-        score: this.novaClassificacao.score,
-      };
-
-      this.selectedCategoria.dados.push(nova);
-    }
-
-    this.modoEdicao = false;
-    this.classificacaoAtual = null;
-    this.novaClassificacao = {
-      categoria: '',
-      classificacao: '',
-      score: 1.0,
-      descricao: '',
-    };
-
+    if (!this.selectedCategoria || !this.classificacaoAtual) return;
+  
+    this.gitlabService.atualizarClassificacao(
+      this.selectedCategoria.titulo, 
+      this.classificacaoAtual.classificacao,
+      this.novaClassificacao.descricao,
+      this.novaClassificacao.score
+    ).subscribe(
+      (resposta) => {
+        console.log('Classificação atualizada:', resposta);
+        if (this.classificacaoAtual) {
+          this.classificacaoAtual.descricao = resposta.descricao;
+          this.classificacaoAtual.score = resposta.nota;
+      }
+      },
+      (error) => {
+        console.error('Erro ao atualizar classificação:', error);
+      }
+    );
+  
     this.fecharModalNovaClassificacao();
+  }
+  
+  excluirClassificacao(categoria: Categoria, dado: DadoCategoria) {
+    this.gitlabService.excluirClassificacao(categoria.titulo, dado.classificacao).subscribe(
+      () => {
+        categoria.dados = categoria.dados.filter(item => item !== dado);
+        console.log('Classificação excluída com sucesso!');
+      },
+      (error) => {
+        console.error('Erro ao excluir classificação:', error);
+      }
+    );
   }
 
   incrementarScore() {

@@ -191,6 +191,29 @@
   height: 60px;
 }
 
+.scroll-container {
+  max-height: 500px; /* 🔹 Ajuste conforme necessário */
+  overflow-y: auto; /* 🔹 Permite rolagem */
+  padding: 8px;
+}
+
+.scroll-container::-webkit-scrollbar {
+    width: 6px; /* 🔹 Deixa a barra de rolagem mais fina */
+}
+
+.scroll-container::-webkit-scrollbar-track {
+    background: transparent; /* 🔹 Remove o fundo da barra */
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background: #ccc; /* 🔹 Cor neutra e discreta */
+    border-radius: 4px; /* 🔹 Bordas arredondadas para um visual suave */
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #bbb; /* 🔹 Tom mais escuro ao passar o mouse */
+}
+
 /* Seta ao lado do título */
 .seta-icone {
   width: var(--icon-size-sm, 16px);
@@ -381,6 +404,7 @@
 }
 
 /* Tabela dentro do modal */
+/* Estilização original da tabela */
 .tabela-categorias {
   width: 100%;
   border-collapse: separate; /* Use separate para suportar bordas arredondadas */
@@ -424,8 +448,17 @@
   border-bottom: none;
 }
 
-/* Ações no modal - alinhadas à direita e com espaçamento reduzido */
+/* Correções específicas para a coluna "PESO" */
+.tabela-categorias .peso-cell {
+  width: 150px; /* Mantém o tamanho fixo da coluna */
+  white-space: nowrap; /* Impede quebra de linha */
+}
 
+/* Para evitar mudanças de altura */
+.tabela-categorias .peso-cell .peso-input {
+  height: 30px; /* Mesmo tamanho do texto */
+}
+/* Ações no modal - alinhadas à direita e com espaçamento reduzido */
 
 .nova-categoria-container {
   margin-top: 20px; /* Espaço acima do botão */
@@ -433,7 +466,6 @@
   justify-content: flex-end; /* Alinha o botão à direita */
   width: 100%; /* Garante que o contêiner ocupe toda a largura disponível */
 }
-
 
 .peso-input {
   width: 50px;
@@ -821,7 +853,6 @@ input#classificacao {
   font-size: var(--font-normal);
   padding: var(--spacing-xs);
   border: none;
-  border-radius: var(--border-radius-md);
   cursor: pointer;
   transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
 }
@@ -966,17 +997,15 @@ input#classificacao {
 .btn-acoes {
   display: flex;
   justify-content: flex-end; /* Alinha os botões à direita */
-  align-items: center;
+  border-radius: 0; /* Remove qualquer arredondamento */
+  gap: 1px; 
 }
 
 .btn-acoes button {
   margin: 0;
   padding: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 30px;
+  height: 30px;
 }
 
 /* ====================== */

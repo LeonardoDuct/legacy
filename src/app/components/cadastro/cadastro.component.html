@@ -64,7 +64,7 @@
                           <tr>
                               <th (click)="ordenarModal('titulo')">CRITÉRIO</th>
                               <th (click)="ordenarModal('porcentagem')">PESO</th>
-                              <th>AÇÕES</th>
+                              <th >AÇÕES</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -285,55 +285,58 @@
 
   <!-- Categorias -->
   <div *ngFor="let categoria of categorias" class="categoria" [class.expandida]="categoria.expandida">
-      <div class="categoria-minimizada" (click)="toggleCategoria(categoria.id)">
-          <span class="categoria-titulo">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
-                  class="icon seta-icone" [class.expanded]="categoria.expandida">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-              {{ categoria.titulo }}
-          </span>        
-          <div class="indicador">
-              <i class="icon icone-ancora">
-                  <img class="ancora-svg" src="assets/images/icon_contrast_100/peso.svg" alt="Ícone de peso" />
-              </i>
-              <span class="porcentagem">{{ categoria.porcentagem }}%</span>
-          </div>
-      </div>
-      <div class="categoria-detalhes" *ngIf="categoria.expandida">
-          <table>
-              <thead>
-                  <tr>
-                      <th (click)="sortTable('classificacao', categoria.id)">CLASSIFICAÇÃO</th>
-                      <th (click)="sortTable('descricao', categoria.id)">DESCRIÇÃO</th>
-                      <th (click)="sortTable('score', categoria.id)">SCORE</th>
-                      <th>AÇÕES</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr *ngFor="let dado of categoria.dados">
-                      <td><span class="nivel">{{ dado.classificacao }}</span></td>
-                      <td>{{ dado.descricao }}</td>
-                      <td>
-                          <span class="score" [ngClass]="{
-                              'verde': dado.score < 4, 
-                              'amarelo': dado.score >= 4 && dado.score < 7, 
-                              'vermelho-claro': dado.score >= 7 && dado.score < 9, 
-                              'vermelho-escuro': dado.score >= 9}">
-                              {{ dado.score }}
-                          </span>
-                      </td>
-                      <td>
-                        <button class="btn btn-editar" (click)="editarClassificacao(categoria, dado)">
-                          <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
-                        </button>
-                        <button class="btn btn-excluir" (click)="abrirModalConfirmacao(categoria, dado)">
-                          <img class="size-6" src="assets/images/icon_primary_text/delete.svg" alt="Ícone de exclusão" />
-                        </button>
-                      </td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>
-  </div>
+    <div class="categoria-minimizada" (click)="toggleCategoria(categoria.id)">
+        <span class="categoria-titulo">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"  
+                class="icon seta-icone" [class.expanded]="categoria.expandida">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+            {{ categoria.titulo }}
+        </span>        
+        <div class="indicador">
+            <i class="icon icone-ancora">
+                <img class="ancora-svg" src="assets/images/icon_contrast_100/peso.svg" alt="Ícone de peso" />
+            </i>
+            <span class="porcentagem">{{ categoria.porcentagem }}%</span>
+        </div>
+    </div>
+
+    <div class="categoria-detalhes" *ngIf="categoria.expandida">
+        <div class="scroll-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th (click)="sortTable('classificacao', categoria.id)">CLASSIFICAÇÃO</th>
+                        <th (click)="sortTable('descricao', categoria.id)">DESCRIÇÃO</th>
+                        <th (click)="sortTable('score', categoria.id)">SCORE</th>
+                        <th>AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let dado of categoria.dados">
+                        <td><span class="nivel">{{ dado.classificacao }}</span></td>
+                        <td>{{ dado.descricao }}</td>
+                        <td>
+                            <span class="score" [ngClass]="{
+                                'verde': dado.score < 4,  
+                                'amarelo': dado.score >= 4 && dado.score < 7,  
+                                'vermelho-claro': dado.score >= 7 && dado.score < 9,  
+                                'vermelho-escuro': dado.score >= 9}">
+                                {{ dado.score }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-editar" (click)="editarClassificacao(categoria, dado)">
+                                <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
+                            </button>
+                            <button class="btn btn-excluir" (click)="abrirModalConfirmacao(categoria, dado)">
+                                <img class="size-6" src="assets/images/icon_primary_text/delete.svg" alt="Ícone de exclusão" />
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 </section>

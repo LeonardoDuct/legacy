@@ -6,26 +6,22 @@ import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class GitlabService {
-  private readonly apiUrl = environment.backendApiUrl; // URL do backend Express.js
+  private readonly apiUrl = environment.backendApiUrl;
 
   constructor(private http: HttpClient) {}
 
-  // 🔹 Buscar todas as issues agrupadas por projeto principal
   obterIssuesPorProjeto(): Observable<any> {
     return this.http.get(`${this.apiUrl}/issues`);
   }
 
-  // 🔹 Buscar detalhes de uma única issue pelo ID
   obterDetalhesDaIssue(issueId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/issues/${issueId}`);
   }
 
-  // 🔹 Buscar todos os projetos
   obterProjetos(): Observable<any> {
     return this.http.get(`${this.apiUrl}/projects`);
   }
 
-  // 🔹 Buscar todas as labels
   carregarLabels(): Observable<any> {
     return this.http.get(`${this.apiUrl}/labels`);
   }
@@ -36,6 +32,34 @@ export class GitlabService {
 
   obterIssuesPorPeriodo(dataInicio: string, dataFim: string): Observable<Issue[]> {
   return this.http.get<Issue[]>(`${this.apiUrl}/issues/filtrar?dataInicio=${dataInicio}&dataFim=${dataFim}`);
+}
+
+obterCategorias(): Observable<any> {
+  return this.http.get(`${this.apiUrl}/categorias`);
+}
+
+atualizarCategoria(id: string, titulo: string, porcentagem: number): Observable<any> {
+  return this.http.put(`${this.apiUrl}/categorias/${id}`, { titulo, porcentagem });
+}
+
+excluirCategoria(id: string): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/categorias/${id}`);
+}
+
+atualizarClassificacao(categoria: string, classificacao: string, descricao: string, score: number): Observable<any> {
+  const categoriaEncoded = encodeURIComponent(categoria.trim());
+
+  const classificacaoLimpa = classificacao.trim().split(/[-/]/).pop()?.trim() || '';
+  const classificacaoEncoded = encodeURIComponent(classificacaoLimpa);
+
+  const urlFinal = `${this.apiUrl}/classificacao/${categoriaEncoded}/${classificacaoEncoded}`;
+
+  return this.http.put(urlFinal, { descricao, score });
+}
+
+
+excluirClassificacao(categoria: string, classificacao: string): Observable<any> {
+  return this.http.delete(`${this.apiUrl}/classificacao/${categoria}/${classificacao}`);
 }
   
 }
