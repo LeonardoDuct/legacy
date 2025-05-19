@@ -84,9 +84,12 @@
                                   <button *ngIf="categoria.editando" class="btn btn-salvar" (click)="salvarEdicao(categoria)">
                                       Salvar
                                   </button>
-                                  <button class="btn btn-excluir" (click)="excluirCategoria(categoria.id)">
+                                  <button *ngIf="categoria.titulo !== 'Cliente' && categoria.titulo !== 'Prazo'" 
+                                          class="btn btn-excluir" 
+                                          (click)="excluirCategoria(categoria.id)">
                                       <img class="size-6" src="assets/images/icon_primary_text/delete.svg" alt="Ícone de exclusão" />
                                   </button>
+
                               </td>
                           </tr>
                       </tbody>

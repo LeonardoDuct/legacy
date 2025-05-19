@@ -29,43 +29,47 @@ interface Categoria {
 })
 export class CadastroComponent implements OnInit {
 
+  // Dados principais
   categorias: Categoria[] = [];
-
-  constructor(private gitlabService: GitlabService) {} 
-
-  ngOnInit() {
-    this.carregarCategorias();
-  }
-
-
   novaClassificacao = {
     categoria: '',
     classificacao: '',
     score: 1.0,
     descricao: '',
   };
-
   sortColumn = '';
   sortDirection = true;
 
+  // Modais e controles de UI
   modalAberto = false;
   modalNovaCategoriaAberto = false;
   modalNovaClassificacaoAberto = false;
   dropdownAberto = false;
-
   novaCategoriaNome = '';
   novaCategoriaPeso = 0;
-
   selectedCategoria: Categoria | undefined;
   modoEdicao = false;
-  classificacaoAtual: DadoCategoria | null = null; // Referência para a classificação atual durante a edição
+  classificacaoAtual: DadoCategoria | null = null;
+
+  // Modal de confirmação
+  modalConfirmacaoAberto = false;
+  categoriaSelecionada: Categoria | undefined;
+  dadoSelecionado: DadoCategoria | undefined;
+
+  constructor(private gitlabService: GitlabService) {}
+
+  ngOnInit() {
+    this.carregarCategorias();
+  }
+
+  // --- Categoria ---
 
   carregarCategorias() {
     this.gitlabService.obterCategorias().subscribe(
       (dados) => {
         this.categorias = dados.map((categoria: any) => {
           const nomeCorrigido = categoria.nome_categoria.toLowerCase().includes('urgenc') ? 'Urgência' : categoria.nome_categoria;
-  
+
           const mapDados = (classificacao: string, descricao: string, score: string) =>
             classificacao && descricao && score
               ? classificacao.split('\n').map((_, index) => ({
@@ -74,10 +78,10 @@ export class CadastroComponent implements OnInit {
                   score: parseFloat(score.split('\n')[index]) || 0,
                 }))
               : [];
-  
+
           return {
             id: categoria.nome_categoria.toLowerCase(),
-            titulo: nomeCorrigido, // 🔹 Agora o nome aparece corretamente com acento!
+            titulo: nomeCorrigido,
             porcentagem: categoria.peso,
             expandida: false,
             dados:
@@ -87,7 +91,7 @@ export class CadastroComponent implements OnInit {
                 ? mapDados(categoria.classificacao_prazo, categoria.descricao_prazo, categoria.score_prazo)
                 : nomeCorrigido === 'Impacto'
                 ? mapDados(categoria.classificacao_impacto, categoria.descricao_impacto, categoria.score_impacto)
-                : nomeCorrigido === 'Urgência' // 🔹 Agora pegamos corretamente os dados de Urgência
+                : nomeCorrigido === 'Urgência'
                 ? mapDados(categoria.classificacao_urgencia, categoria.descricao_urgencia, categoria.score_urgencia)
                 : nomeCorrigido === 'Complexidade'
                 ? mapDados(categoria.classificacao_complexidade, categoria.descricao_complexidade, categoria.score_complexidade)
@@ -132,6 +136,104 @@ export class CadastroComponent implements OnInit {
     this.categorias = this.categorias.filter(cat => cat.id !== id);
   }
 
+  novaCategoria() {
+    this.modalNovaCategoriaAberto = true;
+  }
+
+  fecharModalNovaCategoria() {
+    this.modalNovaCategoriaAberto = false;
+  }
+
+  gravarNovaCategoria(nome: string, peso: number) {
+    const nova: Categoria = {
+      id: `categoria-${this.categorias.length + 1}`,
+      titulo: nome,
+      porcentagem: peso,
+      expandida: false,
+      dados: [{ classificacao: '', descricao: '', score: 0 }],
+    };
+
+    this.categorias.push(nova);
+    this.fecharModalNovaCategoria();
+  }
+
+  // --- Classificação ---
+
+  abrirModalNovaClassificacao() {
+    this.novaClassificacao = {
+      categoria: '',
+      classificacao: '',
+      score: 1.0,
+      descricao: '',
+    };
+    this.modoEdicao = false;
+    this.selectedCategoria = undefined;
+    this.modalNovaClassificacaoAberto = true;
+  }
+
+  fecharModalNovaClassificacao() {
+    this.modalNovaClassificacaoAberto = false;
+  }
+
+  editarClassificacao(categoria: Categoria, dado: DadoCategoria) {
+    this.modoEdicao = true;
+    this.modalNovaClassificacaoAberto = true;
+    this.novaClassificacao = {
+      categoria: categoria.titulo,
+      classificacao: dado.classificacao,
+      score: dado.score,
+      descricao: dado.descricao,
+    };
+    this.selectedCategoria = categoria;
+    this.classificacaoAtual = dado;
+  }
+
+  gravarClassificacao() {
+    if (!this.selectedCategoria || !this.classificacaoAtual) return;
+
+    this.gitlabService.atualizarClassificacao(
+      this.selectedCategoria.titulo,
+      this.classificacaoAtual.classificacao,
+      this.novaClassificacao.descricao,
+      this.novaClassificacao.score
+    ).subscribe(
+      (resposta) => {
+        console.log('Classificação atualizada:', resposta);
+        if (this.classificacaoAtual) {
+          this.classificacaoAtual.descricao = resposta.descricao;
+          this.classificacaoAtual.score = resposta.nota;
+        }
+      },
+      (error) => {
+        console.error('Erro ao atualizar classificação:', error);
+      }
+    );
+
+    this.fecharModalNovaClassificacao();
+  }
+
+  excluirClassificacao(categoria: Categoria, dado: DadoCategoria) {
+    this.gitlabService.excluirClassificacao(categoria.titulo, dado.classificacao).subscribe(
+      () => {
+        categoria.dados = categoria.dados.filter(item => item !== dado);
+        console.log('Classificação excluída com sucesso!');
+      },
+      (error) => {
+        console.error('Erro ao excluir classificação:', error);
+      }
+    );
+  }
+
+  incrementarScore() {
+    this.novaClassificacao.score = Math.min(this.novaClassificacao.score + 0.5, 10.0);
+  }
+
+  decrementarScore() {
+    this.novaClassificacao.score = Math.max(this.novaClassificacao.score - 0.5, 0.0);
+  }
+
+  // --- Ordenação ---
+
   sortTable(column: string, categoriaId: string) {
     const categoria = this.categorias.find(cat => cat.id === categoriaId);
     if (!categoria) return;
@@ -159,108 +261,14 @@ export class CadastroComponent implements OnInit {
     });
   }
 
+  // --- Modais e helpers visuais ---
+
   abrirModal() {
     this.modalAberto = true;
   }
 
   fecharModal() {
     this.modalAberto = false;
-  }
-
-  novaCategoria() {
-    this.modalNovaCategoriaAberto = true;
-  }
-
-  fecharModalNovaCategoria() {
-    this.modalNovaCategoriaAberto = false;
-  }
-
-  gravarNovaCategoria(nome: string, peso: number) {
-    const nova: Categoria = {
-      id: `categoria-${this.categorias.length + 1}`,
-      titulo: nome,
-      porcentagem: peso,
-      expandida: false,
-      dados: [{ classificacao: '', descricao: '', score: 0 }],
-    };
-
-    this.categorias.push(nova);
-    this.fecharModalNovaCategoria();
-  }
-
-  abrirModalNovaClassificacao() {
-    this.novaClassificacao = {
-      categoria: '',
-      classificacao: '',
-      score: 1.0,
-      descricao: '',
-    };
-    this.modoEdicao = false; // Garantir que não está no modo de edição
-    this.selectedCategoria = undefined; // Limpar categoria selecionada
-    this.modalNovaClassificacaoAberto = true; // Abrir o modal
-  }
-
-  fecharModalNovaClassificacao() {
-    this.modalNovaClassificacaoAberto = false;
-  }
-
-  editarClassificacao(categoria: Categoria, dado: DadoCategoria) {
-    this.modoEdicao = true;
-    this.modalNovaClassificacaoAberto = true;
-  
-    this.novaClassificacao = {
-      categoria: categoria.titulo,
-      classificacao: dado.classificacao,
-      score: dado.score,
-      descricao: dado.descricao,
-    };
-  
-    this.selectedCategoria = categoria;
-    this.classificacaoAtual = dado;
-  }
-  
-  gravarClassificacao() {
-    if (!this.selectedCategoria || !this.classificacaoAtual) return;
-  
-    this.gitlabService.atualizarClassificacao(
-      this.selectedCategoria.titulo, 
-      this.classificacaoAtual.classificacao,
-      this.novaClassificacao.descricao,
-      this.novaClassificacao.score
-    ).subscribe(
-      (resposta) => {
-        console.log('Classificação atualizada:', resposta);
-        if (this.classificacaoAtual) {
-          this.classificacaoAtual.descricao = resposta.descricao;
-          this.classificacaoAtual.score = resposta.nota;
-      }
-      },
-      (error) => {
-        console.error('Erro ao atualizar classificação:', error);
-      }
-    );
-  
-    this.fecharModalNovaClassificacao();
-  }
-  
-  excluirClassificacao(categoria: Categoria, dado: DadoCategoria) {
-    this.gitlabService.excluirClassificacao(categoria.titulo, dado.classificacao).subscribe(
-      () => {
-        categoria.dados = categoria.dados.filter(item => item !== dado);
-        console.log('Classificação excluída com sucesso!');
-      },
-      (error) => {
-        console.error('Erro ao excluir classificação:', error);
-      }
-    );
-  }
-
-  incrementarScore() {
-    this.novaClassificacao.score = Math.min(this.novaClassificacao.score + 0.5, 10.0);
-  }
-
-  decrementarScore() {
-    this.novaClassificacao.score = Math.max(this.novaClassificacao.score - 0.5, 0.0);
   }
 
   toggleDropdown() {
@@ -280,11 +288,6 @@ export class CadastroComponent implements OnInit {
     return 'score vermelho-escuro';
   }
 
-  // Novas funções adicionadas para o modal de confirmação
-  modalConfirmacaoAberto = false; // Controla a exibição do modal de confirmação
-  categoriaSelecionada: Categoria | undefined; // Categoria selecionada para exclusão
-  dadoSelecionado: DadoCategoria | undefined; // Dado selecionado para exclusão
-
   abrirModalConfirmacao(categoria?: Categoria, dado?: DadoCategoria) {
     this.modalConfirmacaoAberto = true;
     this.categoriaSelecionada = categoria;
@@ -299,16 +302,12 @@ export class CadastroComponent implements OnInit {
 
   confirmarExclusao() {
     if (this.dadoSelecionado && this.categoriaSelecionada) {
-      // Excluir apenas o dado selecionado da categoria
       this.categoriaSelecionada.dados = this.categoriaSelecionada.dados.filter(
         dado => dado !== this.dadoSelecionado
       );
     } else if (this.categoriaSelecionada) {
-      // Excluir a categoria inteira se nenhum dado for selecionado
       this.categorias = this.categorias.filter(cat => cat !== this.categoriaSelecionada);
     }
-  
-    // Fechar o modal de confirmação e limpar as variáveis
     this.fecharModalConfirmacao();
   }
 }

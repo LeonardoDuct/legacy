@@ -52,9 +52,13 @@
         
           <!-- 🔹 Select para escolher o período + botão -->
           <div class="campo-selecao">
-            <select class="dropdown" [(ngModel)]="periodoSelecionado" (change)="atualizarFiltro()">
-              
-            </select>
+            <select class="dropdown" [(ngModel)]="periodoSelecionado">
+              <option value="" disabled selected hidden>Selecione um período</option>
+              <option value="7d">Últimos 7 dias</option>
+              <option value="15d">Últimos 15 dias</option>
+              <option value="30d">Últimos 30 dias</option>
+              <option value="personalizado">Personalizado</option>
+            </select>            
         
             <button
               class="btn btn-search"
@@ -148,7 +152,14 @@
       
           <!-- Parte 4: Pendências -->
           <div class="quadro-rodape">
-            <button class="btn btn-detalhes" type="button" [routerLink]="['/dashboard', projeto.nome]">+ Detalhes</button>
+            <button
+              class="btn btn-detalhes"
+              type="button"
+              [routerLink]="['/dashboard', projeto.nome]"
+              [queryParams]="{ dataInicio: dataInicio, dataFim: dataFim }"
+            >
+              + Detalhes
+            </button>
           </div>
         </div>
       </section>

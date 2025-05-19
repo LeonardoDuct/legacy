@@ -62,27 +62,32 @@
 
         <!-- Bloco de Filtros -->
         <aside class="bloco-filtro">
-            <div class="filtro-container">
-                <!-- Dropdown -->
-                <div class="dropdown-wrapper">
-                    <select id="tipo-filtro" class="dropdown">
-                        <option value="" disabled selected>Selecione uma categoria</option>
-                        <option value="classificacao">Classificação</option>
-                        <option value="descricao">Descrição</option>
-                        <option value="score">Score</option>
-                    </select>
-                </div>
-      
-                <!-- Input de texto -->
-                <div class="input-wrapper">
-                    <input type="text" id="filtro-descricao" class="input-text" placeholder="Digitar filtro de descrição" />
-                    <button class="btn btn-search">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-search">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
-                        </svg>
-                    </button>
-                </div>
+          <div class="filtro-container">
+            <!-- Dropdown -->
+            <div class="dropdown-wrapper">
+              <select id="tipo-filtro" class="dropdown" [(ngModel)]="filtroColuna">
+                <option value="" disabled selected>Selecione uma coluna</option>
+                <option value="repositorio">Repositório</option>
+                <option value="cliente">Cliente</option>
+                <option value="status">Status</option>
+                <option value="responsavel">Responsável</option>
+              </select>
             </div>
+        
+            <!-- Input de texto -->
+            <div class="input-wrapper">
+              <input type="text"
+                     id="filtro-descricao"
+                     class="input-text"
+                     placeholder="Digite o filtro"
+                     [(ngModel)]="filtroValor" />
+              <button class="btn btn-search" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-search">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
+                </svg>
+              </button>
+            </div>
+          </div>
         </aside>
     </section>
 
@@ -200,13 +205,67 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let tarefa of tarefas">
+          <tr *ngFor="let tarefa of tarefasFiltradas; let i = index">
             <td>{{ tarefa.prioridade }}</td>
-            <td><span class="texto-score" [ngClass]="getScoreClass(tarefa.scoreTotal)">{{ tarefa.scoreTotal }}</span></td>
+            <td class="score-cell"
+                (mouseenter)="showTooltip(i)"
+                (mouseleave)="hideTooltip()"
+                style="position: relative;">
+              <span class="texto-score" [ngClass]="getScoreClass(tarefa.score_total)">
+                {{ tarefa.score_total }}
+              </span>
+              <ng-container *ngIf="openedTooltip === i">
+                <div class="score-tooltip-modal">
+                  <div class="tooltip-arrow"></div>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th class="col-categoria">CATEGORIA</th>
+            <th class="col-peso">PESO</th>
+            <th class="col-classificacao">CLASSIFICAÇÃO</th>
+            <th class="col-score">SCORE</th>
+            <th class="col-subtotal">SCORE SUB-TOTAL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of tarefa.score_breakdown">
+                        <td class="textoLarge col-categoria">{{ item.categoria }}</td>
+                        <td class="textoLarge col-peso">{{ item.peso }}%</td>
+                        <td class=" texto-small col-classificacao">
+                          <ng-container *ngIf="item.categoria === 'Prazo'; else normalClassificacao">
+                            <span 
+                              *ngIf="prazoAtrasado(item.classificacao)" 
+                              class="dot-red">
+                            </span>
+                            {{ item.classificacao | date: 'dd/MM/yyyy' }}
+                          </ng-container>
+                          <ng-template #normalClassificacao>
+                            <span class="badge badge-classificacao">{{ item.classificacao }}</span>
+                          </ng-template>
+                        </td>
+                        
+                        <td class="texto-small col-score">
+                          <span class="badge" [ngClass]="getScoreClass(item.score)">
+                            {{ item.score }}
+                          </span>
+                        </td>
+                        
+                        <td class=" texto-small col-subtotal">
+                          <span class="badge" [ngClass]="getScoreClass(item.score)">{{ item.subTotal }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </ng-container>
+            </td>
             <td><a [href]="tarefa.link" target="_blank">#{{ tarefa.codigo_issue }}</a></td>
             <td>{{ tarefa.repositorio }}</td>
             <td class="coluna-cliente"><span class="texto-cliente">{{ tarefa.cliente }}</span></td>
-            <td><span class="texto-status">{{ tarefa.status }}</span></td>
+            <td><span class="texto-status" [ngStyle]="{ 'background-color': corDeStatus(tarefa.status), 'color': '#fff' }">
+                {{ tarefa.status }}
+              </span>
+            </td>
             <td>{{ tarefa.prazo ? (tarefa.prazo | date: 'dd/MM/yyyy') : 'Indefinido' }}</td>
             <td class="coluna-responsavel">{{ tarefa.responsavel }}</td>
           </tr>

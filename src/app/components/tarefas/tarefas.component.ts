@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { GitlabService } from '../../services/gitlab.service';
+import { FormsModule } from '@angular/forms';
 
 interface Issue {
   codigo_issue: number;
@@ -18,7 +19,7 @@ interface Issue {
 @Component({
   selector: 'app-tarefas',
   standalone: true,
-  imports: [CommonModule, CabecalhoComponent],
+  imports: [CommonModule, CabecalhoComponent, FormsModule],
   templateUrl: './tarefas.component.html',
   styleUrl: './tarefas.component.css',
 })
@@ -30,6 +31,41 @@ export class TarefasComponent implements OnInit {
   atrasadasTotal: number = 0;
   pendentesTotal: number = 0;
   statusGeral: string = 'Estável';
+  openedTooltip: number | null = null;
+
+
+  // Variáveis de filtro
+  filtroColuna: string = '';
+  filtroValor: string = '';
+
+  LABEL_STATUS_COLORS: { [label: string]: string } = {
+    // Sustentação
+    "Status / Não Iniciado": "#e86f5b",
+    "Status / Iniciado": "#e88e3d",
+    "Status / Liberado": "#18aa61",
+    "Status / Pendente": "#e2445c",
+    "Status / Stand By": "#e86f5b",
+  
+    // Projetos
+    "Status / Acompanhamento": "#e88e3d",
+    "Status / Em Andamento": "#e88e3d",
+    "Status / Aguardando": "#e2445c",
+    "Status / Pendencia": "#e2445c",
+  
+    // Processos
+    "Status / Fila": "#e86f5b",
+    "Status / Andamento": "#e88e3d",
+    "Status / Ajuste": "#e88e3d",
+    "Status / Validação": "#e88e3d",
+  
+    // Desenvolvimento (usando os mesmos nomes)
+    // QA (Análise e QA)
+    "Status / Não Iniciado QA": "#cd5b45",
+    "Status / Iniciado QA": "#ed9121",
+    "Status / Liberado QA": "#009966",
+    "Status / Pendente QA": "#c21e56",
+    "Status / Stand By QA": "#cd5b45"
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -40,15 +76,21 @@ export class TarefasComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.nomeProjeto = params.get('projeto') ?? '';
-
-      if (this.nomeProjeto) {
-        this.carregarTarefas(this.nomeProjeto);
-      }
+  
+      // Pegue os query params e converta null para undefined
+      this.route.queryParamMap.subscribe((queryParams) => {
+        const dataInicio = queryParams.get('dataInicio') || undefined;
+        const dataFim = queryParams.get('dataFim') || undefined;
+  
+        if (this.nomeProjeto) {
+          this.carregarTarefas(this.nomeProjeto, dataInicio, dataFim);
+        }
+      });
     });
   }
 
-  carregarTarefas(projeto: string) {
-    this.gitlabService.obterIssuesPorProjetoNome(projeto).subscribe(
+  carregarTarefas(nomeProjeto: string, dataInicio?: string, dataFim?: string) {
+    this.gitlabService.obterIssuesPorProjetoNome(nomeProjeto, dataInicio, dataFim).subscribe(
       (dados: Issue[]) => {
         this.tarefas = dados;
         this.pendentesTotal = this.tarefas.length;
@@ -64,6 +106,16 @@ export class TarefasComponent implements OnInit {
     );
   }
 
+  get tarefasFiltradas() {
+    if (!this.filtroColuna || !this.filtroValor) {
+      return this.tarefas;
+    }
+    const valor = this.filtroValor.toLowerCase();
+    return this.tarefas.filter(tarefa => {
+      const campo = (tarefa[this.filtroColuna] || '').toString().toLowerCase();
+      return campo.includes(valor);
+    });
+  }
 
   obterStatusGeral(pendentesTotal: number, atrasadasTotal: number): string {
     if (pendentesTotal === 0) return 'Estável'; 
@@ -103,7 +155,30 @@ export class TarefasComponent implements OnInit {
     });
   }
 
+  corDeStatus(status: string): string {
+    if (this.LABEL_STATUS_COLORS[status]) {
+      return this.LABEL_STATUS_COLORS[status];
+    }
+    if (this.LABEL_STATUS_COLORS[status + ' QA']) {
+      return this.LABEL_STATUS_COLORS[status + ' QA'];
+    }
+    return "#2c3e50"; 
+  }
+
   voltar(): void {
     this.router.navigate(['/dashboard']);
   }
+
+  showTooltip(index: number) {
+    this.openedTooltip = index;
+  }
+  hideTooltip() {
+    this.openedTooltip = null;
+  }
+  prazoAtrasado(data: string | Date): boolean {
+    const hoje = new Date();
+    const prazo = new Date(data);
+    return prazo < new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  }
+  
 }

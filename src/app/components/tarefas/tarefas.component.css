@@ -422,4 +422,80 @@
     min-width: 60px; /* Define uma largura mínima para padronizar */
     text-align: center;
 }
-  
+
+
+.score-tooltip-modal {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: 624px;
+  max-width: 90vw;
+  height: auto;
+  min-height: 180px;
+  background: #2B3D52;
+  color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  display: none;
+  z-index: 9999;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: #2B3D52;
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+  box-shadow: -2px 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.score-cell:hover .score-tooltip-modal {
+  display: block;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+}
+
+.col-peso,
+.col-score {
+  border-right: 1px solid rgba(173, 200, 235, 0.24);
+}
+
+.badge-classificacao {
+  background: #C0D5F20F;
+  color: #cbd6e2;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+.badge {
+  font-size: 14px;
+}
+
+.col-subtotal {
+  text-align: right !important;
+}
+
+.dot-red {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background-color: #E0241A;
+}

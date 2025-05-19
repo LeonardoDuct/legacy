@@ -1,5 +1,5 @@
 <nav class="Navigation_sidebar" [class.open]="isMenuOpen">
-    <h3 class="app-title">My App</h3>
+    <h3 class="app-title">Menu</h3>
     <ul class="menu">
         <!-- Dashboard -->
         <li class="menu-item">
@@ -10,11 +10,15 @@
                     </svg>
                 </span>
                 <span>Dashboard</span>
-                <span class="arrow" [class.rotated]="subMenuStates['dashboard']">›</span>
+                <span class="arrow" [class.rotated]="subMenuStates['dashboard']">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </span>
             </div>
             <ul class="submenu" *ngIf="subMenuStates['dashboard']">
-                <a [routerLink]="['/dashboard']">Tarefas</a>
-            </ul>
+                <li><a [routerLink]="['/dashboard']">Tarefas</a></li>
+              </ul>
         </li>
 
         <!-- Cadastro -->
@@ -26,10 +30,12 @@
                     </svg>
                 </span>
                 <span>Cadastro</span>
-                <span class="arrow" [class.rotated]="subMenuStates['cadastro']">›</span>
+                <span class="arrow" [class.rotated]="subMenuStates['cadastro']"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                  </svg></span>
             </div>
             <ul class="submenu" *ngIf="subMenuStates['cadastro']">
-                <a [routerLink]="['/cadastro']">Score</a>
+                <li><a [routerLink]="['/cadastro']">Score</a></li>
             </ul>
         </li>
 
@@ -43,7 +49,9 @@
                     </svg>
                 </span>
                 <span>Configurações</span>
-                <span class="arrow" [class.rotated]="subMenuStates['configuracoes']">›</span>
+                <span class="arrow" [class.rotated]="subMenuStates['configuracoes']"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                  </svg></span>
             </div>
             <ul class="submenu" *ngIf="subMenuStates['configuracoes']">
                 <li class="submenu-item">Usuários</li>
@@ -55,6 +63,6 @@
 <header class="header-top">
     <button class="menu-button" aria-label="Abrir menu" (click)="toggleMenu()">☰</button>
     <div class="title">
-        <span class="dashboard">LEGACY</span>
-    </div>
+        <img src="assets/images/login_logo.svg" alt="Logo" class="logo-img">
+    </div>    
 </header>

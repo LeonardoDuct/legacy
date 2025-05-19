@@ -109,3 +109,24 @@
 .title .barra {
     color: white;
 }
+
+.logo-img {
+    height: 30px; /* ou o tamanho desejado */
+    width: auto;
+}
+
+.arrow {
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+  }
+  
+  .arrow svg {
+    width: 15px;
+    height: 15px;
+    transition: transform 0.2s;
+  }
+  
+  .arrow.rotated svg {
+    transform: rotate(90deg); /* gira 90 graus pra baixo */
+  }

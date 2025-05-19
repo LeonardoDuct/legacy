@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Issue } from '../interfaces/models';
+import { HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -26,8 +27,12 @@ export class GitlabService {
     return this.http.get(`${this.apiUrl}/labels`);
   }
 
-  obterIssuesPorProjetoNome(nomeProjeto: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/issues/detalhes/${nomeProjeto}`);
+  obterIssuesPorProjetoNome(nomeProjeto: string, dataInicio?: string, dataFim?: string): Observable<any> {
+    let params = new HttpParams();
+    if (dataInicio) params = params.set('dataInicio', dataInicio);
+    if (dataFim) params = params.set('dataFim', dataFim);
+  
+    return this.http.get(`${this.apiUrl}/issues/detalhes/${nomeProjeto}`, { params });
   }
 
   obterIssuesPorPeriodo(dataInicio: string, dataFim: string): Observable<Issue[]> {

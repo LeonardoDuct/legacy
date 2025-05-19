@@ -41,7 +41,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   pendentesTotal: number = 0;
   atrasadasTotal: number = 0;
   statusGeral: string = 'Estável'; // 🔹 Inicializando com um valor padrão
-  periodoSelecionado: string = '7';
+  periodoSelecionado: string = '';
   dataInicio: string = '';
   dataFim: string = '';
   nomeProjeto: string = '';
@@ -53,73 +53,64 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.carregarProjetos();
   }
 
+  private processarProjetos(dados: any[]): Projeto[] {
+    return dados.map(projeto => {
+      const abertasDentroPrazo = Number(projeto.abertas_dentro_prazo) || 0;
+      const abertasForaPrazo = Number(projeto.abertas_com_atraso) || 0;
+      return {
+        nome: projeto.projeto_principal,
+        abertas: Number(projeto.abertas) || 0,
+        abertasDentroPrazo,
+        abertasForaPrazo,
+        fechadas: Number(projeto.fechadas) || 0,
+        fechadasDentroPrazo: Number(projeto.fechadas_dentro_prazo) || 0,
+        fechadasForaPrazo: Number(projeto.fechadas_com_atraso) || 0,
+        abertas_com_atraso: abertasForaPrazo,
+        fechadasDentro: Number(projeto.fechadas_dentro_prazo) || 0,
+        fechadasFora: Number(projeto.fechadas_com_atraso) || 0,
+        status: this.obterStatus(abertasDentroPrazo, abertasForaPrazo),
+      };
+    });
+  }
+
   atualizarFiltro() {
     const hoje = new Date();
-    const dataInicial = new Date();
   
     if (this.periodoSelecionado !== 'personalizado') {
-      dataInicial.setDate(hoje.getDate() - Number(this.periodoSelecionado));
+      const dias = Number(this.periodoSelecionado.replace('d', ''));
+      const dataInicial = new Date();
+      dataInicial.setDate(hoje.getDate() - dias);
+  
       this.dataInicio = dataInicial.toISOString().split('T')[0];
       this.dataFim = hoje.toISOString().split('T')[0];
+    } else {
+      if (!this.dataInicio || !this.dataFim) {
+        alert('Selecione as duas datas para o período personalizado.');
+        return;
+      }
     }
   
-    console.log("Filtro aplicado ao clicar no botão:", this.periodoSelecionado, this.dataInicio, this.dataFim);
-  
-    // 🔹 Agora aplicamos apenas a filtragem das tarefas!
     this.carregarTarefasPorData(this.dataInicio, this.dataFim);
   }
 
- carregarTarefasPorData(dataInicio: string, dataFim: string) {
-  console.log("Filtrando tarefas entre:", dataInicio, dataFim);
-
-  this.gitlabService.obterIssuesPorPeriodo(dataInicio, dataFim).subscribe((dados: Issue[]) => {
-    console.log("🔹 Total de tarefas recebidas da API:", dados.length);
-
-    // 🔹 Atualizando os projetos já carregados com os dados filtrados
-    this.projetos.forEach(projeto => {
-      const tarefasFiltradas = dados.filter(tarefa => tarefa.sigla_cliente === projeto.nome);
-
-      console.log(`🔍 Projeto: ${projeto.nome} | Tarefas filtradas: ${tarefasFiltradas.length}`);
-
-      projeto.abertas = tarefasFiltradas.length;
-      projeto.abertasDentroPrazo = tarefasFiltradas.filter(tarefa => tarefa.prazo && new Date(tarefa.prazo) >= new Date()).length;
-      projeto.abertasForaPrazo = tarefasFiltradas.filter(tarefa => tarefa.prazo && new Date(tarefa.prazo) < new Date()).length;
-      projeto.fechadas = tarefasFiltradas.filter(tarefa => tarefa.status === "closed").length;
-      projeto.fechadasDentroPrazo = tarefasFiltradas.filter(tarefa => tarefa.status === "closed" && tarefa.data_fechamento && tarefa.prazo && new Date(tarefa.data_fechamento) <= new Date(tarefa.prazo)).length;
-      projeto.fechadasForaPrazo = tarefasFiltradas.filter(tarefa => tarefa.status === "closed" && tarefa.data_fechamento && tarefa.prazo && new Date(tarefa.data_fechamento) > new Date(tarefa.prazo)).length;
-      projeto.abertas_com_atraso = projeto.abertasForaPrazo;
-      projeto.status = this.obterStatus(projeto.abertasDentroPrazo, projeto.abertasForaPrazo);
+  carregarTarefasPorData(dataInicio: string, dataFim: string) {
+    this.gitlabService.obterIssuesPorPeriodo(dataInicio, dataFim).subscribe((dados: any[]) => {
+      this.projetos = this.processarProjetos(dados);
+      this.atualizarTotais();
     });
-
-    console.log("🔹 Projetos atualizados após filtragem:", this.projetos);
-  });
-}
+  }
   
   carregarProjetos(): void {
     this.gitlabService.obterIssuesPorProjeto().subscribe((dados: any[]) => {
-      this.projetos = dados.map(projeto => {
-        const abertasDentroPrazo = Number(projeto.abertas_dentro_prazo) || 0;
-        const abertasForaPrazo = Number(projeto.abertas_com_atraso) || 0;
-
-        return {
-          nome: projeto.projeto_principal,
-          abertas: Number(projeto.abertas) || 0,
-          abertasDentroPrazo,
-          abertasForaPrazo,
-          fechadas: Number(projeto.fechadas) || 0,
-          fechadasDentroPrazo: Number(projeto.fechadas_dentro_prazo) || 0,
-          fechadasForaPrazo: Number(projeto.fechadas_com_atraso) || 0,
-          abertas_com_atraso: abertasForaPrazo,
-          fechadasDentro: Number(projeto.fechadas_dentro_prazo) || 0,
-          fechadasFora: Number(projeto.fechadas_com_atraso) || 0,
-          status: this.obterStatus(abertasDentroPrazo, abertasForaPrazo),
-        };
-      });
-
-      this.pendentesTotal = this.projetos.reduce((total, projeto) => total + projeto.abertas, 0);
-      this.atrasadasTotal = this.projetos.reduce((total, projeto) => total + projeto.abertasForaPrazo, 0);
-      this.statusGeral = this.obterStatusGeral(this.pendentesTotal, this.atrasadasTotal);
+      this.projetos = this.processarProjetos(dados);
+      this.atualizarTotais();
     });
+  }
+  
+  private atualizarTotais() {
+    this.pendentesTotal = this.projetos.reduce((total, projeto) => total + projeto.abertas, 0);
+    this.atrasadasTotal = this.projetos.reduce((total, projeto) => total + projeto.abertasForaPrazo, 0);
+    this.statusGeral = this.obterStatusGeral(this.pendentesTotal, this.atrasadasTotal);
   }
 
   obterStatus(abertasDentroPrazo: number, abertasForaPrazo: number): string {
@@ -143,7 +134,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     return 'Instável';
   }
 
-  removerAcentos(status: string): string {
+  removerAcentos(status: string | undefined | null): string {
+    if (!status) return '';
     return status.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   }
 
