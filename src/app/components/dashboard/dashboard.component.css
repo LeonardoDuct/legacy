@@ -45,7 +45,7 @@
 
 /* Bloco de Tecnologia */
 .bloco-tecnologia {
-    display: flex;
+   flex: 0 0 360px; /* Não cresce, não encolhe, largura fixa */ 
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
@@ -183,11 +183,12 @@
 /* BLOCO FILTRO */
 /* ====================== */
 .bloco-filtro {
-    display: flex;
+    flex: 1 1 0;   /* Cresce para ocupar o espaço restante */
+    min-width: 300px; /* Evita quebrar em telas menores */
     flex-direction: column;
-    padding: 32px 70px 1px 32px;
+    padding: var(--spacing-lg);
     width: auto;
-    height: 150px;
+    height: 149px;
     color: #f5f9ff;
     border-bottom: 1px solid rgba(173, 200, 235, 0.14);
   }
@@ -314,13 +315,16 @@
     flex-direction: column;
     overflow: hidden;
     margin-bottom: 16px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, outline 0.3s ease;
 }
 
 .quadro:hover {
-    transform: scale(1.05); /* Aumenta o tamanho */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Adiciona uma sombra */
+    outline-offset: -4px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* sombra mais escura */
+
+    cursor: pointer;
 }
+
 
 .quadro-header {
     display: flex;

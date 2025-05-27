@@ -12,7 +12,6 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    width: 360px;
     min-width: 320px;
     height: 148px;
     padding: 32px;
@@ -108,7 +107,6 @@
     position: relative;
     display: flex;
     flex-direction: row;
-    width: 360px;
     min-width: 320px;
     height: 148px;
     padding: 16px;
@@ -189,17 +187,19 @@
 /* BLOCO FILTRO */
 /* ====================== */
 .bloco-filtro {
-    width: 720px;
-    height: 152px;
-    min-width: 500px;
-    padding: var(--spacing-lg);
-    gap: var(--spacing-sm);
-    background: var(--primary-bg);
-    border-radius: var(--border-radius-md);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+  min-width: 500px;
+  /* width: 720px;  <-- remova ou comente esta linha */
+  height: 149px;
+  padding: var(--spacing-lg);
+  gap: var(--spacing-sm);
+  background: var(--primary-bg);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 2 1 0%; /* <- faz o bloco crescer para ocupar o espaço restante */
+  box-sizing: border-box;
+}
   
   /* Título do Filtro */
   .titulo-filtro {
@@ -426,7 +426,7 @@
 
 .score-tooltip-modal {
   position: absolute;
-  left: 100%;
+  left: calc(100% - 80px);
   top: 0;
   width: 624px;
   max-width: 90vw;
@@ -444,16 +444,9 @@
   overflow-wrap: break-word;
 }
 
-.tooltip-arrow {
-  position: absolute;
-  left: -10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  background: #2B3D52;
-  clip-path: polygon(0 50%, 100% 0, 100% 100%);
-  box-shadow: -2px 2px 6px rgba(0, 0, 0, 0.2);
+.score-tooltip-modal.tooltip-up {
+  top: auto;
+  bottom: 0;
 }
 
 .score-cell:hover .score-tooltip-modal {
@@ -498,4 +491,52 @@ th, td {
   margin-right: 6px;
   border-radius: 50%;
   background-color: #E0241A;
+}
+
+.status-bolinha {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+  border: 1px solid #bbb;
+}
+
+.status-bolinha.verde {
+  background: #18aa61;
+  border-color: #18aa61;
+}
+.status-bolinha.vermelha {
+  background: #E0241A;
+  border-color: #E0241A;
+}
+.status-bolinha.amarela {
+  background: #FFFF00;
+  border-color: #FFFF00;
+}
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip {
+  visibility: hidden;
+  background-color: #2B3D52; /* Fundo escuro */
+  color: #fff; /* Texto branco */
+  text-align: center;
+  padding: 10px 15px;
+  border-radius: 5px;
+  position: absolute;
+  bottom: 100%; /* Posiciona acima do elemento */
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
 }

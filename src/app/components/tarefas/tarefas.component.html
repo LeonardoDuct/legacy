@@ -215,7 +215,8 @@
                 {{ tarefa.score_total }}
               </span>
               <ng-container *ngIf="openedTooltip === i">
-                <div class="score-tooltip-modal">
+                <div class="score-tooltip-modal"
+                     [ngClass]="{'tooltip-up': tarefasFiltradas.length - i <= 5}">
                   <div class="tooltip-arrow"></div>
                   <table>
                     <thead>
@@ -266,14 +267,23 @@
                 {{ tarefa.status }}
               </span>
             </td>
-            <td>{{ tarefa.prazo ? (tarefa.prazo | date: 'dd/MM/yyyy') : 'Indefinido' }}</td>
+            <td class="tooltip-container">
+              <span class="status-bolinha"
+                [ngClass]="{
+                  'verde': !prazoAtrasado(tarefa.prazo) && !tarefa.motivoAtraso,
+                  'vermelha': prazoAtrasado(tarefa.prazo) && !tarefa.motivoAtraso,
+                  'amarela': tarefa.motivoAtraso
+                }"
+              ></span>
+              {{ tarefa.prazo ? (tarefa.prazo | date: 'dd/MM/yyyy') : 'Indefinido' }}
+            
+              <span class="tooltip" *ngIf="tarefa.motivoAtraso">
+                {{ tarefa.motivoAtraso }}
+              </span>
+            </td>
             <td class="coluna-responsavel">{{ tarefa.responsavel }}</td>
           </tr>
         </tbody>
       </table>
     </div>
   </section>
-  
-  
-  
-

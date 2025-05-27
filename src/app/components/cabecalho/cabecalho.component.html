@@ -54,7 +54,9 @@
                   </svg></span>
             </div>
             <ul class="submenu" *ngIf="subMenuStates['configuracoes']">
-                <li class="submenu-item">Usuários</li>
+                <li class="submenu-item">
+                    <a [routerLink]="['/usuarios']">Usuários</a>
+                </li>
             </ul>
         </li>
     </ul>
@@ -63,6 +65,9 @@
 <header class="header-top">
     <button class="menu-button" aria-label="Abrir menu" (click)="toggleMenu()">☰</button>
     <div class="title">
-        <img src="assets/images/login_logo.svg" alt="Logo" class="logo-img">
-    </div>    
+        <a [routerLink]="['/dashboard']">
+          <img src="assets/images/login_logo.svg" alt="Logo" class="logo-img" style="cursor: pointer;" />
+        </a>
+      </div>
+      
 </header>

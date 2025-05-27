@@ -130,3 +130,12 @@
   .arrow.rotated svg {
     transform: rotate(90deg); /* gira 90 graus pra baixo */
   }
+
+  .submenu a {
+    color: #cccccc; /* Alterando a cor padrão dos links */
+    text-decoration: none; /* Removendo sublinhado */
+}
+
+.submenu a:hover {
+    color: #ffffff; /* Definindo uma cor mais clara ao passar o mouse */
+}

@@ -14,6 +14,8 @@ interface Issue {
   responsavel: string;
   prioridade?: number;
   score_total?: number;
+  labels?: string[];
+  motivoAtraso?: string | null;
 }
 
 @Component({
@@ -67,6 +69,8 @@ export class TarefasComponent implements OnInit {
     "Status / Stand By QA": "#cd5b45"
   };
 
+  AGUARDANDO_INTERNAS: string[] = ['Aguardando ajustes', 'Aguardando review'];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -90,21 +94,43 @@ export class TarefasComponent implements OnInit {
   }
 
   carregarTarefas(nomeProjeto: string, dataInicio?: string, dataFim?: string) {
-    this.gitlabService.obterIssuesPorProjetoNome(nomeProjeto, dataInicio, dataFim).subscribe(
-      (dados: Issue[]) => {
-        this.tarefas = dados;
+    this.gitlabService.obterIssuesPorProjetoNome(nomeProjeto, dataInicio, dataFim).subscribe({
+      next: (dados: Issue[]) => {
+        this.tarefas = dados.map(tarefa => ({
+          ...tarefa,
+          motivoAtraso: this.getMotivoAtraso(tarefa)
+        }));
+  
         this.pendentesTotal = this.tarefas.length;
         this.atrasadasTotal = this.tarefas.filter(
-          (tarefa) => tarefa.prazo && new Date(tarefa.prazo) < new Date()
+          tarefa => tarefa.prazo && new Date(tarefa.prazo) < new Date() && !tarefa.motivoAtraso
         ).length;
-
+  
         this.statusGeral = this.obterStatusGeral(this.pendentesTotal, this.atrasadasTotal);
       },
-      (erro) => {
+      error: (erro) => {
         console.error('Erro ao carregar tarefas:', erro);
       }
-    );
+    });
   }
+
+  getMotivoAtraso(tarefa: Issue): string | null {
+    if (!this.prazoAtrasado(tarefa.prazo) || !tarefa.labels) return null;
+
+    // Busca label "Aguardando X" que não seja interna
+    const labelAguardandoOutro = tarefa.labels.find(label =>
+      label.startsWith('Aguardando') &&
+      !this.AGUARDANDO_INTERNAS.includes(label)
+    );
+
+    if (labelAguardandoOutro) {
+      // Extrai o setor, ex: "Aguardando QA"
+      const setor = labelAguardandoOutro.replace('Aguardando ', '');
+      return `Essa issue está aguardando o setor de ${setor} para ser finalizada.`;
+    }
+    return null;
+  }
+  
 
   get tarefasFiltradas() {
     if (!this.filtroColuna || !this.filtroValor) {

@@ -1,0 +1,392 @@
+.header-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 1px;
+  background-color: var(--primary-bg);
+}
+
+/* Bloco de Tecnologia */
+.bloco-tecnologia {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  width: auto;
+  min-width: 720px;
+  height: 148px;
+  padding: var(--spacing-lg);
+  color: var(--text-primary);
+  border-right: 1px solid var(--border-contrast);
+  border-bottom: 1px solid var(--border-contrast);
+}
+
+.bloco-tecnologia .conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: 296px;
+}
+
+.bloco-tecnologia .titulo {
+  font-weight: var(--font-weight-light);
+  font-size: var(--font-normal);
+  line-height: 125%;
+  color: var(--text-muted);
+}
+
+.bloco-tecnologia .status {
+  display: flex;
+  width: 86px;
+  height: 29px;
+  font-weight: var(--font-weight-bold);
+  font-size: 22px; /* Manter fixo, pois não tem variável */
+}
+
+/* ====================== */
+/* BLOCO FILTRO */
+/* ====================== */
+
+.bloco-filtro {
+  width: 720px;
+  height: 149px;
+  min-width: 500px;
+  padding: var(--spacing-lg);
+  gap: var(--spacing-sm);
+  background: var(--primary-bg);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Título do Filtro */
+.titulo-filtro {
+  font-size: var(--font-large);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-primary);
+}
+
+/* Container dos filtros */
+.filtro-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* Dropdown para selecionar a categoria */
+.dropdown-wrapper {
+  width: 656px;
+  height: var(--height-small);
+  min-width: 320px;
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.dropdown {
+  width: 100%;
+  height: 100%;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  background: var(--secondary-bg);
+  color: var(--text-primary);
+  font-size: var(--font-medium);
+  cursor: pointer;
+}
+
+/* Input de pesquisa */
+.input-wrapper {
+  width: 656px;
+  height: var(--height-small);
+  min-width: 320px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  position: relative;
+}
+
+/* Campo de texto */
+.input-text {
+  width: 596px;
+  height: var(--height-small);
+  padding: var(--spacing-xs);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  background: var(--secondary-bg);
+  color: var(--text-primary);
+  font-size: var(--font-medium);
+}
+
+.input-text::placeholder {
+  color: var(--placeholder-text);
+}
+
+/* Botão de pesquisa */
+
+
+.icon-search {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: var(--text-primary);
+}
+
+.cadastro-page {
+  display: flex;
+  height: 100vh;
+  background: #1d2b3a;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 20px; 
+}
+  
+  .form-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .cadastro-box {
+    width: 100%;
+    max-width: 350px;
+    background-color: #1d2b3a;
+    color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.15);
+    position: relative;
+  }
+  
+  .cadastro-box .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .btn-fechar {
+    background: none;
+    color: white;
+    font-size: 24px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+  }
+  
+  .btn-fechar:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-search {
+    width: 44px;
+    height: var(--height-small);
+    background: var(--primary-blue);
+  }
+  
+  .btn-search:hover {
+    background: var(--hover-blue);
+  }
+
+  .icon-close {
+    width: 24px; /* Tamanho do ícone */
+    height: 24px; /* Tamanho do ícone */
+  }
+  
+  .cadastro-box .logo img {
+    height: 32px;
+  }
+  
+  .cadastro-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .cadastro-box form label {
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+    color: #ccc;
+  }
+  
+  .cadastro-box form input {
+    padding: 0.7rem;
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #2e3b4e;
+    color: white;
+    font-size: 1rem;
+    transition: outline 0.2s;
+  }
+  
+  .cadastro-box form input::placeholder {
+    color: #aaa;
+  }
+  
+  .cadastro-box form input:focus {
+    outline: 2px solid #0a66ff;
+  }
+  
+  .erro-msg {
+    color: #ff7f7f;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+  
+  .sucesso-msg {
+    color: #90ee90;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+  
+  .cadastro-box form button {
+    padding: 0.9rem;
+    background-color: #0a66ff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .cadastro-box form button:hover:not(:disabled) {
+    background-color: #004fc1;
+  }
+  
+  .cadastro-box form button:disabled {
+    background-color: #90caf9;
+    cursor: not-allowed;
+  }
+
+  .cadastro-title {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 2rem;
+  }
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Garantindo que esteja acima dos outros elementos */
+  }
+  
+  .tabela-container {
+    padding: 1rem;
+    width: 100%;
+    max-width: 900px; /* Ajuste para um tamanho maior */
+  }
+  
+  .tabela-tarefas {
+    width: 100%;
+    min-width: 600px; /* Define um tamanho mínimo */
+    border-collapse: separate; /* Use separate para suportar bordas arredondadas */
+    background-color: #223348;
+    border-spacing: 0; /* Garante que não haja espaçamento entre células */
+    border-radius: 7px; /* Adiciona bordas arredondadas */
+    overflow: hidden; /* Garante que o arredondamento seja aplicado */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Contorno externo da tabela */
+  }
+  
+  .tabela-tarefas th,
+.tabela-tarefas td {
+  padding: 10px;
+  text-align: inherit;
+}
+
+/* Cabeçalho da tabela */
+.tabela-tarefas th {
+  color: #EBF4FFE5;
+  font-weight: var(--font-weight-bold) !important; /* Font weight 600 para o título */
+  font-size: var(--font-small);
+}
+
+/* Linhas da tabela */
+.tabela-tarefas tr {
+  position: relative; /* Necessário para posicionar o pseudo-elemento */
+}
+
+.tabela-tarefas tr:after {
+  content: '';
+  position: absolute;
+  bottom: 0; /* Alinha no final da linha */
+  left: 10px; /* Define o início da linha */
+  right: 10px; /* Define o final da linha antes da borda */
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2); /* Cor da linha */
+}
+
+.tabela-tarefas td {
+  color: #EBF4FFE5;
+  font-size: var(--font-normal) !important;
+  font-weight: var(--font-weight-light) !important;
+  border-bottom: none; /* Remove a borda padrão entre as células */
+}
+/* Estilo base para todos os botões */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-normal);
+  padding: var(--spacing-xs);
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.btn:active {
+  color: var(--text-primary);
+}
+
+.btn:disabled {
+  background: rgba(12, 108, 233, 0.5);
+  cursor: not-allowed;
+}
+
+/* Estilo específico para o botão de cadastro */
+.btn-cadastro {
+  width: 169px;
+  height: var(--field-height, 40px);
+  margin-left: auto; /* Alinha o botão à direita */
+  padding: 8px var(--button-horizontal-padding, 16px);
+  background: var(--Semantic-colors-Primary, #0C6CE9);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.btn-cadastro:hover {
+  background: #0A5BC7;
+}
+
+.btn-cadastro:active {
+  background: #084BA3;
+}
+  
+  /* Responsivo */
+  @media (max-width: 600px) {
+    .cadastro-box {
+      max-width: 98vw;
+      padding: 1rem;
+      border-radius: 4px;
+      box-shadow: none;
+    }
+  }

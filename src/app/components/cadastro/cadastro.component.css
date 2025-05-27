@@ -53,7 +53,7 @@
 
 .bloco-filtro {
   width: 720px;
-  height: 152px;
+  height: 149px;
   min-width: 500px;
   padding: var(--spacing-lg);
   gap: var(--spacing-sm);
@@ -857,6 +857,10 @@ input#classificacao {
   transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
 }
 
+.btn:active {
+  color: var(--text-primary);
+}
+
 /* Estados genéricos */
 .btn:hover {
   transform: scale(1.05);
@@ -989,6 +993,11 @@ input#classificacao {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+.btn-salvar {
+  color: var(--placeholder-text);
+  margin-left: 10px; /* Ajuste o valor para mover o botão para longe da lixeira */
+}
+
 /* ====================== */
 /* POSICIONAMENTOS ESPECÍFICOS */
 /* ====================== */
@@ -1002,7 +1011,7 @@ input#classificacao {
 }
 
 .btn-acoes button {
-  margin: 0;
+  margin: 0 2px;
   padding: 0;
   width: 30px;
   height: 30px;
@@ -1031,3 +1040,48 @@ input#classificacao {
   background-color: #c62828; /* Vermelho mais escuro no hover */
   transform: scale(1.05); /* Aumenta levemente o tamanho */
 }
+
+.modal-sucesso-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.10); /* leve escurecido para dar foco */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-sucesso-content {
+  color: #12d212;
+  padding: 18px 32px;                   /* padding menor */
+  border-radius: 10px;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.18);
+  font-size: 1.1rem;                    /* um pouco menor */
+  font-weight: 600;
+  border: 1.5px solid #c3e6cb;
+  text-align: center;
+  min-width: 220px;
+  max-width: 320px;
+  margin: 0 16px;                       /* evita colar nas bordas no mobile */
+  animation: pop-in 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Suaviza a sombra e arredonda mais */

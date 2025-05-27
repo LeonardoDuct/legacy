@@ -50,6 +50,7 @@ export class CadastroComponent implements OnInit {
   selectedCategoria: Categoria | undefined;
   modoEdicao = false;
   classificacaoAtual: DadoCategoria | null = null;
+  mensagemSucesso: string | null = null;
 
   // Modal de confirmação
   modalConfirmacaoAberto = false;
@@ -65,12 +66,13 @@ export class CadastroComponent implements OnInit {
   // --- Categoria ---
 
   carregarCategorias() {
-    this.gitlabService.obterCategorias().subscribe(
-      (dados) => {
+    this.gitlabService.obterCategorias().subscribe({
+      next: (dados) => {
         this.categorias = dados.map((categoria: any) => {
           const nomeCorrigido = categoria.nome_categoria.toLowerCase().includes('urgenc') ? 'Urgência' : categoria.nome_categoria;
-
-          const mapDados = (classificacao: string, descricao: string, score: string) =>
+  
+          // Função para os blocos normais (impacto, prazo, etc.)
+          const mapDadosPadrao = (classificacao: string, descricao: string, score: string) =>
             classificacao && descricao && score
               ? classificacao.split('\n').map((_, index) => ({
                   classificacao: classificacao.split('\n')[index],
@@ -78,7 +80,20 @@ export class CadastroComponent implements OnInit {
                   score: parseFloat(score.split('\n')[index]) || 0,
                 }))
               : [];
-
+  
+          // Função especial para Cliente (vem tudo junto, separado por |)
+          const mapDadosCliente = (classificacao: string) =>
+            classificacao
+              ? classificacao.split('\n').map((linha: string) => {
+                  const [classificacao, descricao, score] = linha.split('|');
+                  return {
+                    classificacao,
+                    descricao: descricao && descricao.trim() !== '' ? descricao : 'SEM DESCRIÇÃO',
+                    score: parseFloat(score) || 0,
+                  };
+                })
+              : [];
+  
           return {
             id: categoria.nome_categoria.toLowerCase(),
             titulo: nomeCorrigido,
@@ -86,23 +101,23 @@ export class CadastroComponent implements OnInit {
             expandida: false,
             dados:
               nomeCorrigido === 'Cliente'
-                ? mapDados(categoria.classificacao_cliente, categoria.descricao_cliente, categoria.score_cliente)
+                ? mapDadosCliente(categoria.classificacao_cliente)
                 : nomeCorrigido === 'Prazo'
-                ? mapDados(categoria.classificacao_prazo, categoria.descricao_prazo, categoria.score_prazo)
+                ? mapDadosPadrao(categoria.classificacao_prazo, categoria.descricao_prazo, categoria.score_prazo)
                 : nomeCorrigido === 'Impacto'
-                ? mapDados(categoria.classificacao_impacto, categoria.descricao_impacto, categoria.score_impacto)
+                ? mapDadosPadrao(categoria.classificacao_impacto, categoria.descricao_impacto, categoria.score_impacto)
                 : nomeCorrigido === 'Urgência'
-                ? mapDados(categoria.classificacao_urgencia, categoria.descricao_urgencia, categoria.score_urgencia)
+                ? mapDadosPadrao(categoria.classificacao_urgencia, categoria.descricao_urgencia, categoria.score_urgencia)
                 : nomeCorrigido === 'Complexidade'
-                ? mapDados(categoria.classificacao_complexidade, categoria.descricao_complexidade, categoria.score_complexidade)
+                ? mapDadosPadrao(categoria.classificacao_complexidade, categoria.descricao_complexidade, categoria.score_complexidade)
                 : [],
           };
         });
       },
-      (error) => {
+      error: (error) => {
         console.error('Erro ao carregar categorias:', error);
       }
-    );
+    });
   }
 
   toggleCategoria(id: string) {
@@ -115,9 +130,35 @@ export class CadastroComponent implements OnInit {
   }
 
   gravarCategorias() {
-    console.log('Categorias gravadas:', this.categorias);
-    this.fecharModal();
+    let erro = false;
+    let categoriasAtualizadas = 0;
+  
+    this.categorias.forEach((cat) => {
+      const nomeCategoriaSemAcento = this.removerAcentos(cat.titulo);
+  
+      this.gitlabService.atualizarCategoria(nomeCategoriaSemAcento, cat.titulo, cat.porcentagem)
+        .subscribe({
+          next: () => {
+            categoriasAtualizadas++;
+            if (categoriasAtualizadas === this.categorias.length && !erro) {
+              this.mostrarMensagemSucesso('Categorias salvas com sucesso!');
+              this.carregarCategorias();
+              this.fecharModal();
+            }
+          },
+          error: (err) => {
+            erro = true;
+            this.mostrarMensagemSucesso('Erro ao salvar categorias!');
+            console.error('Erro ao atualizar categoria:', err);
+          }
+        });
+    });
   }
+  
+  removerAcentos(texto: string): string {
+    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+  
 
   editarCategoria(categoria: Categoria) {
     console.log('Editar categoria:', categoria);
@@ -145,16 +186,20 @@ export class CadastroComponent implements OnInit {
   }
 
   gravarNovaCategoria(nome: string, peso: number) {
-    const nova: Categoria = {
-      id: `categoria-${this.categorias.length + 1}`,
-      titulo: nome,
-      porcentagem: peso,
-      expandida: false,
-      dados: [{ classificacao: '', descricao: '', score: 0 }],
-    };
-
-    this.categorias.push(nova);
-    this.fecharModalNovaCategoria();
+    // Chama o service para criar a categoria no backend
+    this.gitlabService.criarCategoria(nome, peso).subscribe({
+      next: (resposta) => {
+        // Atualiza a lista de categorias local (o ideal é recarregar do backend para garantir sincronismo)
+        this.carregarCategorias();
+        this.fecharModalNovaCategoria();
+        this.mostrarMensagemSucesso('Categoria criada com sucesso!');
+      },
+      error: (error) => {
+        console.error('Erro ao criar categoria:', error);
+        // Você pode mostrar mensagem de erro se quiser
+        this.mostrarMensagemSucesso('Erro ao criar categoria!');
+      }
+    });
   }
 
   // --- Classificação ---
@@ -189,40 +234,69 @@ export class CadastroComponent implements OnInit {
   }
 
   gravarClassificacao() {
-    if (!this.selectedCategoria || !this.classificacaoAtual) return;
-
-    this.gitlabService.atualizarClassificacao(
-      this.selectedCategoria.titulo,
-      this.classificacaoAtual.classificacao,
-      this.novaClassificacao.descricao,
-      this.novaClassificacao.score
-    ).subscribe(
-      (resposta) => {
-        console.log('Classificação atualizada:', resposta);
-        if (this.classificacaoAtual) {
-          this.classificacaoAtual.descricao = resposta.descricao;
-          this.classificacaoAtual.score = resposta.nota;
+    if (this.modoEdicao && this.selectedCategoria && this.classificacaoAtual) {
+      this.gitlabService.atualizarClassificacao(
+        this.selectedCategoria.titulo,
+        this.classificacaoAtual.classificacao,
+        this.novaClassificacao.descricao,
+        this.novaClassificacao.score
+      ).subscribe({
+        next: (resposta) => {
+          if (this.classificacaoAtual) {
+            this.classificacaoAtual.descricao = resposta.descricao;
+            this.classificacaoAtual.score = resposta.nota;
+          }
+          this.fecharModalNovaClassificacao();
+          this.mostrarMensagemSucesso('Gravado com sucesso!');
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar classificação:', error);
         }
-      },
-      (error) => {
-        console.error('Erro ao atualizar classificação:', error);
+      });
+  
+    } else {
+      if (this.novaClassificacao.categoria) {
+        const categoria = this.novaClassificacao.categoria.trim();
+        const classificacao = this.novaClassificacao.classificacao.trim();
+        const descricao = this.novaClassificacao.descricao;
+        const score = this.novaClassificacao.score;
+  
+        console.log('Chamando criarClassificacao:', categoria, classificacao, descricao, score);
+  
+        this.gitlabService.criarClassificacao(categoria, classificacao, descricao, score)
+          .subscribe({
+            next: (resposta) => {
+              const categoriaObj = this.categorias.find(cat => cat.titulo === categoria);
+              if (categoriaObj) {
+                categoriaObj.dados.push({
+                  classificacao: classificacao,
+                  descricao: resposta.descricao,
+                  score: resposta.nota,
+                });
+              }
+              this.fecharModalNovaClassificacao();
+              this.mostrarMensagemSucesso('Gravado com sucesso!');
+            },
+            error: (error) => {
+              console.error('Erro ao criar classificação:', error);
+            }
+          });
       }
-    );
-
-    this.fecharModalNovaClassificacao();
+    }
   }
-
+  
   excluirClassificacao(categoria: Categoria, dado: DadoCategoria) {
-    this.gitlabService.excluirClassificacao(categoria.titulo, dado.classificacao).subscribe(
-      () => {
+    this.gitlabService.excluirClassificacao(categoria.titulo, dado.classificacao).subscribe({
+      next: () => {
         categoria.dados = categoria.dados.filter(item => item !== dado);
-        console.log('Classificação excluída com sucesso!');
+        this.mostrarMensagemSucesso('Classificação excluída com sucesso!');
       },
-      (error) => {
+      error: (error) => {
         console.error('Erro ao excluir classificação:', error);
       }
-    );
+    });
   }
+  
 
   incrementarScore() {
     this.novaClassificacao.score = Math.min(this.novaClassificacao.score + 0.5, 10.0);
@@ -275,9 +349,17 @@ export class CadastroComponent implements OnInit {
     this.dropdownAberto = !this.dropdownAberto;
   }
 
+  mostrarMensagemSucesso(texto: string) {
+    this.mensagemSucesso = texto;
+    setTimeout(() => {
+      this.mensagemSucesso = null;
+    }, 3000); // esconde após 3 segundos
+  }
+
   selecionarCategoria(categoria: Categoria, event: Event) {
     event.stopPropagation();
     this.selectedCategoria = categoria;
+    this.novaClassificacao.categoria = categoria.titulo; // <--- garanta isso!
     this.dropdownAberto = false;
   }
 
@@ -302,12 +384,39 @@ export class CadastroComponent implements OnInit {
 
   confirmarExclusao() {
     if (this.dadoSelecionado && this.categoriaSelecionada) {
-      this.categoriaSelecionada.dados = this.categoriaSelecionada.dados.filter(
-        dado => dado !== this.dadoSelecionado
-      );
+      this.gitlabService.excluirClassificacao(
+        this.categoriaSelecionada.titulo,
+        this.dadoSelecionado.classificacao
+      ).subscribe({
+        next: () => {
+          this.categoriaSelecionada!.dados = this.categoriaSelecionada!.dados.filter(
+            dado => dado !== this.dadoSelecionado
+          );
+          this.mostrarMensagemSucesso('Classificação excluída com sucesso!');
+          this.fecharModalConfirmacao();
+        },
+        error: (error) => {
+          console.error('Erro ao excluir classificação:', error);
+          this.fecharModalConfirmacao();
+        }
+      });
+  
     } else if (this.categoriaSelecionada) {
-      this.categorias = this.categorias.filter(cat => cat !== this.categoriaSelecionada);
+      this.gitlabService.excluirCategoria(this.categoriaSelecionada.id).subscribe({
+        next: () => {
+          this.categorias = this.categorias.filter(cat => cat !== this.categoriaSelecionada);
+          this.mostrarMensagemSucesso('Categoria excluída com sucesso!');
+          this.fecharModalConfirmacao();
+        },
+        error: (error) => {
+          console.error('Erro ao excluir categoria:', error);
+          this.fecharModalConfirmacao();
+        }
+      });
+  
+    } else {
+      this.fecharModalConfirmacao();
     }
-    this.fecharModalConfirmacao();
   }
+  
 }

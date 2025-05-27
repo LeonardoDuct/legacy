@@ -1,5 +1,8 @@
 import express, { Request, Response, Router } from 'express';
 import pool from '../config/database';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
 
@@ -15,6 +18,13 @@ interface Issue {
   link: string;
   score_total?: number;
   prioridade?: number; 
+}  
+
+interface UsuarioBody {
+  nome: string;
+  email: string;
+  senha: string;
+  admin: boolean;
 }
 
 interface Cliente {
@@ -35,6 +45,15 @@ interface ClassificacaoParams {
 interface ClassificacaoBody {
   descricao?: string;
   score?: number | string;
+}
+
+interface CategoriaParams {
+  nome_categoria: string;
+}
+
+interface CategoriaBody {
+  titulo: string;
+  porcentagem: number;
 }
 
 
@@ -66,9 +85,9 @@ router.get('/issues', async (_req: Request, res: Response) => {
           SELECT
               CASE
                   WHEN p.id IN (109) THEN 'Sustentação'
-                  WHEN p.id IN (113, 111, 106, 104, 73, 32) THEN 'Processos'
-                  WHEN p.id IN (133, 110, 107) THEN 'QA'
-                  WHEN p.id IN (108) THEN 'Projetos'
+                  WHEN p.id IN (113, 111, 106, 104, 32) THEN 'Processos'
+                  WHEN p.id IN (110, 107) THEN 'QA'
+                  WHEN p.id IN (108, 123) THEN 'Projetos'
                   WHEN p.id IN (130, 129) AND r.id = 328 THEN 'Produtos'
                   WHEN r.id = 3 THEN 'Desenvolvimento'
                   WHEN p.id IN (125) THEN 'RNC'
@@ -104,7 +123,6 @@ router.get('/issues', async (_req: Request, res: Response) => {
   }
 });
 
-/* ---------------------- Issues: Detalhes por Projeto ---------------------- */
 router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Response) => {
   try {
     const projetoPrincipal = req.params.projetoPrincipal;
@@ -131,7 +149,7 @@ router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Respo
         i.numero_is AS codigo_issue,
         CASE
           WHEN p.id IN (109) THEN 'Sustentação'
-          WHEN p.id IN (113, 111, 106, 104, 73, 32) THEN 'Processos'
+          WHEN p.id IN (113, 111, 106, 104, 32) THEN 'Processos'
           WHEN p.id IN (110, 107) THEN 'QA'
           WHEN p.id IN (108, 123) THEN 'Projetos'
           WHEN p.id IN (130, 129) AND r.id = 328 THEN 'Produtos'
@@ -143,47 +161,15 @@ router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Respo
         i.sigla_cliente AS cliente,
         i.labels,
         COALESCE(
-          (
-            SELECT lbl
-            FROM unnest(i.labels) AS lbl
-            WHERE 
-              (
-                (p.id IN (109) AND lbl IN (
-                  'Status / Não Iniciado', 'Status / Iniciado', 'Status / Liberado', 'Status / Pendente', 'Status / Stand By'
-                ))
-                OR
-                (p.id IN (113, 111, 106, 104, 73, 32) AND lbl IN (
-                  'Status / Fila', 'Status / Andamento', 'Status / Ajuste', 'Status / Validação', 'Status / Aguardando', 'Status / Pendente'
-                ))
-                OR
-                (p.id IN (133, 110, 107) AND lbl IN (
-                  'Status / Não Iniciado', 'Status / Iniciado', 'Status / Liberado', 'Status / Pendente', 'Status / Stand By'
-                ))
-                OR
-                (p.id IN (108) AND lbl IN (
-                  'Status / Acompanhamento', 'Status / Em Andamento', 'Status / Aguardando', 'Status / Stand By', 'Status / Pendencia'
-                ))
-                OR
-                (p.id IN (130, 129) AND r.id = 328 AND lbl IN (
-                  'Status / Acompanhamento', 'Status / Em Andamento', 'Status / Aguardando', 'Status / Stand By', 'Status / Pendencia'
-                ))
-                OR
-                (r.id = 3 AND lbl IN (
-                  'Status / Andamento', 'Status / Aguardando', 'Status / Pendente', 'Status / Stand By'
-                ))
-                OR
-                (p.id IN (125) AND lbl IN (
-                  'Status / ...'
-                ))
-                OR
-                (p.id IN (44) AND lbl IN (
-                  'Status / ...'
-                ))
-              )
-            LIMIT 1
-          ),
-          'Status não definido'
-        ) AS status,
+  (
+    SELECT lbl
+    FROM unnest(i.labels) AS lbl
+    WHERE lbl LIKE 'Status /%'
+    LIMIT 1
+  ),
+  'Status não definido'
+) AS status,
+
         i.prazo,
         COALESCE(NULLIF(i.responsavel, ''), 'Indefinido') AS responsavel,
         i.link AS link 
@@ -194,9 +180,9 @@ router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Respo
         AND (
           CASE
             WHEN p.id IN (109) THEN 'Sustentação'
-            WHEN p.id IN (113, 111, 106, 104, 73, 32) THEN 'Processos'
-            WHEN p.id IN (133, 110, 107) THEN 'QA'
-            WHEN p.id IN (108) THEN 'Projetos'
+            WHEN p.id IN (113, 111, 106, 104, 32) THEN 'Processos'
+            WHEN p.id IN (110, 107) THEN 'QA'
+            WHEN p.id IN (108, 123) THEN 'Projetos'
             WHEN p.id IN (130, 129) AND r.id = 328 THEN 'Produtos'
             WHEN r.id = 3 THEN 'Desenvolvimento'
             WHEN p.id IN (125) THEN 'RNC'
@@ -223,10 +209,8 @@ router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Respo
     labelsArr.forEach((l: Label) => { labelsMap[l.label] = parseFloat(l.nota); });
 
     // Busca categorias e pesos
-    // Exemplo: SELECT categoria, peso FROM categorias
     const categoriasResult = await pool.query('SELECT categoria, peso FROM categorias');
     const categoriasArr: { categoria: string; peso: number }[] = categoriasResult.rows;
-    // Monta um MAP para peso de cada categoria
     const categoriaPesoMap: { [cat: string]: number } = {};
     categoriasArr.forEach(row => { categoriaPesoMap[row.categoria] = row.peso; });
 
@@ -252,7 +236,10 @@ router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Respo
       if (issue.prazo) {
         const prazoDate = new Date(issue.prazo);
         const hoje = new Date();
-        const diasAtraso = Math.ceil((hoje.getTime() - prazoDate.getTime()) / (1000 * 60 * 60 * 24));
+        // Zera horas para evitar arredondamento de dias
+        prazoDate.setHours(0, 0, 0, 0);
+        hoje.setHours(0, 0, 0, 0);
+        const diasAtraso = Math.floor((hoje.getTime() - prazoDate.getTime()) / (1000 * 60 * 60 * 24));
         if (diasAtraso > 0) {
           if (diasAtraso <= 10) scorePrazo = diasAtraso * 1;
           else if (diasAtraso <= 20) scorePrazo = 10 + (diasAtraso - 10) * 2;
@@ -263,10 +250,10 @@ router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Respo
       const pesoPrazo = categoriaPesoMap['Prazo'] ?? 30;
 
       // URGÊNCIA
-      const classificacaoUrgencia = extrairClassificacao(labels, 'Urgência');
-      const labelUrgencia = classificacaoUrgencia ? `Urgência / ${classificacaoUrgencia}` : '';
+      const classificacaoUrgencia = extrairClassificacao(labels, 'Urgencia');
+      const labelUrgencia = classificacaoUrgencia ? `Urgencia / ${classificacaoUrgencia}` : '';
       const scoreUrgencia = labelUrgencia && labelsMap[labelUrgencia] !== undefined ? labelsMap[labelUrgencia] : 0;
-      const pesoUrgencia = categoriaPesoMap['Urgência'] ?? 20;
+      const pesoUrgencia = categoriaPesoMap['Urgencia'] ?? 20;
 
       // COMPLEXIDADE
       const classificacaoComplexidade = extrairClassificacao(labels, 'Complexidade');
@@ -287,39 +274,39 @@ router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Respo
           peso: pesoCliente,
           classificacao: classificacaoCliente,
           score: scoreCliente,
-          subTotal: Math.round(scoreCliente * pesoCliente / 100 * 100) / 100
+          subTotal: Number((scoreCliente * pesoCliente / 100).toFixed(2))
         },
         {
           categoria: 'Prazo',
           peso: pesoPrazo,
           classificacao: classificacaoPrazo,
           score: scorePrazo,
-          subTotal: Math.round(scorePrazo * pesoPrazo / 100 * 100) / 100
+          subTotal: Number((scorePrazo * pesoPrazo / 100).toFixed(2))
         },
         {
           categoria: 'Urgência',
           peso: pesoUrgencia,
           classificacao: classificacaoUrgencia,
           score: scoreUrgencia,
-          subTotal: Math.round(scoreUrgencia * pesoUrgencia / 100 * 100) / 100
+          subTotal: Number((scoreUrgencia * pesoUrgencia / 100).toFixed(2))
         },
         {
           categoria: 'Complexidade',
           peso: pesoComplexidade,
           classificacao: classificacaoComplexidade,
           score: scoreComplexidade,
-          subTotal: Math.round(scoreComplexidade * pesoComplexidade / 100 * 100) / 100
+          subTotal: Number((scoreComplexidade * pesoComplexidade / 100).toFixed(2))
         },
         {
           categoria: 'Impacto',
           peso: pesoImpacto,
           classificacao: classificacaoImpacto,
           score: scoreImpacto,
-          subTotal: Math.round(scoreImpacto * pesoImpacto / 100 * 100) / 100
+          subTotal: Number((scoreImpacto * pesoImpacto / 100).toFixed(2))
         }
       ];
 
-      const score_total = breakdown.reduce((sum, cat) => sum + cat.subTotal, 0);
+      const score_total = Number(breakdown.reduce((sum, cat) => sum + cat.subTotal, 0).toFixed(2));
 
       return {
         ...issue,
@@ -370,9 +357,9 @@ router.get('/issues/filtrar', async (req: Request, res: Response) => {
           SELECT
               CASE
                   WHEN p.id IN (109) THEN 'Sustentação'
-                  WHEN p.id IN (113, 111, 106, 104, 73, 32) THEN 'Processos'
-                  WHEN p.id IN (133, 110, 107) THEN 'QA'
-                  WHEN p.id IN (108) THEN 'Projetos'
+                  WHEN p.id IN (113, 111, 106, 104, 32) THEN 'Processos'
+                  WHEN p.id IN (110, 107) THEN 'QA'
+                  WHEN p.id IN (108, 123) THEN 'Projetos'
                   WHEN p.id IN (130, 129) AND r.id = 328 THEN 'Produtos'
                   WHEN r.id = 3 THEN 'Desenvolvimento'
                   WHEN p.id IN (125) THEN 'RNC'
@@ -419,20 +406,27 @@ router.get('/categorias', async (_req: Request, res: Response) => {
         c.categoria AS nome_categoria,
         c.peso,
         COALESCE(
-          (SELECT STRING_AGG(cl.sigla_cliente, E'\n') FROM cliente cl),
-          'Nenhuma sigla encontrada'
+          (SELECT STRING_AGG(
+            cl.sigla_cliente || '|' || COALESCE(cl.descricao, '') || '|' || COALESCE(cl.nota::TEXT, ''),
+            E'\n'
+          ) FROM cliente cl),
+          ''
         ) AS classificacao_cliente,
+
         COALESCE(
-          (SELECT STRING_AGG(cl.descricao, E'\n') FROM cliente cl),
-          'Nenhuma descrição encontrada'
-        ) AS descricao_cliente,
+          (SELECT STRING_AGG(sp.classificacao, E'\n') FROM score_prazos sp),
+          'Sem classificação'
+        ) AS classificacao_prazo,
         COALESCE(
-          (SELECT STRING_AGG(cl.nota::TEXT, E'\n') FROM cliente cl),
+          (SELECT STRING_AGG(sp.dias::TEXT, E'\n') FROM score_prazos sp),
+          'Sem descrição'
+        ) AS descricao_prazo,
+        COALESCE(
+          (SELECT STRING_AGG(sp.nota::TEXT, E'\n') FROM score_prazos sp),
           'Sem nota'
-        ) AS score_cliente,
-        COALESCE(sp.classificacao, 'Sem classificação') AS classificacao_prazo,
-        COALESCE(sp.dias::TEXT, 'Sem descrição') AS descricao_prazo,
-        COALESCE(sp.nota::TEXT, 'Sem nota') AS score_prazo,
+        ) AS score_prazo,
+
+        -- Impacto, Urgência, Complexidade seguem igual
         COALESCE(
           (SELECT STRING_AGG(l.label, E'\n') FROM labels l WHERE l.label LIKE 'Impacto /%'),
           'Nenhum impacto definido'
@@ -470,7 +464,6 @@ router.get('/categorias', async (_req: Request, res: Response) => {
           'Sem nota'
         ) AS score_complexidade
       FROM categorias c
-      LEFT JOIN score_prazos sp ON c.categoria = 'Prazo'
       ORDER BY c.peso DESC;
     `);
 
@@ -481,14 +474,12 @@ router.get('/categorias', async (_req: Request, res: Response) => {
   }
 });
 
-/* ---------------------- Atualizar Classificações (PUT) ---------------------- */
 router.put(
   '/classificacao/:categoria/:classificacao',
   async (req: Request<ClassificacaoParams, any, ClassificacaoBody>, res: Response): Promise<void> => {
     try {
       const categoria = decodeURIComponent(req.params.categoria).trim();
       const classificacao = decodeURIComponent(req.params.classificacao).trim().replace(/\s*\/\s*/g, ' ');
-
       const { descricao, score } = req.body;
       const scoreAsNumber = score !== undefined ? parseFloat(String(score)) : undefined;
 
@@ -496,7 +487,6 @@ router.put(
         res.status(400).json({ message: 'O campo score deve ser um número válido.' });
         return;
       }
-
       if (descricao === undefined && scoreAsNumber === undefined) {
         res.status(400).json({ message: 'Envie ao menos uma propriedade para atualizar (descricao ou score).' });
         return;
@@ -504,41 +494,69 @@ router.put(
 
       let query = '';
       let params: any[] = [];
+
       if (['Impacto', 'Urgência', 'Complexidade'].includes(categoria)) {
         const labelCompleta = `${categoria} / ${classificacao}`.trim();
-
         if (descricao !== undefined && scoreAsNumber !== undefined) {
-          query = `
-            UPDATE labels
-            SET descricao = $1, nota = CAST($2 AS double precision)
-            WHERE label = $3
-            RETURNING *;
-          `;
+          query = `UPDATE labels SET descricao = $1, nota = CAST($2 AS double precision) WHERE label = $3 RETURNING *;`;
           params = [descricao, scoreAsNumber, labelCompleta];
         } else if (descricao !== undefined) {
-          query = `
-            UPDATE labels
-            SET descricao = $1
-            WHERE label = $2
-            RETURNING *;
-          `;
+          query = `UPDATE labels SET descricao = $1 WHERE label = $2 RETURNING *;`;
           params = [descricao, labelCompleta];
         } else {
-          query = `
-            UPDATE labels
-            SET nota = CAST($1 AS double precision)
-            WHERE label = $2
-            RETURNING *;
-          `;
+          query = `UPDATE labels SET nota = CAST($1 AS double precision) WHERE label = $2 RETURNING *;`;
           params = [scoreAsNumber, labelCompleta];
         }
+      } else if (categoria === 'Cliente') {
+        // Atualiza cliente
+        if (classificacao === undefined) {
+          res.status(400).json({ message: 'Sigla do cliente obrigatória.' });
+          return;
+        }
+        const sets: string[] = [];
+        const updateValues: any[] = [];
+        if (descricao !== undefined) {
+          sets.push('descricao = $' + (updateValues.length + 1));
+          updateValues.push(descricao);
+        }
+        if (scoreAsNumber !== undefined) {
+          sets.push('nota = CAST($' + (updateValues.length + 1) + ' AS double precision)');
+          updateValues.push(scoreAsNumber);
+        }
+        if (sets.length === 0) {
+          res.status(400).json({ message: 'Nada para atualizar.' });
+          return;
+        }
+        query = `UPDATE cliente SET ${sets.join(', ')} WHERE sigla_cliente = $${updateValues.length + 1} RETURNING *;`;
+        params = [...updateValues, classificacao];
+      } else if (categoria === 'Prazo') {
+        // Atualiza score_prazos
+        if (classificacao === undefined) {
+          res.status(400).json({ message: 'Classificação do prazo obrigatória.' });
+          return;
+        }
+        const sets: string[] = [];
+        const updateValues: any[] = [];
+        if (descricao !== undefined) {
+          sets.push('dias = $' + (updateValues.length + 1));
+          updateValues.push(descricao);
+        }
+        if (scoreAsNumber !== undefined) {
+          sets.push('nota = CAST($' + (updateValues.length + 1) + ' AS double precision)');
+          updateValues.push(scoreAsNumber);
+        }
+        if (sets.length === 0) {
+          res.status(400).json({ message: 'Nada para atualizar.' });
+          return;
+        }
+        query = `UPDATE score_prazos SET ${sets.join(', ')} WHERE classificacao = $${updateValues.length + 1} RETURNING *;`;
+        params = [...updateValues, classificacao];
       } else {
-        res.status(400).json({ message: 'Categoria inválida' });
+        res.status(400).json({ message: 'Categoria inválida.' });
         return;
       }
 
       const result = await pool.query(query, params);
-
       if (result.rows.length > 0) {
         res.json(result.rows[0]);
       } else {
@@ -552,26 +570,105 @@ router.put(
 );
 
 /* ------------------ Atualizar Categoria (PUT) ------------------ */
-router.put('/categorias/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { titulo, porcentagem } = req.body;
+router.put(
+  '/categorias/:nome_categoria',
+  async (req: Request<CategoriaParams, any, CategoriaBody>, res: Response) => {
+    const nome_categoria = decodeURIComponent(req.params.nome_categoria);
+    const { titulo, porcentagem } = req.body;
 
-  try {
-    const result = await pool.query(
-      `UPDATE categorias SET categoria = $1, peso = $2 WHERE id = $3 RETURNING *;`,
-      [titulo, porcentagem, id]
-    );
+    try {
+      const result = await pool.query(
+        `UPDATE categorias SET categoria = $1, peso = $2 WHERE categoria ILIKE $3 RETURNING *;`,
+        [titulo, porcentagem, nome_categoria]
+      );
 
-    if (result.rows.length > 0) {
-      res.json(result.rows[0]);
-    } else {
-      res.status(404).json({ message: 'Categoria não encontrada' });
+      if (result.rows.length > 0) {
+        res.json(result.rows[0]);
+      } else {
+        res.status(404).json({ message: 'Categoria não encontrada' });
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar categoria:', error);
+      res.status(500).json({ message: 'Erro interno ao atualizar categoria' });
     }
-  } catch (error) {
-    console.error('Erro ao atualizar categoria:', error);
-    res.status(500).json({ message: 'Erro interno ao atualizar categoria' });
   }
-});
+);
+
+router.post(
+  '/classificacao/:categoria/:classificacao',
+  async (req: Request<ClassificacaoParams, any, ClassificacaoBody>, res: Response): Promise<void> => {
+    try {
+      const categoria = decodeURIComponent(req.params.categoria).trim();
+      const classificacao = decodeURIComponent(req.params.classificacao).trim().replace(/\s*\/\s*/g, ' ');
+      const { descricao, score } = req.body;
+      const scoreAsNumber = score !== undefined ? parseFloat(String(score)) : undefined;
+
+      if (score !== undefined && (scoreAsNumber === undefined || isNaN(scoreAsNumber))) {
+        res.status(400).json({ message: 'O campo score deve ser um número válido.' });
+        return;
+      }
+      if (descricao === undefined && scoreAsNumber === undefined) {
+        res.status(400).json({ message: 'Envie ao menos uma propriedade para criar (descricao ou score).' });
+        return;
+      }
+
+      let query = '';
+      let params: any[] = [];
+
+      if (['Impacto', 'Urgência', 'Complexidade'].includes(categoria)) {
+        // Mantém lógica antiga
+        const labelCompleta = `${categoria} / ${classificacao}`.trim();
+        if (descricao !== undefined && scoreAsNumber !== undefined) {
+          query = `INSERT INTO labels (label, descricao, nota) VALUES ($1, $2, CAST($3 AS double precision)) RETURNING *;`;
+          params = [labelCompleta, descricao, scoreAsNumber];
+        } else if (descricao !== undefined) {
+          query = `INSERT INTO labels (label, descricao) VALUES ($1, $2) RETURNING *;`;
+          params = [labelCompleta, descricao];
+        } else {
+          query = `INSERT INTO labels (label, nota) VALUES ($1, CAST($2 AS double precision)) RETURNING *;`;
+          params = [labelCompleta, scoreAsNumber];
+        }
+      } else if (categoria === 'Cliente') {
+        // Insere em cliente (sigla_cliente, descricao, nota)
+        if (classificacao === undefined) {
+          res.status(400).json({ message: 'Sigla do cliente obrigatória.' });
+          return;
+        }
+        if (descricao === undefined) {
+          res.status(400).json({ message: 'Descrição obrigatória para cliente.' });
+          return;
+        }
+        query = `INSERT INTO cliente (sigla_cliente, descricao, nota) VALUES ($1, $2, CAST($3 AS double precision)) RETURNING *;`;
+        params = [classificacao, descricao, scoreAsNumber ?? null];
+      } else if (categoria === 'Prazo') {
+        // Insere em score_prazos (classificacao, dias, nota)
+        if (classificacao === undefined) {
+          res.status(400).json({ message: 'Classificação do prazo obrigatória.' });
+          return;
+        }
+        if (descricao === undefined) {
+          res.status(400).json({ message: 'Quantidade de dias obrigatória em prazo.' });
+          return;
+        }
+        query = `INSERT INTO score_prazos (classificacao, dias, nota) VALUES ($1, $2, CAST($3 AS double precision)) RETURNING *;`;
+        params = [classificacao, descricao, scoreAsNumber ?? null];
+      } else {
+        res.status(400).json({ message: 'Categoria inválida.' });
+        return;
+      }
+
+      const result = await pool.query(query, params);
+      res.status(201).json(result.rows[0]);
+    } catch (error: any) {
+      if (error.code === '23505') {
+        res.status(409).json({ message: 'Já existe uma classificação com esse nome.' });
+      } else {
+        console.error('Erro ao criar classificação:', error);
+        res.status(500).json({ message: 'Erro interno ao criar classificação' });
+      }
+    }
+  }
+);
 
 /* ---------------------- Deletar Categoria (DELETE) ---------------------- */
 router.delete('/categorias/:id', async (req: Request, res: Response) => {
@@ -596,10 +693,31 @@ router.delete('/classificacao/:categoria/:classificacao', async (req: Request, r
   const { categoria, classificacao } = req.params;
 
   try {
-    const result = await pool.query(
-      `DELETE FROM classificacoes WHERE categoria = $1 AND classificacao = $2 RETURNING *;`,
-      [categoria, classificacao]
-    );
+    let result;
+    if (categoria === 'Prazo') {
+      // Para Prazo, classificacao é a string, mas pode precisar identificar pelo id ou outro campo
+      result = await pool.query(
+        `DELETE FROM score_prazos WHERE classificacao = $1 RETURNING *;`,
+        [classificacao]
+      );
+    } else if (categoria === 'Cliente') {
+      result = await pool.query(
+        `DELETE FROM cliente WHERE sigla_cliente = $1 RETURNING *;`,
+        [classificacao]
+      );
+    } else if (categoria === 'Impacto' || categoria === 'Urgência' || categoria === 'Complexidade') {
+      // Labels são tipo "Impacto / AlgumaCoisa"
+      result = await pool.query(
+        `DELETE FROM labels WHERE label = $1 RETURNING *;`,
+        [`${categoria} / ${classificacao}`]
+      );
+    } else {
+      // Fallback para outras (ou mantenha sua tabela classificacoes caso use)
+      result = await pool.query(
+        `DELETE FROM classificacoes WHERE categoria = $1 AND classificacao = $2 RETURNING *;`,
+        [categoria, classificacao]
+      );
+    }
 
     if (result.rows.length > 0) {
       res.json({ message: 'Classificação excluída com sucesso' });
@@ -611,5 +729,172 @@ router.delete('/classificacao/:categoria/:classificacao', async (req: Request, r
     res.status(500).json({ message: 'Erro interno ao excluir classificação' });
   }
 });
+
+router.post('/categorias', async (req: Request, res: Response) => {
+  const { titulo, porcentagem } = req.body;
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO categorias (categoria, peso) VALUES ($1, $2) RETURNING *;`,
+      [titulo, porcentagem]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Erro ao criar categoria:', error);
+    res.status(500).json({ message: 'Erro interno ao criar categoria' });
+  }
+});
+
+router.post(
+  '/usuarios',
+  async (req: Request<{}, {}, UsuarioBody>, res: Response): Promise<void> => {
+    const { nome, email, senha, admin } = req.body;
+
+    try {
+      // Verifica se o email já está cadastrado
+      const existente = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
+      if (existente.rows.length > 0) {
+        res.status(400).json({ mensagem: 'Email já cadastrado' });
+        return;
+      }
+
+      // Hash da senha
+      const senhaHash = await bcrypt.hash(senha, 10);
+
+      // Inserção no banco, incluindo campo admin
+      await pool.query(
+        'INSERT INTO usuarios (nome, email, senha_hash, admin) VALUES ($1, $2, $3, $4)',
+        [nome, email, senhaHash, !!admin] // garante boolean
+      );
+
+      res.status(201).json({ mensagem: 'Usuário criado com sucesso' });
+    } catch (erro) {
+      console.error('Erro ao cadastrar usuário:', erro);
+      res.status(500).json({ mensagem: 'Erro interno' });
+    }
+  }
+);
+
+router.put('/usuarios/:id', async (req, res) => {
+  const { id } = req.params;
+  const { nome, email, admin } = req.body;
+
+  try {
+    // Atualizar no banco (sem alterar senha)
+    await pool.query(
+      'UPDATE usuarios SET nome = $1, email = $2, admin = $3 WHERE id = $4',
+      [nome, email, admin, id]
+    );
+    res.status(200).json({ mensagem: 'Usuário atualizado com sucesso' });
+  } catch (erro) {
+    console.error('Erro ao atualizar usuário:', erro);
+    res.status(500).json({ mensagem: 'Erro interno' });
+  }
+});
+
+
+router.post(
+  '/login',
+  async (req: Request, res: Response): Promise<void> => {
+    const { email, senha } = req.body;
+
+    if (!email || !senha) {
+      res.status(400).json({ mensagem: 'Email e senha são obrigatórios.' });
+      return;
+    }
+
+    try {
+      // Busca o usuário pelo email
+      const result = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
+      const usuario = result.rows[0];
+
+      if (!usuario) {
+        res.status(401).json({ mensagem: 'Usuário ou senha inválidos.' });
+        return;
+      }
+
+      // Compara a senha enviada com o hash salvo
+      const senhaCorreta = await bcrypt.compare(senha, usuario.senha_hash);
+      if (!senhaCorreta) {
+        res.status(401).json({ mensagem: 'Usuário ou senha inválidos.' });
+        return;
+      }
+
+      // Gera o token
+      const token = jwt.sign(
+        {
+          id: usuario.id,
+          nome: usuario.nome,
+          email: usuario.email,
+          admin: usuario.admin,
+        },
+        process.env.JWT_SECRET || 'sua_chave_secreta',
+        { expiresIn: '8h' }
+      );
+
+      // Se precisa trocar a senha, sinaliza no retorno
+      const precisaTrocarSenha = usuario.troca_senha;
+
+      res.json({
+        token,
+        trocaSenha: precisaTrocarSenha, // ← aqui você informa ao frontend
+        usuario: {
+          id: usuario.id,
+          nome: usuario.nome,
+          email: usuario.email,
+          admin: usuario.admin,
+        }
+      });
+    } catch (erro) {
+      console.error('Erro ao realizar login:', erro);
+      res.status(500).json({ mensagem: 'Erro interno ao realizar login.' });
+    }
+  }
+);
+
+router.post('/usuarios/:id/alterar-senha', authMiddleware, async (req, res) => {
+  const { id } = req.params;
+  const { novaSenha } = req.body;
+  const usuarioAutenticado = (req as any).user;
+
+  if (!novaSenha) {
+    res.status(400).json({ mensagem: 'Nova senha é obrigatória.' });
+    return;
+  }
+
+  // Validação de autorização
+  if (usuarioAutenticado.id !== Number(id)) {
+    res.status(403).json({ mensagem: 'Você não tem permissão para alterar esta senha.' });
+    return;
+  }
+
+  try {
+    const senhaHash = await bcrypt.hash(novaSenha, 10);
+
+    await pool.query(
+      'UPDATE usuarios SET senha_hash = $1, troca_senha = false WHERE id = $2',
+      [senhaHash, id]
+    );
+
+    res.status(200).json({ mensagem: 'Senha alterada com sucesso.' });
+  } catch (erro) {
+    console.error('Erro ao alterar senha:', erro);
+    res.status(500).json({ mensagem: 'Erro ao alterar senha.' });
+  }
+});
+
+
+router.get('/usuarios', async (req: Request, res: Response) => {
+  try {
+    const resultado = await pool.query(
+      'SELECT id, nome, email, admin, criado_em FROM usuarios ORDER BY id DESC'
+    );    
+    res.json(resultado.rows);
+  } catch (erro: any) {
+    console.error('Erro ao buscar usuários:', erro.message || erro);
+    res.status(500).json({ mensagem: 'Erro ao buscar usuários', erro: erro.message || erro });
+  }
+});
+
 
 export default router;

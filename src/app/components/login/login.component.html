@@ -1,0 +1,79 @@
+<section class="login-page">
+  <section class="left-side">
+    <img src="assets/images/logo3d3.png" alt="Shapes" class="shapes-img" />
+  </section>
+
+  <section class="right-side">
+    <div class="login-box">
+      <div class="logo">
+        <img src="assets/images/login_logo.svg" alt="Logo" />
+      </div>
+
+      <!-- FORMULÁRIO DE LOGIN -->
+      <form *ngIf="!primeiroAcesso" (ngSubmit)="onLogin()" #loginForm="ngForm">
+        <label>Login</label>
+        <input
+          type="text"
+          name="email"
+          placeholder="E-mail ou nome de usuário"
+          [(ngModel)]="email"
+          #emailInput="ngModel"
+          required
+        />
+
+        <label>Senha</label>
+        <div class="password-field">
+          <input
+            type="password"
+            name="senha"
+            placeholder="Senha"
+            [(ngModel)]="senha"
+            #senhaInput="ngModel"
+            required
+          />
+          <span class="toggle-password">
+            <!-- ícone de olho -->
+          </span>
+        </div>
+
+        <a class="forgot" href="#">Esqueceu suas credenciais?</a>
+
+        <button type="submit" [disabled]="loginForm.invalid || loading">
+          {{ loading ? 'Entrando...' : 'Entrar' }}
+        </button>
+
+        <button class="access-request" type="button">
+          <img src="assets/images/icon_primary_text/icon_before.svg" alt="Ícone usuário" class="icon icone-usuario" />
+          Solicitar acesso
+        </button>
+      </form>
+
+      <!-- FORMULÁRIO DE ALTERAR SENHA (PRIMEIRO ACESSO) -->
+      <form *ngIf="primeiroAcesso" (ngSubmit)="onAlterarSenha()" #novaSenhaForm="ngForm">
+        <label>Nova senha</label>
+        <input
+          type="password"
+          name="novaSenha"
+          placeholder="Digite a nova senha"
+          [(ngModel)]="novaSenha"
+          #novaSenhaInput="ngModel"
+          required
+        />
+
+        <label>Confirme a nova senha</label>
+        <input
+          type="password"
+          name="confirmarSenha"
+          placeholder="Confirme a nova senha"
+          [(ngModel)]="confirmarSenha"
+          #confirmarSenhaInput="ngModel"
+          required
+        />
+
+        <button type="submit" [disabled]="novaSenhaForm.invalid || novaSenha !== confirmarSenha">
+          Alterar Senha
+        </button>
+      </form>
+    </div>
+  </section>
+</section>
