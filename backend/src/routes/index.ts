@@ -87,7 +87,7 @@ router.get('/issues', async (_req: Request, res: Response) => {
                   WHEN p.id IN (109) THEN 'Sustentação'
                   WHEN p.id IN (113, 111, 106, 104, 32) THEN 'Processos'
                   WHEN p.id IN (110, 107) THEN 'QA'
-                  WHEN p.id IN (108, 123) THEN 'Projetos'
+                  WHEN p.id IN (108, 123, 124) THEN 'Projetos'
                   WHEN p.id IN (130, 129) AND r.id = 328 THEN 'Produtos'
                   WHEN r.id = 3 THEN 'Desenvolvimento'
                   WHEN p.id IN (125) THEN 'RNC'
@@ -146,12 +146,13 @@ router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Respo
     // Consulta principal das issues
     const sql = `
       SELECT
+        i.id AS id_issue,
         i.numero_is AS codigo_issue,
         CASE
           WHEN p.id IN (109) THEN 'Sustentação'
           WHEN p.id IN (113, 111, 106, 104, 32) THEN 'Processos'
           WHEN p.id IN (110, 107) THEN 'QA'
-          WHEN p.id IN (108, 123) THEN 'Projetos'
+          WHEN p.id IN (108, 123, 124) THEN 'Projetos'
           WHEN p.id IN (130, 129) AND r.id = 328 THEN 'Produtos'
           WHEN r.id = 3 THEN 'Desenvolvimento'
           WHEN p.id IN (125) THEN 'RNC'
@@ -182,7 +183,7 @@ router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Respo
             WHEN p.id IN (109) THEN 'Sustentação'
             WHEN p.id IN (113, 111, 106, 104, 32) THEN 'Processos'
             WHEN p.id IN (110, 107) THEN 'QA'
-            WHEN p.id IN (108, 123) THEN 'Projetos'
+            WHEN p.id IN (108, 123, 124) THEN 'Projetos'
             WHEN p.id IN (130, 129) AND r.id = 328 THEN 'Produtos'
             WHEN r.id = 3 THEN 'Desenvolvimento'
             WHEN p.id IN (125) THEN 'RNC'
@@ -247,13 +248,13 @@ router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Respo
           else scorePrazo = 60 + (diasAtraso - 30) * 5;
         }
       }
-      const pesoPrazo = categoriaPesoMap['Prazo'] ?? 30;
+      const pesoPrazo = categoriaPesoMap['Prazo'] ?? 0;
 
       // URGÊNCIA
-      const classificacaoUrgencia = extrairClassificacao(labels, 'Urgencia');
-      const labelUrgencia = classificacaoUrgencia ? `Urgencia / ${classificacaoUrgencia}` : '';
+      const classificacaoUrgencia = extrairClassificacao(labels, 'Urgência');
+      const labelUrgencia = classificacaoUrgencia ? `Urgência / ${classificacaoUrgencia}` : '';
       const scoreUrgencia = labelUrgencia && labelsMap[labelUrgencia] !== undefined ? labelsMap[labelUrgencia] : 0;
-      const pesoUrgencia = categoriaPesoMap['Urgencia'] ?? 20;
+      const pesoUrgencia = categoriaPesoMap['Urgência'] ?? 0;
 
       // COMPLEXIDADE
       const classificacaoComplexidade = extrairClassificacao(labels, 'Complexidade');
@@ -359,7 +360,7 @@ router.get('/issues/filtrar', async (req: Request, res: Response) => {
                   WHEN p.id IN (109) THEN 'Sustentação'
                   WHEN p.id IN (113, 111, 106, 104, 32) THEN 'Processos'
                   WHEN p.id IN (110, 107) THEN 'QA'
-                  WHEN p.id IN (108, 123) THEN 'Projetos'
+                  WHEN p.id IN (108, 123, 124) THEN 'Projetos'
                   WHEN p.id IN (130, 129) AND r.id = 328 THEN 'Produtos'
                   WHEN r.id = 3 THEN 'Desenvolvimento'
                   WHEN p.id IN (125) THEN 'RNC'
@@ -896,5 +897,207 @@ router.get('/usuarios', async (req: Request, res: Response) => {
   }
 });
 
+router.get('/issues/:id/sucessoras', async (req: Request, res: Response): Promise<void> => {
+  let { id } = req.params;
+
+  try {
+    const idQuery = `SELECT id FROM issues WHERE numero_is = $1`;
+    const idResult = await pool.query(idQuery, [id]);
+
+    if (idResult.rows.length > 0) {
+      id = idResult.rows[0].id;
+    }
+
+    const origemQuery = `
+      SELECT i.*, p.nome AS repositorio, r.id AS repositorio_id
+      FROM issues i
+      JOIN projeto p ON i.id_projeto = p.id
+      JOIN repositorio r ON p.id_repositorio = r.id
+      WHERE i.id = $1
+    `;
+    const origemResult = await pool.query(origemQuery, [id]);
+    if (origemResult.rows.length === 0) {
+      res.status(404).json({ error: 'Issue de origem não encontrada' });
+      return;
+    }
+    const origem = origemResult.rows[0];
+
+    const relacionadasQuery = `SELECT id_is_destino FROM issues_relacionadas WHERE id_is_origem = $1`;
+    const relacionadasResult = await pool.query(relacionadasQuery, [id]);
+    const destinos = relacionadasResult.rows.map(row => row.id_is_destino);
+
+    if (destinos.length === 0) {
+      res.json({
+        tituloOrigem: origem.titulo,
+        numeroIsOrigem: origem.numero_is,
+        repositorioOrigem: origem.repositorio, // ✅ Alteração aqui
+        sucessoras: [],
+      });
+      return;
+    }
+
+    const sql = `
+      SELECT
+        i.id AS id_issue,
+        i.numero_is AS codigo_issue,
+        i.titulo,
+        i.numero_is,
+        CASE
+          WHEN p.id IN (109) THEN 'Sustentação'
+          WHEN p.id IN (113, 111, 106, 104, 32) THEN 'Processos'
+          WHEN p.id IN (110, 107) THEN 'QA'
+          WHEN p.id IN (108, 123, 124) THEN 'Projetos'
+          WHEN p.id IN (130, 129) AND r.id = 328 THEN 'Produtos'
+          WHEN r.id = 3 THEN 'Desenvolvimento'
+          WHEN p.id IN (125) THEN 'RNC'
+          WHEN p.id IN (44) THEN 'CMO'
+        END AS projeto_principal,
+        p.nome AS repositorio,
+        i.sigla_cliente AS cliente,
+        i.labels,
+        COALESCE(
+          (
+            SELECT lbl
+            FROM unnest(i.labels) AS lbl
+            WHERE lbl LIKE 'Status /%'
+            LIMIT 1
+          ),
+          'Status não definido'
+        ) AS status,
+        i.prazo,
+        COALESCE(NULLIF(i.responsavel, ''), 'Indefinido') AS responsavel,
+        i.link AS link,
+        i.status AS status,
+        i.data_fechamento
+      FROM issues i
+      JOIN projeto p ON i.id_projeto = p.id
+      JOIN repositorio r ON p.id_repositorio = r.id
+        AND i.id = ANY($1)
+      ORDER BY i.prazo ASC NULLS LAST;
+    `;
+
+    const issuesResult = await pool.query(sql, [destinos]);
+    const issues = issuesResult.rows;
+
+    const clientesResult = await pool.query('SELECT sigla_cliente, nota FROM cliente');
+    const clientes = clientesResult.rows;
+    const clientesMap: { [sigla: string]: number } = {};
+    clientes.forEach((c: any) => { clientesMap[c.sigla_cliente] = parseFloat(c.nota); });
+
+    const labelsResult = await pool.query('SELECT label, nota FROM labels');
+    const labelsArr = labelsResult.rows;
+    const labelsMap: { [key: string]: number } = {};
+    labelsArr.forEach((l: any) => { labelsMap[l.label] = parseFloat(l.nota); });
+
+    const categoriasResult = await pool.query('SELECT categoria, peso FROM categorias');
+    const categoriasArr = categoriasResult.rows;
+    const categoriaPesoMap: { [cat: string]: number } = {};
+    categoriasArr.forEach((row: any) => { categoriaPesoMap[row.categoria] = row.peso; });
+
+    function extrairClassificacao(labels: string[] | null, chave: string) {
+      if (!labels) return '';
+      const found = labels.find(l => l.startsWith(chave + ' / '));
+      return found ? found.replace(`${chave} / `, "") : '';
+    }
+
+    function calcularScore(issue: any, clientesMap: {[sigla:string]:number}, categoriaPesoMap: {[cat:string]:number}) {
+      const labels = issue.labels || [];
+
+      const classificacaoCliente = issue.cliente || '';
+      const scoreCliente = clientesMap[classificacaoCliente] || 0;
+      const pesoCliente = categoriaPesoMap['Cliente'] ?? 30;
+
+      let scorePrazo = 0;
+      if (issue.prazo) {
+        const prazoDate = new Date(issue.prazo);
+        const hoje = new Date();
+        prazoDate.setHours(0,0,0,0);
+        hoje.setHours(0,0,0,0);
+        const diasAtraso = Math.floor((hoje.getTime() - prazoDate.getTime()) / (1000 * 60 * 60 * 24));
+        if (diasAtraso > 0) {
+          if (diasAtraso <= 10) scorePrazo = diasAtraso * 1;
+          else if (diasAtraso <= 20) scorePrazo = 10 + (diasAtraso - 10) * 2;
+          else if (diasAtraso <= 30) scorePrazo = 30 + (diasAtraso - 20) * 3;
+          else scorePrazo = 60 + (diasAtraso - 30) * 5;
+        }
+      }
+      const pesoPrazo = categoriaPesoMap['Prazo'] ?? 30;
+
+      // URGÊNCIA
+      const classificacaoUrgencia = extrairClassificacao(labels, 'Urgencia');
+      const labelUrgencia = classificacaoUrgencia ? `Urgencia / ${classificacaoUrgencia}` : '';
+      const scoreUrgencia = labelUrgencia && labelsMap[labelUrgencia] !== undefined ? labelsMap[labelUrgencia] : 0;
+      const pesoUrgencia = categoriaPesoMap['Urgencia'] ?? 20;
+
+      // COMPLEXIDADE
+      const classificacaoComplexidade = extrairClassificacao(labels, 'Complexidade');
+      const labelComplexidade = classificacaoComplexidade ? `Complexidade / ${classificacaoComplexidade}` : '';
+      const scoreComplexidade = labelComplexidade && labelsMap[labelComplexidade] !== undefined ? labelsMap[labelComplexidade] : 0;
+      const pesoComplexidade = categoriaPesoMap['Complexidade'] ?? 15;
+
+      // IMPACTO
+      const classificacaoImpacto = extrairClassificacao(labels, 'Impacto');
+      const labelImpacto = classificacaoImpacto ? `Impacto / ${classificacaoImpacto}` : '';
+      const scoreImpacto = labelImpacto && labelsMap[labelImpacto] !== undefined ? labelsMap[labelImpacto] : 0;
+      const pesoImpacto = categoriaPesoMap['Impacto'] ?? 5;
+
+      const breakdown = [
+        { categoria: 'Cliente', peso: pesoCliente, classificacao: classificacaoCliente, score: scoreCliente, subTotal: Number((scoreCliente * pesoCliente / 100).toFixed(2)) },
+        { categoria: 'Prazo', peso: pesoPrazo, classificacao: issue.prazo || '', score: scorePrazo, subTotal: Number((scorePrazo * pesoPrazo / 100).toFixed(2)) },
+        { categoria: 'Urgência', peso: pesoUrgencia, classificacao: classificacaoUrgencia, score: scoreUrgencia, subTotal: Number((scoreUrgencia * pesoUrgencia / 100).toFixed(2)) },
+        { categoria: 'Complexidade', peso: pesoComplexidade, classificacao: classificacaoComplexidade, score: scoreComplexidade, subTotal: Number((scoreComplexidade * pesoComplexidade / 100).toFixed(2)) },
+        { categoria: 'Impacto', peso: pesoImpacto, classificacao: classificacaoImpacto, score: scoreImpacto, subTotal: Number((scoreImpacto * pesoImpacto / 100).toFixed(2)) }
+      ];
+
+      const scoreTotal = breakdown.reduce((acc, cur) => acc + cur.subTotal, 0);
+
+      return { score_total: Number(scoreTotal.toFixed(2)), score_breakdown: breakdown };
+    }
+
+    // 8. Formata issues com score e campo "conclusao" - ✅ Alteração aqui no tratamento de concluídas
+    const issuesFormatadas = issues.map(issue => {
+      let conclusao: string;
+
+      if (issue.status === 'closed') {
+        conclusao = issue.data_fechamento
+          ? `Concluído em ${new Date(issue.data_fechamento).toLocaleDateString()}`
+          : 'Data de fechamento não informada';
+      } else {
+        conclusao = issue.prazo
+          ? `Expectativa de conclusão ${new Date(issue.prazo).toLocaleDateString()}`
+          : 'Sem expectativa de conclusão';
+      }
+
+      const { score_total, score_breakdown } = calcularScore(issue, clientesMap, categoriaPesoMap);
+
+      return {
+        ...issue,
+        conclusao,
+        score_total,
+        score_breakdown
+      };
+    });
+
+    // 9. Ordena por score_total desc
+    issuesFormatadas.sort((a, b) => b.score_total - a.score_total);
+
+    // 10. Adiciona prioridade
+    issuesFormatadas.forEach((issue, index) => {
+      issue.prioridade = index + 1;
+    });
+
+    // 11. Retorna resultado final - ✅ Alteração aqui para incluir repositorioOrigem
+    res.json({
+      tituloOrigem: origem.titulo,
+      numeroIsOrigem: origem.numero_is,
+      repositorioOrigem: origem.repositorio,
+      sucessoras: issuesFormatadas,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro interno no servidor' });
+  }
+});
 
 export default router;

@@ -139,3 +139,21 @@
 .submenu a:hover {
     color: #ffffff; /* Definindo uma cor mais clara ao passar o mouse */
 }
+
+.right-section {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%; 
+}
+
+.logout-button {
+    font-weight: 400;
+    line-height: 134%;
+    letter-spacing: 0%;
+    color: #EBF4FFE5;
+    background: #223348;
+    width: 51px;
+    height: 19px;
+    border: none; 
+    cursor: pointer; 
+  }

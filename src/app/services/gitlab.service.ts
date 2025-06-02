@@ -125,4 +125,13 @@ export class GitlabService {
     const classificacaoEncoded = encodeURIComponent(classificacao.trim());
     return this.http.delete(`${this.apiUrl}/classificacao/${categoriaEncoded}/${classificacaoEncoded}`);
   }
+
+  obterSucessoras(id: number): Observable<{ tituloOrigem: string; repositorioOrigem: string; numeroIsOrigem: number; sucessoras: Issue[] }> {
+    return this.http.get<{ tituloOrigem: string; repositorioOrigem: string; numeroIsOrigem: number; sucessoras: Issue[] }>(`${this.apiUrl}/issues/${id}/sucessoras`);
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+  }
+  
 }

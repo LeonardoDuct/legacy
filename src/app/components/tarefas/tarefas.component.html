@@ -202,6 +202,7 @@
                 </svg>
               </span>
             </th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -281,7 +282,29 @@
                 {{ tarefa.motivoAtraso }}
               </span>
             </td>
-            <td class="coluna-responsavel">{{ tarefa.responsavel }}</td>
+            <td class="coluna-responsavel">
+              {{ tarefa.responsavel }}
+            </td>
+            
+            <td class="coluna-sucessoras">
+              <a *ngIf="getQuantidadeSucessoras(tarefa.id_issue) > 0"
+                 [routerLink]="['/sucessoras', tarefa.id_issue]"
+                 class="sucessoras-button relative inline-flex items-center justify-center w-6 h-6">
+                
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                     stroke-width="1.5" stroke="currentColor"
+                     class="icon icone-link w-4 h-4 text-[#D1E3FA94]">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622
+                           1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                </svg>
+            
+                <span class="quantidade-sucessoras absolute -top-1 -right-1 text-[10px] text-[#D1E3FA94] font-medium">
+                  {{ getQuantidadeSucessoras(tarefa.id_issue) }}
+                </span>
+              </a>
+            </td>
+                 
           </tr>
         </tbody>
       </table>

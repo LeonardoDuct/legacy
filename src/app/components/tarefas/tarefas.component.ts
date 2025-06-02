@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
 import { GitlabService } from '../../services/gitlab.service';
 import { FormsModule } from '@angular/forms';
 
@@ -16,12 +16,13 @@ interface Issue {
   score_total?: number;
   labels?: string[];
   motivoAtraso?: string | null;
+  id_issue: number;
 }
 
 @Component({
   selector: 'app-tarefas',
   standalone: true,
-  imports: [CommonModule, CabecalhoComponent, FormsModule],
+  imports: [CommonModule, CabecalhoComponent, FormsModule, RouterModule],
   templateUrl: './tarefas.component.html',
   styleUrl: './tarefas.component.css',
 })
@@ -77,6 +78,8 @@ export class TarefasComponent implements OnInit {
     private gitlabService: GitlabService
   ) {}
 
+  sucessorasMap: { [id_issue: number]: number } = {};
+
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.nomeProjeto = params.get('projeto') ?? '';
@@ -96,10 +99,11 @@ export class TarefasComponent implements OnInit {
   carregarTarefas(nomeProjeto: string, dataInicio?: string, dataFim?: string) {
     this.gitlabService.obterIssuesPorProjetoNome(nomeProjeto, dataInicio, dataFim).subscribe({
       next: (dados: Issue[]) => {
-        this.tarefas = dados.map(tarefa => ({
-          ...tarefa,
-          motivoAtraso: this.getMotivoAtraso(tarefa)
-        }));
+        this.tarefas = dados.map(tarefa => {
+          // Passa o id (único) para buscar sucessoras, e não o codigo_issue
+          this.carregarQuantidadeSucessoras(tarefa.id_issue);  
+          return { ...tarefa, motivoAtraso: this.getMotivoAtraso(tarefa) };
+        });
   
         this.pendentesTotal = this.tarefas.length;
         this.atrasadasTotal = this.tarefas.filter(
@@ -113,6 +117,21 @@ export class TarefasComponent implements OnInit {
       }
     });
   }
+
+  carregarQuantidadeSucessoras(idIssue: number): void {
+    this.gitlabService.obterSucessoras(idIssue).subscribe({
+      next: (data) => {
+        const sucessoras = data?.sucessoras ?? [];
+        this.sucessorasMap[idIssue] = sucessoras.length;  
+      },
+      error: (error: any) => console.error(`Erro ao obter sucessoras da issue ${idIssue}:`, error)
+    });
+  }
+  
+
+getQuantidadeSucessoras(idIssue: number): number {
+    return this.sucessorasMap[idIssue] || 0;
+}
 
   getMotivoAtraso(tarefa: Issue): string | null {
     if (!this.prazoAtrasado(tarefa.prazo) || !tarefa.labels) return null;
@@ -201,6 +220,7 @@ export class TarefasComponent implements OnInit {
   hideTooltip() {
     this.openedTooltip = null;
   }
+
   prazoAtrasado(data: string | Date): boolean {
     const hoje = new Date();
     const prazo = new Date(data);

@@ -69,5 +69,13 @@
           <img src="assets/images/login_logo.svg" alt="Logo" class="logo-img" style="cursor: pointer;" />
         </a>
       </div>
+
+      <div class="right-section">
+        <button *ngIf="estaLogado(); else loginBtn" class="logout-button" (click)="logout()">Logout</button>
+        <ng-template #loginBtn>
+          <button class="logout-button" [routerLink]="['/login']">Login</button>
+        </ng-template>
+      </div>
       
 </header>
+

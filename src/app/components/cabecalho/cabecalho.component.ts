@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
+import { GitlabService } from '../../services/gitlab.service';
 
 @Component({
   selector: 'app-cabecalho',
@@ -18,7 +19,10 @@ export class CabecalhoComponent implements OnInit {
 
   caminho: string[] = [];
 
-  constructor(private router: Router) {}
+  constructor(
+      private gitlabService: GitlabService,
+      private router: Router
+    ) {}
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
@@ -45,5 +49,14 @@ export class CabecalhoComponent implements OnInit {
 
   getTituloPagina(): string {
     return this.caminho[0] || 'Dashboard';
+  }
+
+  estaLogado(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
+  logout(): void {
+    this.gitlabService.logout();
+    this.router.navigate(['/login']);
   }
 }

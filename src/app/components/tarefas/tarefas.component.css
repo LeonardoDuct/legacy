@@ -155,6 +155,8 @@
     width: 20px;
     height: 20px;
     color: #f5f9ff;
+    margin-bottom: 8px; /* 🔹 Dá um pequeno espaço entre o ícone e o texto */
+
 }
 
 .texto-numero {
@@ -218,7 +220,9 @@
   
   /* Dropdown para selecionar a categoria */
   .dropdown-wrapper {
-    width: 656px;
+    /*width: 656px; */
+    width: 100%;
+    min-width: 720px;
     height: var(--height-small);
     min-width: 320px;
     display: flex;
@@ -238,7 +242,8 @@
   
   /* Input de pesquisa */
   .input-wrapper {
-    width: 656px;
+    /* width: 656px; */
+    width: 100%;
     height: var(--height-small);
     min-width: 320px;
     display: flex;
@@ -249,7 +254,8 @@
   
   /* Campo de texto */
   .input-text {
-    width: 596px;
+    min-width: 596px;
+    width: 100%;
     height: var(--height-small);
     padding: var(--spacing-xs);
     border: none;
@@ -539,4 +545,44 @@ th, td {
 .tooltip-container:hover .tooltip {
   visibility: visible;
   opacity: 1;
+}
+
+.icone-link {
+  width: 20px;
+  height: 20px;
+  color: #D1E3FA94;
+  stroke: currentColor;
+}
+
+.quantidade-sucessoras {
+  position: relative;
+  top: -10px;       /* Estava -4px ou -1px, agora sobe mais */
+  right: -4px;
+  font-size: 10px;
+  color: #D1E3FA94;
+  font-weight: 500;
+}
+
+.sucessoras-button {
+  text-decoration: none;
+}
+
+@media (min-width: 1440px) {
+  .cabecalho-inferior {
+    gap: 32px;
+  }
+
+  .bloco-tecnologia,
+  .bloco-indicadores,
+  .bloco-filtro {
+    padding: 32px;
+  }
+
+  .titulo {
+    font-size: 26px;
+  }
+
+  .texto-numero .numero {
+    font-size: 48px;
+  }
 }

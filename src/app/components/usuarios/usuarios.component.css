@@ -48,7 +48,7 @@
 /* ====================== */
 
 .bloco-filtro {
-  width: 720px;
+  width: 100%;
   height: 149px;
   min-width: 500px;
   padding: var(--spacing-lg);
@@ -77,7 +77,7 @@
 
 /* Dropdown para selecionar a categoria */
 .dropdown-wrapper {
-  width: 656px;
+  width: 100%;
   height: var(--height-small);
   min-width: 320px;
   display: flex;
@@ -97,7 +97,7 @@
 
 /* Input de pesquisa */
 .input-wrapper {
-  width: 656px;
+  width: 100%;
   height: var(--height-small);
   min-width: 320px;
   display: flex;
@@ -108,7 +108,8 @@
 
 /* Campo de texto */
 .input-text {
-  width: 596px;
+  width: 100%;
+  min-width: 596px;
   height: var(--height-small);
   padding: var(--spacing-xs);
   border: none;
@@ -285,7 +286,7 @@
   .tabela-container {
     padding: 1rem;
     width: 100%;
-    max-width: 900px; /* Ajuste para um tamanho maior */
+    max-width: 1920px; /* Ajuste para um tamanho maior */
   }
   
   .tabela-tarefas {
