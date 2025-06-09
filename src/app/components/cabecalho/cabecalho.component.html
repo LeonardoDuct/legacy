@@ -1,16 +1,24 @@
 <nav class="Navigation_sidebar" [class.open]="isMenuOpen">
-    <h3 class="app-title">My App</h3>
+    <h3 class="app-title">Menu</h3>
     <ul class="menu">
         <!-- Dashboard -->
         <li class="menu-item">
-            <div class="menu-header">
+            <div class="menu-header" (click)="toggleSubMenu('dashboard')">
                 <span class="icon">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
                     </svg>
                 </span>
                 <span>Dashboard</span>
+                <span class="arrow" [class.rotated]="subMenuStates['dashboard']">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </span>
             </div>
+            <ul class="submenu" *ngIf="subMenuStates['dashboard']">
+                <li><a [routerLink]="['/dashboard']">Tarefas</a></li>
+              </ul>
         </li>
 
         <!-- Cadastro -->
@@ -22,11 +30,12 @@
                     </svg>
                 </span>
                 <span>Cadastro</span>
-                <span class="arrow" [class.rotated]="subMenuStates['cadastro']">›</span>
+                <span class="arrow" [class.rotated]="subMenuStates['cadastro']"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                  </svg></span>
             </div>
             <ul class="submenu" *ngIf="subMenuStates['cadastro']">
-                <li class="submenu-item">Clientes</li>
-                <li class="submenu-item">Labels</li>
+                <li><a [routerLink]="['/cadastro']">Score</a></li>
             </ul>
         </li>
 
@@ -40,10 +49,14 @@
                     </svg>
                 </span>
                 <span>Configurações</span>
-                <span class="arrow" [class.rotated]="subMenuStates['configuracoes']">›</span>
+                <span class="arrow" [class.rotated]="subMenuStates['configuracoes']"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                  </svg></span>
             </div>
             <ul class="submenu" *ngIf="subMenuStates['configuracoes']">
-                <li class="submenu-item">Usuários</li>
+                <li class="submenu-item">
+                    <a [routerLink]="['/usuarios']">Usuários</a>
+                </li>
             </ul>
         </li>
     </ul>
@@ -52,6 +65,17 @@
 <header class="header-top">
     <button class="menu-button" aria-label="Abrir menu" (click)="toggleMenu()">☰</button>
     <div class="title">
-        <span class="dashboard">LOGO</span>
-    </div>
+        <a [routerLink]="['/dashboard']">
+          <img src="assets/images/login_logo.svg" alt="Logo" class="logo-img" style="cursor: pointer;" />
+        </a>
+      </div>
+
+      <div class="right-section">
+        <button *ngIf="estaLogado(); else loginBtn" class="logout-button" (click)="logout()">Logout</button>
+        <ng-template #loginBtn>
+          <button class="logout-button" [routerLink]="['/login']">Login</button>
+        </ng-template>
+      </div>
+      
 </header>
+

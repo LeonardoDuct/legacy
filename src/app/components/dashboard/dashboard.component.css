@@ -45,7 +45,7 @@
 
 /* Bloco de Tecnologia */
 .bloco-tecnologia {
-    display: flex;
+   flex: 0 0 360px; /* Não cresce, não encolhe, largura fixa */ 
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
@@ -61,10 +61,19 @@
 .bloco-tecnologia .conteudo {
     display: flex;
     flex-direction: column;
-    gap: 8px;
     width: 296px;
 }
 
+/* Breadcrumb */
+.bloco-tecnologia .breadcrumb {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 125%;
+    color: rgba(245, 249, 255, 0.7); /* Cor com transparência */
+    display: block; /* Garante que o breadcrumb fique em sua própria linha */
+}
+
+/* Título */
 .bloco-tecnologia .titulo {
     font-weight: 600;
     font-size: 22px;
@@ -72,12 +81,13 @@
     color: white;
 }
 
+/* Status */
 .bloco-tecnologia .status {
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 4px 8px;
-    width: 86px;
+    width: 86px; /* Mantém o tamanho correto */
     height: 29px;
     border-radius: 8px;
     background: var(--semantic-colors-success-10, #0FF56F1A);
@@ -127,9 +137,10 @@
 .bloco-indicadores .pendente,
 .bloco-indicadores .atrasadas {
     display: flex;
-    align-items: center;
+    flex-direction: column; /* 🔹 Organiza os itens na vertical */
+    align-items: flex-start; /* 🔹 Alinha os elementos à esquerda */
     justify-content: center;
-    gap: 16px;
+    gap: 8px;
     width: 180px;
     height: 100%;
     padding: 16px;
@@ -139,16 +150,17 @@
     width: 20px;
     height: 20px;
     color: #f5f9ff;
+    margin-bottom: 8px; /* 🔹 Dá um pequeno espaço entre o ícone e o texto */
 }
 
 .texto-numero {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-start; /* 🔹 Alinha os textos à esquerda */
     justify-content: center;
     width: 104px;
     height: 54px;
-    gap: 16px;
+    gap: 4px;
 }
 
 .texto-numero .texto {
@@ -171,32 +183,29 @@
 /* BLOCO FILTRO */
 /* ====================== */
 .bloco-filtro {
-    display: flex;
+    flex: 1 1 0;   /* Cresce para ocupar o espaço restante */
+    min-width: 300px; /* Evita quebrar em telas menores */
     flex-direction: column;
-    gap: 10px;
-    padding: 32px 88px 16px 32px;
+    padding: var(--spacing-lg);
     width: auto;
-    height: 148px;
-    min-width: 400px;
+    height: 149px;
     color: #f5f9ff;
     border-bottom: 1px solid rgba(173, 200, 235, 0.14);
-    border-radius: 0;
   }
   
   .titulo-filtro {
     font-weight: 400;
     font-size: 14px;
     line-height: 125%;
-    letter-spacing: 3%;
     color: #D9E8FCB0;
     text-align: left;
-    margin: 0 0 8px 0;
   }
   
   .campos-data {
     display: flex;
     justify-content: space-between;
-    gap: 19px;
+    gap: 16px;
+    margin-top: 10px;
   }
   
   .date-wrapper {
@@ -227,10 +236,64 @@
     transform: translateY(-50%);
     width: 18px; /* Tamanho do ícone */
     height: 18px; /* Tamanho do ícone */
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>');
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="%23D1E3FA"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>');
     background-size: contain;
     background-repeat: no-repeat;
   }
+
+  .campo-selecao {
+    display: flex;
+    min-width: 696px;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+  
+  .dropdown {
+    width: 100%;
+    height: 100%;
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-primary);
+    font-size: var(--font-medium);
+    cursor: pointer;
+  }
+
+  .campo-selecao select {
+    padding: 8px;
+    border-radius: 6px;
+    background-color: #ADC8EB24;
+    color: var(--text-primary);
+    background: var(--secondary-bg) !important;
+
+    font-size: var(--font-medium);
+    cursor: pointer;
+    flex-grow: 1;
+  }
+  
+  /* 🔹 Botão de busca (visível ao lado do select personalizado) */
+  .btn-search {
+    width: 44px;
+    height: 36px;
+    border-radius: 6px;
+    background: var(--primary-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .btn-search:hover {
+    background: var(--hover-blue);
+  }
+  
+  .icon-search {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    color: white;
+  }
+  
 
 /* ====================== */
 /* BLOCO QUADROS */
@@ -240,14 +303,11 @@
     flex-wrap: wrap;
     gap: 16px;
     justify-content: center;
-    padding: 16px;
-    width: 100%;
-    margin: 0 auto;
+    margin: 20px;
 }
 
 .quadro {
     width: calc(33.33% - 16px);
-    max-width: 438.67px;
     height: auto;
     background: var(--Shades-Base, #223348);
     border-radius: var(--Border-Radius-L, 8px);
@@ -255,13 +315,21 @@
     flex-direction: column;
     overflow: hidden;
     margin-bottom: 16px;
+    transition: box-shadow 0.3s ease, outline 0.3s ease;
 }
+
+.quadro:hover {
+    outline-offset: -4px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* sombra mais escura */
+
+    cursor: pointer;
+}
+
 
 .quadro-header {
     display: flex;
     justify-content: space-between;
     align-items: center; /* Alinha verticalmente todos os elementos */
-    max-width: 438.67px; /* Define o tamanho fixo do quadro */
     height: 78px; /* Define a altura fixa */
     border: 1px solid rgba(173, 200, 235, 0.14);
     padding: 0; /* Remove o padding externo */
@@ -283,7 +351,7 @@
 .projeto-nome {
     font-size: 16px;
     color: #fff;
-    font-weight: 500;
+    font-weight: bold;
 }
 
 .projeto-status {
@@ -366,10 +434,6 @@
     color: #fff;
 }
 
-.borda-esquerda {
-    padding-left: 16px;
-}
-
 .quadro-tabela {
     height: 214px;
     padding: 0 16px;
@@ -388,6 +452,7 @@
 .linha.categoria .coluna-esquerda {
     font-weight: bold;
     color: #FFFFFF;
+    margin-top: 8px;
 }
 
 .linha.subcategoria {
@@ -416,6 +481,7 @@
     text-align: right;
     font-size: 14px;
     color: #fff;
+    margin-top: 8px;
 }
 
 .quadro-rodape {
@@ -426,7 +492,7 @@
     padding: 16px;
 }
 
-.pendencias-botao {
+.btn-detalhes {
     width: 117px;
     height: 36px;
     border-radius: var(--Border-Radius-M, 8px);
@@ -434,6 +500,19 @@
     font-size: 16px;
     cursor: pointer;
     padding: 8px 16px;
-    background-color: rgba(173, 200, 235, 0.14); /* Ajuste de cor */
-    color: #90BDF9; /* Texto branco */
+    background-color: rgba(173, 200, 235, 0.14);
+    color: #90BDF9;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .btn-detalhes:hover {
+    background-color: rgba(173, 200, 235, 0.25); /* um pouco mais forte */
+    transform: scale(1.03);
+  }
+  
+
+@media (min-width: 1200px) {
+    .quadros-container {
+        padding: 8px; /* Reduza o padding lateral em telas maiores */
+    }
 }

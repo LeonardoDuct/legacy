@@ -1,0 +1,321 @@
+<section class="tarefas">
+    <app-cabecalho></app-cabecalho>
+
+    <!-- Cabeçalho inferior -->
+    <section class="header-bottom">
+        <!-- Bloco de Tecnologia -->
+        <article class="bloco-tecnologia">
+            <div class="conteudo">
+              <div class="topo-bloco">
+                <button class="btn-voltar" (click)="voltar()">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                       stroke-width="1.5" stroke="currentColor" class="icone-voltar">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                  </svg>
+                </button>
+                <div class="info-projeto">
+                  <span class="breadcrumb">Dashboard / Tarefas</span>
+                  <div class="linha-titulo">
+                    <h2 class="titulo">{{ nomeProjeto }}</h2>
+                    <span class="projeto-status" [ngClass]="removerAcentos(statusGeral)">
+                        {{ statusGeral }}
+                      </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+                   
+
+        <!-- Bloco de Indicadores -->
+        <article class="bloco-indicadores">
+            <div class="pendente">
+                <div class="icon">
+                    <!-- Ícone Pendente -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3"/>
+                    </svg>
+                </div>
+                <div class="texto-numero">
+                    <div class="texto">Pendentes</div>
+                    <div class="numero">{{ pendentesTotal }}</div>
+                </div>
+            </div>
+
+            <!-- Linha Separadora -->
+            <div class="linha-separadora"></div>
+
+            <div class="atrasadas">
+                <div class="icon">
+                    <!-- Ícone Atrasadas -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
+                    </svg>
+                </div>
+                <div class="texto-numero">
+                    <div class="texto">Atrasadas</div>
+                    <div class="numero">{{ atrasadasTotal }}</div>
+                </div>
+            </div>
+            
+        </article>
+
+        <!-- Bloco de Filtros -->
+        <aside class="bloco-filtro">
+          <div class="filtro-container">
+            <!-- Dropdown -->
+            <div class="dropdown-wrapper">
+              <select id="tipo-filtro" class="dropdown" [(ngModel)]="filtroColuna">
+                <option value="" disabled selected>Selecione uma coluna</option>
+                <option value="repositorio">Repositório</option>
+                <option value="cliente">Cliente</option>
+                <option value="status">Status</option>
+                <option value="responsavel">Responsável</option>
+              </select>
+            </div>
+        
+            <!-- Input de texto -->
+            <div class="input-wrapper">
+              <input type="text"
+                     id="filtro-descricao"
+                     class="input-text"
+                     placeholder="Digite o filtro"
+                     [(ngModel)]="filtroValor" />
+              <button class="btn btn-search" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-search">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </aside>
+    </section>
+
+</section>
+
+<section class="tabela-container">
+    <div class="tabela-scroll">
+      <table class="tabela-tarefas">
+        <thead>
+          <tr>
+            <th (click)="sortTable('prioridade')">
+              <span class="titulo-coluna">
+                Prioridade
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'prioridade' && sortDirection === true,
+                    'descending': sortColumn === 'prioridade' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('scoreTotal')">
+              <span class="titulo-coluna">
+                Score Total
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'scoreTotal' && sortDirection === true,
+                    'descending': sortColumn === 'scoreTotal' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('codigo')">
+              <span class="titulo-coluna">
+                Código IS
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'codigo' && sortDirection === true,
+                    'descending': sortColumn === 'codigo' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('repositorio')">
+              <span class="titulo-coluna">
+                Repositório
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'repositorio' && sortDirection === true,
+                    'descending': sortColumn === 'repositorio' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('cliente')">
+              <span class="titulo-coluna">
+                Cliente
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'cliente' && sortDirection === true,
+                    'descending': sortColumn === 'cliente' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('status')" class="coluna-status">
+              <span class="titulo-coluna">
+                Status
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'status' && sortDirection === true,
+                    'descending': sortColumn === 'status' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('prazo')">
+              <span class="titulo-coluna">
+                Prazo
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'prazo' && sortDirection === true,
+                    'descending': sortColumn === 'prazo' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th (click)="sortTable('responsavel')" class="cabecalho-responsavel">
+              <span class="titulo-coluna">
+                Responsável
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
+                  [ngClass]="{
+                    'icone-seta': true,
+                    'ascending': sortColumn === 'responsavel' && sortDirection === true,
+                    'descending': sortColumn === 'responsavel' && sortDirection === false
+                  }">
+                  <path d="M41 288h238c21.4 0 32.1 25.9 17 41L177 448c-9.4 9.4-24.6 9.4-33.9 0L24 329c-15.1-15.1-4.4-41 17-41zm255-105L177 64c-9.4-9.4-24.6-9.4-33.9 0L24 183c-15.1 15.1-4.4 41 17 41h238c21.4 0 32.1-25.9 17-41z" />
+                </svg>
+              </span>
+            </th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tarefa of tarefasFiltradas; let i = index">
+            <td>{{ tarefa.prioridade }}</td>
+            <td class="score-cell"
+                (mouseenter)="showTooltip(i)"
+                (mouseleave)="hideTooltip()"
+                style="position: relative;">
+              <span class="texto-score" [ngClass]="getScoreClass(tarefa.score_total)">
+                {{ tarefa.score_total }}
+              </span>
+              <ng-container *ngIf="openedTooltip === i">
+                <div class="score-tooltip-modal"
+                     [ngClass]="{'tooltip-up': tarefasFiltradas.length - i <= 5}">
+                  <div class="tooltip-arrow"></div>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th class="col-categoria">CATEGORIA</th>
+            <th class="col-peso">PESO</th>
+            <th class="col-classificacao">CLASSIFICAÇÃO</th>
+            <th class="col-score">SCORE</th>
+            <th class="col-subtotal">SCORE SUB-TOTAL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of tarefa.score_breakdown">
+                        <td class="textoLarge col-categoria">{{ item.categoria }}</td>
+                        <td class="textoLarge col-peso">{{ item.peso }}%</td>
+                        <td class=" texto-small col-classificacao">
+                          <ng-container *ngIf="item.categoria === 'Prazo'; else normalClassificacao">
+                            <span 
+                              *ngIf="prazoAtrasado(item.classificacao)" 
+                              class="dot-red">
+                            </span>
+                            {{ item.classificacao | date: 'dd/MM/yyyy' }}
+                          </ng-container>
+                          <ng-template #normalClassificacao>
+                            <span class="badge badge-classificacao">{{ item.classificacao }}</span>
+                          </ng-template>
+                        </td>
+                        
+                        <td class="texto-small col-score">
+                          <span class="badge" [ngClass]="getScoreClass(item.score)">
+                            {{ item.score }}
+                          </span>
+                        </td>
+                        
+                        <td class=" texto-small col-subtotal">
+                          <span class="badge" [ngClass]="getScoreClass(item.score)">{{ item.subTotal }}</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </ng-container>
+            </td>
+            <td class="tooltip-container">
+              <span class="tooltip-wrapper">
+                <a [href]="tarefa.link" target="_blank" class="link-is">#{{ tarefa.codigo_issue }}</a>
+                <span class="tooltip">{{ tarefa.titulo }}</span>
+              </span>
+            </td>
+
+
+
+            <td>{{ tarefa.repositorio }}</td>
+            <td class="coluna-cliente"><span class="texto-cliente">{{ tarefa.cliente }}</span></td>
+            <td><span class="texto-status" [ngStyle]="{ 'background-color': corDeStatus(tarefa.status), 'color': '#fff' }">
+                {{ tarefa.status }}
+              </span>
+            </td>
+            <td class="tooltip-container">
+              <span class="status-bolinha"
+                [ngClass]="{
+                  'verde': !prazoAtrasado(tarefa.prazo) && !tarefa.motivoAtraso,
+                  'vermelha': prazoAtrasado(tarefa.prazo) && !tarefa.motivoAtraso,
+                  'amarela': tarefa.motivoAtraso
+                }"
+              ></span>
+              {{ tarefa.prazo ? (tarefa.prazo | date: 'dd/MM/yyyy') : 'Indefinido' }}
+            
+              <span class="tooltip" *ngIf="tarefa.motivoAtraso">
+                {{ tarefa.motivoAtraso }}
+              </span>
+            </td>
+            <td class="coluna-responsavel">
+              {{ tarefa.responsavel }}
+            </td>
+            
+            <td class="coluna-sucessoras">
+              <a *ngIf="getQuantidadeSucessoras(tarefa.id_issue) > 0"
+                 [routerLink]="['/sucessoras', tarefa.id_issue]"
+                 class="sucessoras-button relative inline-flex items-center justify-center w-6 h-6">
+                
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                     stroke-width="1.5" stroke="currentColor"
+                     class="icon icone-link w-4 h-4 text-[#D1E3FA94]">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622
+                           1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                </svg>
+            
+                <span class="quantidade-sucessoras absolute -top-1 -right-1 text-[10px] text-[#D1E3FA94] font-medium">
+                  {{ getQuantidadeSucessoras(tarefa.id_issue) }}
+                </span>
+              </a>
+            </td>
+                 
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>

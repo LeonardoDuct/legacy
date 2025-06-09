@@ -1,0 +1,102 @@
+<app-cabecalho></app-cabecalho>
+
+<body>
+  <section class="header">
+    <div class="header--sub">
+      <div class="group--title">
+        <button class="btn-voltar" (click)="voltar()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="icone-voltar">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+          </svg>
+        </button>
+        <div class="title">
+          
+          <div class="title--sub">
+            <p class="tertiary">Dashboard / Tarefas / {{ repositorioOrigem }} / #{{ numeroIsOrigem }}</p>
+            <h3>{{ tituloIssueOrigem }}</h3>
+          </div>
+          <div class="group--badge">
+            <div class="badge">
+              <p>Em andamento</p>
+            </div>
+            <!-- <div class="badge success"><p>15.5</p></div> -->
+            
+            <span class="texto-score" [ngClass]="getScoreClass(scoreOrigemTotal)">
+              {{ scoreOrigemTotal }}
+            </span>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header--sub">
+      <div class="group--highlight">
+        <div class="highlight border-left--add">
+          <div class="highlight--data">
+            <div class="highlight--data--sub">
+              <i class="icon" data-feather="link"></i>
+              <h6>Ligadas</h6>
+            </div>
+            <h1>{{ totalLigadas }}</h1>
+          </div>
+          <div class="highlight--label"></div>
+        </div>
+
+        <div class="highlight border-left--add">
+          <div class="highlight--data">
+            <div class="highlight--data--sub">
+              <i class="icon" data-feather="check-circle"></i>
+              <h6>Concluídas</h6>
+            </div>
+            <h1>{{ totalConcluidas }}</h1>
+          </div>
+          <div class="highlight--label"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="kanban">
+    <div class="kanban--body">
+      <!-- Iterar sobre projetos -->
+      <div class="kanban--column" *ngFor="let projeto of agruparPorProjeto(sucessoras)">
+        <div class="group--title size-s">
+          <div class="title">
+            <h4>{{ projeto.nome }}</h4>
+          </div>
+        </div>
+
+        <div class="kanban--column--body">
+          <!-- Iterar sobre as issues do projeto -->
+          <div class="kanban--card" *ngFor="let issue of projeto.issues">
+            <p class="tertiary">#{{ issue.numero_is }}</p>
+
+            <ul>
+              <li>
+                <a [href]="issue.link" target="_blank" class="link-titulo">{{ issue.titulo }}</a>
+              </li>
+            </ul>
+
+            <div class="group">
+              <img class="avatar" src="assets/images/icon_primary_text/default.svg" alt="Ícone de avatar" />
+              <p>{{ issue.responsavel }}</p>
+            </div>
+
+            <p class="tertiary">{{ issue.conclusao }}</p>
+
+            <div class="group--badge">
+              <div class="badge" [ngClass]="issue.status === 'closed' ? 'success' : getStatusBadgeClass(issue.status)">
+                <p>{{ issue.status === 'closed' ? 'Concluído' : 'Em andamento' }}</p>
+              </div>
+            <span class="texto-score" [ngClass]="getScoreClass(issue.score_total)">
+              {{ issue.score_total }}
+            </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>

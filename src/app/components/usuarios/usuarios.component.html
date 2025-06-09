@@ -1,0 +1,131 @@
+<app-cabecalho></app-cabecalho>
+
+<section class="header-bottom">
+  <article class="bloco-tecnologia">
+      <div class="conteudo">
+          <h2 class="titulo">Cadastro</h2>
+          <span class="status">Usuarios</span>
+      </div>
+  </article>
+
+  <aside class="bloco-filtro">
+      <div class="filtro-container">
+          <div class="dropdown-wrapper">
+              <select id="tipo-filtro" class="dropdown">
+                  <option value="" disabled selected>Selecione uma coluna</option>
+                  <option value="classificacao">Nome</option>
+                  <option value="descricao">Email</option>
+                  <option value="score">Adminstrador</option>
+              </select>
+          </div>
+
+          <!-- Input de texto -->
+          <div class="input-wrapper">
+              <input type="text" id="filtro-descricao" class="input-text" placeholder="Digitar filtro" />
+              <button class="btn btn-search">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-search">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
+                  </svg>
+              </button>
+          </div>
+      </div>
+  </aside>
+</section>
+
+<section class="cadastro-page">
+    <!-- Botão para abrir o modal -->
+
+    <!-- Tabela dentro de um container -->
+    <section class="tabela-container">
+        <button (click)="abrirModalCadastro()" class="btn btn-cadastro">Cadastrar Usuário</button>
+    
+            <table class="tabela-tarefas">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Data de Criação</th>
+                        <th>Administrador</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let usuario of usuarios">
+                        <td>{{ usuario.nome }}</td>
+                        <td>{{ usuario.email }}</td>
+                        <td>{{ usuario.criado_em | date: 'dd/MM/yyyy' }}</td>
+                        <td>{{ usuario.admin ? 'Sim' : 'Não' }}</td>
+                        <td>
+                            <button class="btn btn-editar" (click)="editarUsuario(usuario)">
+                              <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
+                          </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    <!-- Modal de Cadastro -->
+    <section class="form-side modal" *ngIf="mostrarModal">
+        <div class="cadastro-box">
+          <button class="btn btn-fechar" (click)="fecharModal()" aria-label="Fechar">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-close">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <div class="logo">
+            <img src="assets/images/login_logo.svg" alt="Logo" />
+          </div>
+          <div class="cadastro-title">
+            {{ modoEdicao ? 'Editar Usuário' : 'Cadastro de Usuário' }}
+          </div>
+          <form #cadastroForm="ngForm" (ngSubmit)="onSubmit()">
+            <label for="nome">Nome</label>
+            <input
+              type="text"
+              id="nome"
+              name="nome"
+              required
+              [(ngModel)]="nome"
+              placeholder="Seu nome completo"
+            />
+      
+            <label for="email">E-mail</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              [(ngModel)]="email"
+              placeholder="Seu e-mail"
+            />
+      
+            <!-- Mostrar campo senha somente no cadastro -->
+            <ng-container *ngIf="!modoEdicao">
+              <label for="senha">Senha</label>
+              <input
+                type="password"
+                id="senha"
+                name="senha"
+                required
+                [(ngModel)]="senha"
+                placeholder="Crie uma senha"
+              />
+            </ng-container>
+      
+            <label>
+              <input type="checkbox" name="admin" [(ngModel)]="admin" /> Administrador
+            </label>
+      
+            <div *ngIf="erroCadastro" class="erro-msg">{{ erroCadastro }}</div>
+            <div *ngIf="sucessoCadastro" class="sucesso-msg">{{ sucessoCadastro }}</div>
+      
+            <button type="submit" [disabled]="cadastroForm.invalid">
+              {{ modoEdicao ? 'Atualizar' : 'Cadastrar' }}
+            </button>
+          </form>
+        </div>
+      </section>
+      
+      
+</section>

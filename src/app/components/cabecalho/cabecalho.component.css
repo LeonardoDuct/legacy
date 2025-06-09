@@ -109,3 +109,51 @@
 .title .barra {
     color: white;
 }
+
+.logo-img {
+    height: 30px; /* ou o tamanho desejado */
+    width: auto;
+}
+
+.arrow {
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s;
+  }
+  
+  .arrow svg {
+    width: 15px;
+    height: 15px;
+    transition: transform 0.2s;
+  }
+  
+  .arrow.rotated svg {
+    transform: rotate(90deg); /* gira 90 graus pra baixo */
+  }
+
+  .submenu a {
+    color: #cccccc; /* Alterando a cor padrão dos links */
+    text-decoration: none; /* Removendo sublinhado */
+}
+
+.submenu a:hover {
+    color: #ffffff; /* Definindo uma cor mais clara ao passar o mouse */
+}
+
+.right-section {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%; 
+}
+
+.logout-button {
+    font-weight: 400;
+    line-height: 134%;
+    letter-spacing: 0%;
+    color: #EBF4FFE5;
+    background: #223348;
+    width: 51px;
+    height: 19px;
+    border: none; 
+    cursor: pointer; 
+  }

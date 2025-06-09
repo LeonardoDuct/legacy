@@ -1,192 +1,137 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, forkJoin, of } from 'rxjs';
-import { map, mergeMap, catchError } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Issue } from '../shared/interfaces/models';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class GitlabService {
-  private readonly apiUrl = environment.apiUrl;
-  private readonly token = environment.gitlabToken;
-  private readonly cache = new Map<string, any>();
+  private readonly apiUrl = environment.backendApiUrl;
 
   constructor(private http: HttpClient) {}
 
-  private criarHeaders(): HttpHeaders {
-    return new HttpHeaders({ 'Private-Token': this.token });
-  }
+  private obterIdUsuarioDoToken(): string | null {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
 
-  private criarParams(params: Record<string, string | number>): HttpParams {
-    return Object.entries(params).reduce((acc, [key, value]) => {
-      return value !== undefined && value !== null ? acc.set(key, value.toString()) : acc;
-    }, new HttpParams());
-  }
-
-  private criarUrl(projectId: number, path: string = ''): string {
-    return `${this.apiUrl}/projects/${projectId}${path ? '/' + path : ''}`;
-  }
-
-  private getRequest(url: string, params?: HttpParams, observe: any = 'body'): Observable<any> {
-    const cacheKey = JSON.stringify({ url, params: params?.toString(), observe });
-    const shouldRefresh = true;
-
-    if (!shouldRefresh && this.cache.has(cacheKey)) {
-      return of(this.cache.get(cacheKey));
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.id || null;
+    } catch {
+      return null;
     }
-
-    return this.http.get(url, { headers: this.criarHeaders(), params, observe }).pipe(
-      map(response => {
-        this.cache.set(cacheKey, response);
-        return response;
-      }),
-      catchError(error => {
-        console.error('❌ Erro na requisição:', error);
-        return of(null);
-      })
-    );
   }
 
-  private paginar(projectId: number, totalPages: number, baseParams: HttpParams, path: string): Observable<any[]> {
-    const requests = Array.from({ length: totalPages - 1 }, (_, i) => {
-      const page = i + 2;
-      return this.getRequest(this.criarUrl(projectId, path), baseParams.set('page', page.toString()));
+  cadastrarUsuario(nome: string, email: string, senha: string, admin: boolean): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios`, { nome, email, senha, admin });
+  }
+  
+  login(email: string, senha: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, { email, senha });
+  }
+
+  listarUsuarios(): Observable<any[]> {
+    const token = localStorage.getItem('token');
+    return this.http.get<any[]>(`${this.apiUrl}/usuarios`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
-    return forkJoin(requests);
-  }
-
-  obterIssues(projectId: number, page: number = 1, porPagina: number = 50, estado: string = ''): Observable<any> {
-    const params = this.criarParams({ page, per_page: porPagina, state: estado });
-    return this.getRequest(this.criarUrl(projectId, 'issues'), params);
-  }
-
-  obterTotalIssues(projectId: number): Observable<number> {
-    const params = this.criarParams({ per_page: 1 });
-    return this.getRequest(this.criarUrl(projectId, 'issues'), params, 'response').pipe(
-      map(response => Number(response.headers.get('X-Total')))
-    );
-  }
-
-  obterTotalIssuesDeProjetos(projectIds: number[], estado: string = ''): Observable<number> {
-    const requests = projectIds.map(id => {
-      const params = this.criarParams({ state: estado });
-      return this.getRequest(this.criarUrl(id, 'issues'), params, 'response');
-    });
-
-    return forkJoin(requests).pipe(
-      map(responses => responses.reduce((total, res) => total + Number(res.headers.get('X-Total') || 0), 0))
-    );
-  }
-
-  obterTotalIssuesAbertas(projectId: number): Observable<{ opened: number }> {
-    const initialParams = new HttpParams()
-      .set('per_page', '100')
-      .set('page', '1')
-      .set('state', 'opened');
-  
-    return this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, initialParams, 'response').pipe(
-      mergeMap(response => {
-        const totalPages = Number(response.headers.get('X-Total-Pages'));
-        const issues = response.body;
-        const requests: Observable<any>[] = [];
-  
-        for (let page = 2; page <= totalPages; page++) {
-          const params = new HttpParams()
-            .set('per_page', '100')
-            .set('page', page.toString())
-            .set('state', 'opened');
-  
-          requests.push(this.getRequest(`${this.apiUrl}/projects/${projectId}/issues`, params));
-        }
-  
-        return forkJoin([of(issues), ...requests]).pipe(map(results => results.flat()));
-      }),
-      map(issues => ({ opened: issues.length }))
-    );
   }  
 
-  obterTotalIssuesFiltradas(
-    projectId: number,
-    filtro: { label: string; startDate: string; endDate: string }
-  ): Observable<{ opened: number; closed: number; overdue: number; closedLate: number }> {
-    let params = this.criarParams({ page: 1, state: 'all' });
+  atualizarUsuario(id: number, nome: string, email: string, admin: boolean) {
+    return this.http.put<{ mensagem: string }>(`${this.apiUrl}/usuarios/${id}`, { nome, email, admin });
+  }  
 
-    if (filtro.label && filtro.label !== 'Selecione um cliente') {
-      params = params.set('labels', filtro.label);
+  alterarSenha(novaSenha: string) {
+    const token = localStorage.getItem('token');
+    console.log('Token enviado:', token);
+    const id = this.obterIdUsuarioDoToken();
+  
+    if (!id) {
+      throw new Error('ID do usuário não encontrado no token.');
     }
-    if (filtro.startDate && filtro.endDate) {
-      params = params.set('created_after', filtro.startDate).set('created_before', filtro.endDate);
-    }
+  
+    return this.http.post<any>(`${this.apiUrl}/usuarios/${id}/alterar-senha`, { novaSenha }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+  }  
 
-    return this.getRequest(this.criarUrl(projectId, 'issues'), params, 'response').pipe(
-      mergeMap(response => {
-        const totalPages = Number(response.headers.get('X-Total-Pages')) || 1;
-        const issues = response.body;
-
-        const pages = Array.from({ length: totalPages - 1 }, (_, i) => i + 2);
-        const requests = pages.map(page =>
-          this.getRequest(this.criarUrl(projectId, 'issues'), params.set('page', page.toString())).pipe(
-            catchError(error => {
-              console.error(`❌ Erro na página ${page} do projeto ${projectId}:`, error);
-              return of([]);
-            })
-          )
-        );
-
-        return forkJoin([of(issues), ...requests]).pipe(map(res => res.flat()));
-      }),
-      map(issues => {
-        const inicio = new Date(filtro.startDate).getTime();
-        const fim = new Date(filtro.endDate).getTime();
-
-        const filtradas = issues.filter(issue => {
-          const criado = new Date(issue.created_at).getTime();
-          const fechado = issue.closed_at ? new Date(issue.closed_at).getTime() : null;
-          return (fechado && fechado >= inicio && fechado <= fim) || (criado >= inicio && criado <= fim);
-        });
-
-        return {
-          opened: filtradas.filter(i => i.state === 'opened').length,
-          closed: filtradas.filter(i => i.state === 'closed').length,
-          overdue: filtradas.filter(i => i.due_date && new Date(i.due_date).getTime() < Date.now() && i.state === 'opened').length,
-          closedLate: filtradas.filter(i => i.due_date && i.closed_at && new Date(i.closed_at).getTime() > new Date(i.due_date).getTime() && i.state === 'closed').length
-        };
-      }),
-      catchError(error => {
-        console.error(`❌ Erro ao buscar issues para o projeto ${projectId}:`, error);
-        return of({ opened: 0, closed: 0, overdue: 0, closedLate: 0 });
-      })
-    );
+  obterIssuesPorProjeto(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/issues`);
   }
 
-  obterDetalhesDaTarefa(projectId: number, taskId: string): Observable<any> {
-    return this.getRequest(this.criarUrl(projectId, `issues/${taskId}`));
+  obterDetalhesDaIssue(issueId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/issues/${issueId}`);
   }
 
-  obterSubProjetos(projectId: number): Observable<any[]> {
-    return this.getRequest(this.criarUrl(projectId, 'subprojects'));
+  obterProjetos(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/projects`);
   }
 
-  obterIssuesComSubProjetos(projectId: number): Observable<any[]> {
-    return this.obterSubProjetos(projectId).pipe(
-      mergeMap(subs => {
-        const ids = [projectId, ...subs.map(sp => sp.id)];
-        return forkJoin(ids.map(id => this.obterTotalIssuesAbertas(id)));
-      })
-    );
+  carregarLabels(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/labels`);
   }
 
-  carregarLabels(projectIds: number[]): Observable<any[]> {
-    const requests = projectIds.map(id =>
-      this.getRequest(this.criarUrl(id, 'labels')).pipe(
-        catchError(error => {
-          console.error(`Erro ao carregar labels do projeto ${id}:`, error);
-          return of([]);
-        })
-      )
-    );
+  obterIssuesPorProjetoNome(nomeProjeto: string, dataInicio?: string, dataFim?: string): Observable<any> {
+    let params = new HttpParams();
+    if (dataInicio) params = params.set('dataInicio', dataInicio);
+    if (dataFim) params = params.set('dataFim', dataFim);
 
-    return forkJoin(requests).pipe(
-      map(res => res.flat().filter(label => label?.name && label?.color))
-    );
+    return this.http.get(`${this.apiUrl}/issues/detalhes/${nomeProjeto}`, { params });
   }
+
+  obterIssuesPorPeriodo(dataInicio: string, dataFim: string): Observable<Issue[]> {
+    return this.http.get<Issue[]>(`${this.apiUrl}/issues/filtrar?dataInicio=${dataInicio}&dataFim=${dataFim}`);
+  }
+
+  obterCategorias(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/categorias`);
+  }
+
+  criarCategoria(titulo: string, porcentagem: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/categorias`, { titulo, porcentagem });
+  }
+  
+  atualizarCategoria(nomeCategoria: string, titulo: string, porcentagem: number): Observable<any> {
+    const nomeCategoriaEncoded = encodeURIComponent(nomeCategoria.trim());
+    return this.http.put(`${this.apiUrl}/categorias/${nomeCategoriaEncoded}`, { titulo, porcentagem });
+  }
+
+  excluirCategoria(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/categorias/${id}`);
+  }
+
+  criarClassificacao(categoria: string, classificacao: string, descricao?: string, score?: number): Observable<any> {
+    const categoriaEncoded = encodeURIComponent(categoria.trim());
+    const classificacaoLimpa = classificacao.trim().split(/[-/]/).pop()?.trim() || '';
+    const classificacaoEncoded = encodeURIComponent(classificacaoLimpa);
+    const urlFinal = `${this.apiUrl}/classificacao/${categoriaEncoded}/${classificacaoEncoded}`;
+    return this.http.post(urlFinal, { descricao, score });
+  }
+
+  atualizarClassificacao(categoria: string, classificacao: string, descricao: string,score: number): Observable<any> {
+    const categoriaEncoded = encodeURIComponent(categoria.trim());
+    const classificacaoLimpa = classificacao.trim().split(/[-/]/).pop()?.trim() || '';
+    const classificacaoEncoded = encodeURIComponent(classificacaoLimpa);
+    const urlFinal = `${this.apiUrl}/classificacao/${categoriaEncoded}/${classificacaoEncoded}`;
+    return this.http.put(urlFinal, { descricao, score });
+  }
+
+  excluirClassificacao(categoria: string, classificacao: string): Observable<any> {
+    const categoriaEncoded = encodeURIComponent(categoria.trim());
+    const classificacaoEncoded = encodeURIComponent(classificacao.trim());
+    return this.http.delete(`${this.apiUrl}/classificacao/${categoriaEncoded}/${classificacaoEncoded}`);
+  }
+
+  obterSucessoras(id: number): Observable<{ tituloOrigem: string; repositorioOrigem: string; numeroIsOrigem: number; scoreOrigemTotal: number; sucessoras: Issue[] }> {
+    return this.http.get<{ tituloOrigem: string; repositorioOrigem: string; numeroIsOrigem: number; scoreOrigemTotal: number; sucessoras: Issue[] }>(`${this.apiUrl}/issues/${id}/sucessoras`);
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+  }
+  
 }

@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterModule } from '@angular/router';
+import { GitlabService } from '../../services/gitlab.service';
 
 @Component({
   selector: 'app-cabecalho',
   templateUrl: './cabecalho.component.html',
   styleUrls: ['./cabecalho.component.css'],
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
 })
 export class CabecalhoComponent implements OnInit {
   isMenuOpen = false;
@@ -18,21 +19,18 @@ export class CabecalhoComponent implements OnInit {
 
   caminho: string[] = [];
 
-  constructor(private router: Router) {}
+  constructor(
+      private gitlabService: GitlabService,
+      private router: Router
+    ) {}
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
-      console.log('Evento de navegação detectado:', event); // Verifica se está capturando eventos
-  
       if (event instanceof NavigationEnd) {
-        console.log('URL após redirecionamento:', event.urlAfterRedirects); // Confirma se chegou ao NavigationEnd
-        
         this.caminho = event.urlAfterRedirects
           .split('/')
           .filter(p => p)
           .map(p => this.capitalize(p));
-  
-        console.log('Caminho atualizado:', this.caminho); // Mostra a transformação da URL
       }
     });
   }
@@ -51,5 +49,14 @@ export class CabecalhoComponent implements OnInit {
 
   getTituloPagina(): string {
     return this.caminho[0] || 'Dashboard';
+  }
+
+  estaLogado(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
+  logout(): void {
+    this.gitlabService.logout();
+    this.router.navigate(['/login']);
   }
 }
