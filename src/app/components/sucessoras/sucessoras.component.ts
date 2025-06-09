@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Location } from '@angular/common';
 import { GitlabService } from '../../services/gitlab.service';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
-import { Issue } from '../../interfaces/models';
+import { Issue } from '../../shared/interfaces/models';
+import { getScoreClass } from '../../shared/utils/functions';
+import { prazoAtrasado } from '../../shared/utils/functions';
 
 @Component({
   selector: 'app-sucessoras',
@@ -13,20 +15,26 @@ import { Issue } from '../../interfaces/models';
   templateUrl: './sucessoras.component.html',
   styleUrls: ['./sucessoras.component.css']
 })
+
 export class SucessorasComponent implements OnInit {
   sucessoras: Issue[] = [];
   idIssue!: number;
   tituloIssueOrigem: string = '';
   repositorioOrigem: string = '';
   numeroIsOrigem: number = 0;
+  scoreOrigemTotal: number = 0;
   projetosAgrupados: { nome: string, issues: Issue[] }[] = [];
   totalConcluidas: number = 0;
   totalLigadas: number = 0;
   openedTooltip: number | null = null;
+  getScoreClass = getScoreClass;
+  prazoAtrasado = prazoAtrasado;
 
   constructor(
     private gitlabService: GitlabService,
-    private route: ActivatedRoute
+    private router: Router,
+    private route: ActivatedRoute,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -43,26 +51,33 @@ export class SucessorasComponent implements OnInit {
         this.tituloIssueOrigem = data.tituloOrigem ?? 'Título não disponível';
         this.repositorioOrigem = data.repositorioOrigem ?? 'Repositório desconhecido';
         this.numeroIsOrigem = data.numeroIsOrigem ?? 0;
-  
+
+        // ✅ Agora você pode acessar `scoreOrigemTotal`
+        this.scoreOrigemTotal = data.scoreOrigemTotal ?? 0;
+
         this.sucessoras = data.sucessoras.map((issue: Issue) => {
           let conclusao = 'Sem informação de conclusão';
-  
+
           if (issue.status?.toLowerCase() === 'closed') {
             conclusao = `Concluído em ${issue.data_fechamento ? new Date(issue.data_fechamento).toLocaleDateString() : 'data não informada'}`;
           } else if (issue.status?.toLowerCase() === 'opened') {
             conclusao = issue.prazo ? `Expectativa de conclusão ${new Date(issue.prazo).toLocaleDateString()}` : 'Sem expectativa de conclusão';
           }
-  
-          return { 
-            ...issue, 
+
+          if (this.sucessoras.length > 0) {
+            console.log('Link da primeira sucessora:', this.sucessoras[0].link);
+          }
+
+          return {
+            ...issue,
             conclusao,
-            score_total: issue.score_total ?? null, // ✅ Garante que a propriedade existe, mesmo para `closed`
-            score_breakdown: issue.score_breakdown ?? null // ✅ Garante que a propriedade existe, mesmo para `closed`
+            score_total: issue.score_total ?? null, // ✅ Mantém `score_total` para sucessoras
+            score_breakdown: issue.score_breakdown ?? null // ✅ Garante que os dados estão presentes
           };
         });
-  
+
         this.projetosAgrupados = this.agruparPorProjeto(this.sucessoras);
-  
+
         this.totalConcluidas = this.sucessoras.filter(issue => issue.status === 'closed').length;
         this.totalLigadas = this.sucessoras.length;
       },
@@ -98,18 +113,8 @@ export class SucessorasComponent implements OnInit {
     this.openedTooltip = null;
   }
 
-  prazoAtrasado(data: string | Date): boolean {
-    const hoje = new Date();
-    const prazo = new Date(data);
-    return prazo < new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  voltar(): void {
+    this.location.back()
   }
 
-  getScoreClass(score: number | null | undefined): string {
-    if (score === null || score === undefined) return ''; // 🔹 Evita erro ao acessar um score ausente
-    if (score < 25) return 'score verde';
-    if (score < 50) return 'score amarelo';
-    if (score < 75) return 'score vermelho-claro';
-    return 'score vermelho-escuro';
-  }
-  
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Issue } from '../interfaces/models';
+import { Issue } from '../shared/interfaces/models';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -126,8 +126,8 @@ export class GitlabService {
     return this.http.delete(`${this.apiUrl}/classificacao/${categoriaEncoded}/${classificacaoEncoded}`);
   }
 
-  obterSucessoras(id: number): Observable<{ tituloOrigem: string; repositorioOrigem: string; numeroIsOrigem: number; sucessoras: Issue[] }> {
-    return this.http.get<{ tituloOrigem: string; repositorioOrigem: string; numeroIsOrigem: number; sucessoras: Issue[] }>(`${this.apiUrl}/issues/${id}/sucessoras`);
+  obterSucessoras(id: number): Observable<{ tituloOrigem: string; repositorioOrigem: string; numeroIsOrigem: number; scoreOrigemTotal: number; sucessoras: Issue[] }> {
+    return this.http.get<{ tituloOrigem: string; repositorioOrigem: string; numeroIsOrigem: number; scoreOrigemTotal: number; sucessoras: Issue[] }>(`${this.apiUrl}/issues/${id}/sucessoras`);
   }
 
   logout(): void {

@@ -58,6 +58,7 @@
                     <div class="numero">{{ atrasadasTotal }}</div>
                 </div>
             </div>
+            
         </article>
 
         <!-- Bloco de Filtros -->
@@ -261,7 +262,15 @@
                 </div>
               </ng-container>
             </td>
-            <td><a [href]="tarefa.link" target="_blank">#{{ tarefa.codigo_issue }}</a></td>
+            <td class="tooltip-container">
+              <span class="tooltip-wrapper">
+                <a [href]="tarefa.link" target="_blank" class="link-is">#{{ tarefa.codigo_issue }}</a>
+                <span class="tooltip">{{ tarefa.titulo }}</span>
+              </span>
+            </td>
+
+
+
             <td>{{ tarefa.repositorio }}</td>
             <td class="coluna-cliente"><span class="texto-cliente">{{ tarefa.cliente }}</span></td>
             <td><span class="texto-status" [ngStyle]="{ 'background-color': corDeStatus(tarefa.status), 'color': '#fff' }">

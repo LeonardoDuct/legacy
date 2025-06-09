@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { GitlabService } from 'src/app/services/gitlab.service';
+import { removerAcentos } from 'src/app/shared/utils/functions';
 
 // Interfaces
 interface DadoCategoria {
@@ -63,7 +64,6 @@ export class CadastroComponent implements OnInit {
     this.carregarCategorias();
   }
 
-  // --- Categoria ---
 
   carregarCategorias() {
     this.gitlabService.obterCategorias().subscribe({
@@ -134,7 +134,7 @@ export class CadastroComponent implements OnInit {
     let categoriasAtualizadas = 0;
   
     this.categorias.forEach((cat) => {
-      const nomeCategoriaSemAcento = this.removerAcentos(cat.titulo);
+      const nomeCategoriaSemAcento = removerAcentos(cat.titulo);
   
       this.gitlabService.atualizarCategoria(nomeCategoriaSemAcento, cat.titulo, cat.porcentagem)
         .subscribe({
@@ -154,11 +154,6 @@ export class CadastroComponent implements OnInit {
         });
     });
   }
-  
-  removerAcentos(texto: string): string {
-    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  }
-  
 
   editarCategoria(categoria: Categoria) {
     console.log('Editar categoria:', categoria);

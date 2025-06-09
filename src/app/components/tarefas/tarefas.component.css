@@ -586,3 +586,12 @@ th, td {
     font-size: 48px;
   }
 }
+
+.link-is {
+  color: #f5f9ff !important;
+  text-decoration: none;
+}
+
+.link-is:hover {
+  text-decoration: underline;
+}

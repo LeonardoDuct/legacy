@@ -3,59 +3,18 @@ import pool from '../config/database';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { authMiddleware } from '../middlewares/authMiddleware';
+import {
+  Issue,
+  UsuarioBody,
+  Cliente,
+  Label,
+  ClassificacaoParams,
+  ClassificacaoBody,
+  CategoriaParams,
+  CategoriaBody
+} from '@models/interfaces';
 
 const router = Router();
-
-interface Issue {
-  codigo_issue: number;
-  projeto_principal: string;
-  repositorio: string;
-  cliente: string;
-  labels: string[] | null;
-  status: string;
-  prazo: string | null;
-  responsavel: string;
-  link: string;
-  score_total?: number;
-  prioridade?: number; 
-}  
-
-interface UsuarioBody {
-  nome: string;
-  email: string;
-  senha: string;
-  admin: boolean;
-}
-
-interface Cliente {
-  sigla_cliente: string;
-  nota: string;
-}
-
-interface Label {
-  label: string;
-  nota: string;
-}
-
-interface ClassificacaoParams {
-  categoria: string;
-  classificacao: string;
-}
-
-interface ClassificacaoBody {
-  descricao?: string;
-  score?: number | string;
-}
-
-interface CategoriaParams {
-  nome_categoria: string;
-}
-
-interface CategoriaBody {
-  titulo: string;
-  porcentagem: number;
-}
-
 
 function getQueryStringParam(param: any): string | undefined {
   if (typeof param === 'string') return param;
@@ -148,6 +107,7 @@ router.get('/issues/detalhes/:projetoPrincipal', async (req: Request, res: Respo
       SELECT
         i.id AS id_issue,
         i.numero_is AS codigo_issue,
+        i.titulo AS titulo,
         CASE
           WHEN p.id IN (109) THEN 'Sustentação'
           WHEN p.id IN (113, 111, 106, 104, 32) THEN 'Processos'
@@ -901,6 +861,7 @@ router.get('/issues/:id/sucessoras', async (req: Request, res: Response): Promis
   let { id } = req.params;
 
   try {
+    // 1. Busca o ID completo da issue
     const idQuery = `SELECT id FROM issues WHERE numero_is = $1`;
     const idResult = await pool.query(idQuery, [id]);
 
@@ -908,8 +869,13 @@ router.get('/issues/:id/sucessoras', async (req: Request, res: Response): Promis
       id = idResult.rows[0].id;
     }
 
+    // 2. Busca os dados da issue de origem
     const origemQuery = `
-      SELECT i.*, p.nome AS repositorio, r.id AS repositorio_id
+      SELECT 
+        i.*, 
+        p.nome AS repositorio, 
+        r.id AS repositorio_id,
+        i.sigla_cliente AS cliente
       FROM issues i
       JOIN projeto p ON i.id_projeto = p.id
       JOIN repositorio r ON p.id_repositorio = r.id
@@ -922,97 +888,42 @@ router.get('/issues/:id/sucessoras', async (req: Request, res: Response): Promis
     }
     const origem = origemResult.rows[0];
 
-    const relacionadasQuery = `SELECT id_is_destino FROM issues_relacionadas WHERE id_is_origem = $1`;
-    const relacionadasResult = await pool.query(relacionadasQuery, [id]);
-    const destinos = relacionadasResult.rows.map(row => row.id_is_destino);
+    // 3. Busca dados para cálculo do score
+    const [clientesResult, labelsResult, categoriasResult] = await Promise.all([
+      pool.query('SELECT sigla_cliente, nota FROM cliente'),
+      pool.query('SELECT label, nota FROM labels'),
+      pool.query('SELECT categoria, peso FROM categorias')
+    ]);
 
-    if (destinos.length === 0) {
-      res.json({
-        tituloOrigem: origem.titulo,
-        numeroIsOrigem: origem.numero_is,
-        repositorioOrigem: origem.repositorio, // ✅ Alteração aqui
-        sucessoras: [],
-      });
-      return;
-    }
-
-    const sql = `
-      SELECT
-        i.id AS id_issue,
-        i.numero_is AS codigo_issue,
-        i.titulo,
-        i.numero_is,
-        CASE
-          WHEN p.id IN (109) THEN 'Sustentação'
-          WHEN p.id IN (113, 111, 106, 104, 32) THEN 'Processos'
-          WHEN p.id IN (110, 107) THEN 'QA'
-          WHEN p.id IN (108, 123, 124) THEN 'Projetos'
-          WHEN p.id IN (130, 129) AND r.id = 328 THEN 'Produtos'
-          WHEN r.id = 3 THEN 'Desenvolvimento'
-          WHEN p.id IN (125) THEN 'RNC'
-          WHEN p.id IN (44) THEN 'CMO'
-        END AS projeto_principal,
-        p.nome AS repositorio,
-        i.sigla_cliente AS cliente,
-        i.labels,
-        COALESCE(
-          (
-            SELECT lbl
-            FROM unnest(i.labels) AS lbl
-            WHERE lbl LIKE 'Status /%'
-            LIMIT 1
-          ),
-          'Status não definido'
-        ) AS status,
-        i.prazo,
-        COALESCE(NULLIF(i.responsavel, ''), 'Indefinido') AS responsavel,
-        i.link AS link,
-        i.status AS status,
-        i.data_fechamento
-      FROM issues i
-      JOIN projeto p ON i.id_projeto = p.id
-      JOIN repositorio r ON p.id_repositorio = r.id
-        AND i.id = ANY($1)
-      ORDER BY i.prazo ASC NULLS LAST;
-    `;
-
-    const issuesResult = await pool.query(sql, [destinos]);
-    const issues = issuesResult.rows;
-
-    const clientesResult = await pool.query('SELECT sigla_cliente, nota FROM cliente');
-    const clientes = clientesResult.rows;
+    // Mapeamento de dados
     const clientesMap: { [sigla: string]: number } = {};
-    clientes.forEach((c: any) => { clientesMap[c.sigla_cliente] = parseFloat(c.nota); });
+    clientesResult.rows.forEach((c: any) => {
+      clientesMap[c.sigla_cliente] = parseFloat(c.nota);
+    });
 
-    const labelsResult = await pool.query('SELECT label, nota FROM labels');
-    const labelsArr = labelsResult.rows;
     const labelsMap: { [key: string]: number } = {};
-    labelsArr.forEach((l: any) => { labelsMap[l.label] = parseFloat(l.nota); });
+    labelsResult.rows.forEach((l: any) => { labelsMap[l.label] = parseFloat(l.nota); });
 
-    const categoriasResult = await pool.query('SELECT categoria, peso FROM categorias');
-    const categoriasArr = categoriasResult.rows;
     const categoriaPesoMap: { [cat: string]: number } = {};
-    categoriasArr.forEach((row: any) => { categoriaPesoMap[row.categoria] = row.peso; });
+    categoriasResult.rows.forEach((row: any) => { categoriaPesoMap[row.categoria] = row.peso; });
 
-    function extrairClassificacao(labels: string[] | null, chave: string) {
-      if (!labels) return '';
-      const found = labels.find(l => l.startsWith(chave + ' / '));
-      return found ? found.replace(`${chave} / `, "") : '';
-    }
-
-    function calcularScore(issue: any, clientesMap: {[sigla:string]:number}, categoriaPesoMap: {[cat:string]:number}) {
+    // 4. Função ÚNICA de cálculo (garantindo consistência)
+    function calcularScoreCompleto(issue: any) {
       const labels = issue.labels || [];
 
-      const classificacaoCliente = issue.cliente || '';
-      const scoreCliente = clientesMap[classificacaoCliente] || 0;
+      // CLIENTE
+      const siglaCliente = issue.cliente || issue.sigla_cliente || '';
+      const scoreCliente = siglaCliente ? (clientesMap[siglaCliente] || 0) : 0;
       const pesoCliente = categoriaPesoMap['Cliente'] ?? 30;
 
+      // PRAZO
+      const classificacaoPrazo = issue.prazo || '';
       let scorePrazo = 0;
       if (issue.prazo) {
         const prazoDate = new Date(issue.prazo);
         const hoje = new Date();
-        prazoDate.setHours(0,0,0,0);
-        hoje.setHours(0,0,0,0);
+        prazoDate.setHours(0, 0, 0, 0);
+        hoje.setHours(0, 0, 0, 0);
         const diasAtraso = Math.floor((hoje.getTime() - prazoDate.getTime()) / (1000 * 60 * 60 * 24));
         if (diasAtraso > 0) {
           if (diasAtraso <= 10) scorePrazo = diasAtraso * 1;
@@ -1024,74 +935,142 @@ router.get('/issues/:id/sucessoras', async (req: Request, res: Response): Promis
       const pesoPrazo = categoriaPesoMap['Prazo'] ?? 30;
 
       // URGÊNCIA
-      const classificacaoUrgencia = extrairClassificacao(labels, 'Urgencia');
-      const labelUrgencia = classificacaoUrgencia ? `Urgencia / ${classificacaoUrgencia}` : '';
+      const classificacaoUrgencia = labels.find((l: string) => l.startsWith('Urgência / '))?.replace('Urgência / ', '') || '';
+      const labelUrgencia = classificacaoUrgencia ? `Urgência / ${classificacaoUrgencia}` : '';
       const scoreUrgencia = labelUrgencia && labelsMap[labelUrgencia] !== undefined ? labelsMap[labelUrgencia] : 0;
-      const pesoUrgencia = categoriaPesoMap['Urgencia'] ?? 20;
+      const pesoUrgencia = categoriaPesoMap['Urgência'] ?? 20;
 
       // COMPLEXIDADE
-      const classificacaoComplexidade = extrairClassificacao(labels, 'Complexidade');
+      const classificacaoComplexidade = labels.find((l: string) => l.startsWith('Complexidade / '))?.replace('Complexidade / ', '') || '';
       const labelComplexidade = classificacaoComplexidade ? `Complexidade / ${classificacaoComplexidade}` : '';
       const scoreComplexidade = labelComplexidade && labelsMap[labelComplexidade] !== undefined ? labelsMap[labelComplexidade] : 0;
       const pesoComplexidade = categoriaPesoMap['Complexidade'] ?? 15;
 
       // IMPACTO
-      const classificacaoImpacto = extrairClassificacao(labels, 'Impacto');
+      const classificacaoImpacto = labels.find((l: string) => l.startsWith('Impacto / '))?.replace('Impacto / ', '') || '';
       const labelImpacto = classificacaoImpacto ? `Impacto / ${classificacaoImpacto}` : '';
       const scoreImpacto = labelImpacto && labelsMap[labelImpacto] !== undefined ? labelsMap[labelImpacto] : 0;
       const pesoImpacto = categoriaPesoMap['Impacto'] ?? 5;
 
+      // Monta o breakdown
       const breakdown = [
-        { categoria: 'Cliente', peso: pesoCliente, classificacao: classificacaoCliente, score: scoreCliente, subTotal: Number((scoreCliente * pesoCliente / 100).toFixed(2)) },
-        { categoria: 'Prazo', peso: pesoPrazo, classificacao: issue.prazo || '', score: scorePrazo, subTotal: Number((scorePrazo * pesoPrazo / 100).toFixed(2)) },
-        { categoria: 'Urgência', peso: pesoUrgencia, classificacao: classificacaoUrgencia, score: scoreUrgencia, subTotal: Number((scoreUrgencia * pesoUrgencia / 100).toFixed(2)) },
-        { categoria: 'Complexidade', peso: pesoComplexidade, classificacao: classificacaoComplexidade, score: scoreComplexidade, subTotal: Number((scoreComplexidade * pesoComplexidade / 100).toFixed(2)) },
-        { categoria: 'Impacto', peso: pesoImpacto, classificacao: classificacaoImpacto, score: scoreImpacto, subTotal: Number((scoreImpacto * pesoImpacto / 100).toFixed(2)) }
+        {
+          categoria: 'Cliente',
+          peso: pesoCliente,
+          classificacao: siglaCliente,
+          score: scoreCliente,
+          subTotal: Number((scoreCliente * pesoCliente / 100).toFixed(2))
+        },
+        {
+          categoria: 'Prazo',
+          peso: pesoPrazo,
+          classificacao: classificacaoPrazo,
+          score: scorePrazo,
+          subTotal: Number((scorePrazo * pesoPrazo / 100).toFixed(2))
+        },
+        {
+          categoria: 'Urgência',
+          peso: pesoUrgencia,
+          classificacao: classificacaoUrgencia,
+          score: scoreUrgencia,
+          subTotal: Number((scoreUrgencia * pesoUrgencia / 100).toFixed(2))
+        },
+        {
+          categoria: 'Complexidade',
+          peso: pesoComplexidade,
+          classificacao: classificacaoComplexidade,
+          score: scoreComplexidade,
+          subTotal: Number((scoreComplexidade * pesoComplexidade / 100).toFixed(2))
+        },
+        {
+          categoria: 'Impacto',
+          peso: pesoImpacto,
+          classificacao: classificacaoImpacto,
+          score: scoreImpacto,
+          subTotal: Number((scoreImpacto * pesoImpacto / 100).toFixed(2))
+        }
       ];
 
-      const scoreTotal = breakdown.reduce((acc, cur) => acc + cur.subTotal, 0);
-
-      return { score_total: Number(scoreTotal.toFixed(2)), score_breakdown: breakdown };
-    }
-
-    // 8. Formata issues com score e campo "conclusao" - ✅ Alteração aqui no tratamento de concluídas
-    const issuesFormatadas = issues.map(issue => {
-      let conclusao: string;
-
-      if (issue.status === 'closed') {
-        conclusao = issue.data_fechamento
-          ? `Concluído em ${new Date(issue.data_fechamento).toLocaleDateString()}`
-          : 'Data de fechamento não informada';
-      } else {
-        conclusao = issue.prazo
-          ? `Expectativa de conclusão ${new Date(issue.prazo).toLocaleDateString()}`
-          : 'Sem expectativa de conclusão';
-      }
-
-      const { score_total, score_breakdown } = calcularScore(issue, clientesMap, categoriaPesoMap);
+      const score_total = breakdown.reduce((sum, cat) => sum + cat.subTotal, 0);
 
       return {
-        ...issue,
-        conclusao,
-        score_total,
-        score_breakdown
+        score_total: Number(score_total.toFixed(2)),
+        score_breakdown: breakdown
       };
-    });
+    }
 
-    // 9. Ordena por score_total desc
-    issuesFormatadas.sort((a, b) => b.score_total - a.score_total);
+    // 5. Calcula o score da origem (usando a mesma função)
+    const { score_total: scoreOrigemTotal, score_breakdown: origemBreakdown } = calcularScoreCompleto(origem);
 
-    // 10. Adiciona prioridade
-    issuesFormatadas.forEach((issue, index) => {
-      issue.prioridade = index + 1;
-    });
+    // 6. Busca as issues sucessoras
+    const relacionadasQuery = `SELECT id_is_destino FROM issues_relacionadas WHERE id_is_origem = $1`;
+    const relacionadasResult = await pool.query(relacionadasQuery, [id]);
+    const destinos = relacionadasResult.rows.map(row => row.id_is_destino);
 
-    // 11. Retorna resultado final - ✅ Alteração aqui para incluir repositorioOrigem
+    let sucessoras = [];
+    if (destinos.length > 0) {
+      const sql = `
+        SELECT
+          i.id AS id_issue,
+          i.numero_is AS codigo_issue,
+          i.titulo,
+          i.numero_is,
+          CASE
+            WHEN p.id IN (109) THEN 'Sustentação'
+            WHEN p.id IN (113, 111, 106, 104, 32) THEN 'Processos'
+            WHEN p.id IN (110, 107) THEN 'QA'
+            WHEN p.id IN (108, 123, 124) THEN 'Projetos'
+            WHEN p.id IN (130, 129) AND r.id = 328 THEN 'Produtos'
+            WHEN r.id = 3 THEN 'Desenvolvimento'
+            WHEN p.id IN (125) THEN 'RNC'
+            WHEN p.id IN (44) THEN 'CMO'
+          END AS projeto_principal,
+          p.nome AS repositorio,
+          i.sigla_cliente AS cliente,
+          i.labels,
+          COALESCE(
+            (SELECT lbl FROM unnest(i.labels) AS lbl WHERE lbl LIKE 'Status /%' LIMIT 1),
+            'Status não definido'
+          ) AS status,
+          i.prazo,
+          COALESCE(NULLIF(i.responsavel, ''), 'Indefinido') AS responsavel,
+          i.link AS link,
+          i.status AS status,
+          i.data_fechamento
+        FROM issues i
+        JOIN projeto p ON i.id_projeto = p.id
+        JOIN repositorio r ON p.id_repositorio = r.id
+        WHERE i.id = ANY($1)
+        ORDER BY i.prazo ASC NULLS LAST;
+      `;
+
+      const issuesResult = await pool.query(sql, [destinos]);
+      sucessoras = issuesResult.rows.map(issue => {
+        const { score_total, score_breakdown } = calcularScoreCompleto(issue);
+        return {
+          ...issue,
+          score_total,
+          score_breakdown
+        };
+      });
+
+      // Ordena por score_total decrescente
+      sucessoras.sort((a, b) => b.score_total - a.score_total);
+
+      // Adiciona prioridade
+      sucessoras.forEach((issue, idx) => {
+        issue.prioridade = idx + 1;
+      });
+    }
+
+    // 7. Retorna o resultado completo
     res.json({
       tituloOrigem: origem.titulo,
       numeroIsOrigem: origem.numero_is,
       repositorioOrigem: origem.repositorio,
-      sucessoras: issuesFormatadas,
+      scoreOrigemTotal, // Valor total para a div fixa
+      scoreOrigemBreakdown: origemBreakdown, // Opcional: breakdown completo da origem
+      sucessoras // Com score_total e score_breakdown completos
     });
 
   } catch (error) {

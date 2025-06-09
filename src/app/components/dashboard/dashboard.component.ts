@@ -1,7 +1,9 @@
 import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GitlabService } from '../../services/gitlab.service';
-import { Issue } from '../../interfaces/models';
+import { Issue } from '../../shared/interfaces/models';
+import { obterStatusGeral } from 'src/app/shared/utils/functions';
+import { removerAcentos } from 'src/app/shared/utils/functions';
 import flatpickr from 'flatpickr';
 import { Portuguese } from 'flatpickr/dist/l10n/pt';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
@@ -45,7 +47,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   dataInicio: string = '';
   dataFim: string = '';
   nomeProjeto: string = '';
-
+  removerAcentos = removerAcentos
 
   constructor(private gitlabService: GitlabService) {}
 
@@ -110,7 +112,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   private atualizarTotais() {
     this.pendentesTotal = this.projetos.reduce((total, projeto) => total + projeto.abertas, 0);
     this.atrasadasTotal = this.projetos.reduce((total, projeto) => total + projeto.abertasForaPrazo, 0);
-    this.statusGeral = this.obterStatusGeral(this.pendentesTotal, this.atrasadasTotal);
+    this.statusGeral = obterStatusGeral(this.pendentesTotal, this.atrasadasTotal);
   }
 
   obterStatus(abertasDentroPrazo: number, abertasForaPrazo: number): string {
@@ -121,22 +123,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     if (abertasForaPrazo / totalAbertas > 0.2) return 'Crítico';
 
     return 'Instável';
-  }
-
-  obterStatusGeral(pendentesTotal: number, atrasadasTotal: number): string {
-    if (pendentesTotal === 0) return 'Estável';
-    if (atrasadasTotal === 0) return 'Estável';
-
-    const proporcaoAtrasadas = atrasadasTotal / pendentesTotal;
-
-    if (proporcaoAtrasadas > 0.2) return 'Crítico';
-
-    return 'Instável';
-  }
-
-  removerAcentos(status: string | undefined | null): string {
-    if (!status) return '';
-    return status.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   }
 
   toggleMenu(): void {

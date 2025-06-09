@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
 import { GitlabService } from '../../services/gitlab.service';
 import { FormsModule } from '@angular/forms';
+import { getScoreClass, removerAcentos } from 'src/app/shared/utils/functions';
+import { obterStatusGeral } from 'src/app/shared/utils/functions';
+import { prazoAtrasado } from 'src/app/shared/utils/functions';
 
 interface Issue {
   codigo_issue: number;
@@ -35,7 +38,9 @@ export class TarefasComponent implements OnInit {
   pendentesTotal: number = 0;
   statusGeral: string = 'Estável';
   openedTooltip: number | null = null;
-
+  getScoreClass = getScoreClass
+  removerAcentos = removerAcentos
+  prazoAtrasado = prazoAtrasado
 
   // Variáveis de filtro
   filtroColuna: string = '';
@@ -74,7 +79,7 @@ export class TarefasComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
+    private location: Location,
     private gitlabService: GitlabService
   ) {}
 
@@ -110,7 +115,7 @@ export class TarefasComponent implements OnInit {
           tarefa => tarefa.prazo && new Date(tarefa.prazo) < new Date() && !tarefa.motivoAtraso
         ).length;
   
-        this.statusGeral = this.obterStatusGeral(this.pendentesTotal, this.atrasadasTotal);
+        this.statusGeral = obterStatusGeral(this.pendentesTotal, this.atrasadasTotal);
       },
       error: (erro) => {
         console.error('Erro ao carregar tarefas:', erro);
@@ -134,7 +139,7 @@ getQuantidadeSucessoras(idIssue: number): number {
 }
 
   getMotivoAtraso(tarefa: Issue): string | null {
-    if (!this.prazoAtrasado(tarefa.prazo) || !tarefa.labels) return null;
+    if (!prazoAtrasado(tarefa.prazo) || !tarefa.labels) return null;
 
     // Busca label "Aguardando X" que não seja interna
     const labelAguardandoOutro = tarefa.labels.find(label =>
@@ -150,7 +155,6 @@ getQuantidadeSucessoras(idIssue: number): number {
     return null;
   }
   
-
   get tarefasFiltradas() {
     if (!this.filtroColuna || !this.filtroValor) {
       return this.tarefas;
@@ -160,28 +164,6 @@ getQuantidadeSucessoras(idIssue: number): number {
       const campo = (tarefa[this.filtroColuna] || '').toString().toLowerCase();
       return campo.includes(valor);
     });
-  }
-
-  obterStatusGeral(pendentesTotal: number, atrasadasTotal: number): string {
-    if (pendentesTotal === 0) return 'Estável'; 
-    if (atrasadasTotal === 0) return 'Estável'; 
-
-    const proporcaoAtrasadas = atrasadasTotal / pendentesTotal;
-  
-    if (proporcaoAtrasadas > 0.2) return 'Crítico';
-  
-    return 'Instável';
-  }
-
-  removerAcentos(status: string): string {
-    return status.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  }
-
-  getScoreClass(score: number): string {
-    if (score < 25) return 'score verde';
-    if (score < 50) return 'score amarelo';
-    if (score < 75) return 'score vermelho-claro';
-    return 'score vermelho-escuro';
   }
 
   sortTable(column: string): void {
@@ -211,7 +193,7 @@ getQuantidadeSucessoras(idIssue: number): number {
   }
 
   voltar(): void {
-    this.router.navigate(['/dashboard']);
+    this.location.back()
   }
 
   showTooltip(index: number) {
@@ -219,12 +201,6 @@ getQuantidadeSucessoras(idIssue: number): number {
   }
   hideTooltip() {
     this.openedTooltip = null;
-  }
-
-  prazoAtrasado(data: string | Date): boolean {
-    const hoje = new Date();
-    const prazo = new Date(data);
-    return prazo < new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
   }
   
 }

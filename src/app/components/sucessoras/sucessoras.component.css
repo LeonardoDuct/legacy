@@ -735,3 +735,40 @@ input, button {
     padding: 4px 10px;
     border-radius: 8px;
   }
+
+  .link-titulo {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #f5f9ff !important;
+      line-height: 1.5rem;
+      text-decoration: none;
+      /* remove o sublinhado padrão */
+  }
+
+  .link-titulo:hover {
+      text-decoration: underline;
+      /* opcional: sublinhar ao passar o mouse */
+  }
+
+  .btn-voltar {
+      background-color: #C0D5F20F;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .btn-voltar:hover {
+      background-color: #2c3e50;
+      transform: scale(1.03);
+  }
+
+  .icone-voltar {
+      width: 24px;
+      height: 24px;
+      color: #90BDF9;
+  }
