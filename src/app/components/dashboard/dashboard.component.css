@@ -31,21 +31,9 @@
     color: #f5f9ff;
 }
 
-/* ====================== */
-/* CABEÇALHO INFERIOR */
-/* ====================== */
-
-.header-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    gap: 1px;
-    background-color: #223348;
-}
-
 /* Bloco de Tecnologia */
 .bloco-tecnologia {
-   flex: 0 0 360px; /* Não cresce, não encolhe, largura fixa */ 
+   flex: 0 0 360px; 
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
@@ -58,12 +46,6 @@
     border-bottom: 1px solid rgba(173, 200, 235, 0.14);
 }
 
-.bloco-tecnologia .conteudo {
-    display: flex;
-    flex-direction: column;
-    width: 296px;
-}
-
 /* Breadcrumb */
 .bloco-tecnologia .breadcrumb {
     font-weight: 400;
@@ -72,29 +54,8 @@
     color: rgba(245, 249, 255, 0.7); /* Cor com transparência */
     display: block; /* Garante que o breadcrumb fique em sua própria linha */
 }
-
-/* Título */
-.bloco-tecnologia .titulo {
-    font-weight: 600;
-    font-size: 22px;
-    line-height: 125%;
-    color: white;
-}
-
 /* Status */
-.bloco-tecnologia .status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 8px;
-    width: 86px; /* Mantém o tamanho correto */
-    height: 29px;
-    border-radius: 8px;
-    background: var(--semantic-colors-success-10, #0FF56F1A);
-    color: #0FF56F;
-    font-weight: 500;
-    font-size: 14px;
-}
+
 
 /* Bloco de Indicadores */
 .bloco-indicadores {
@@ -106,6 +67,7 @@
     height: 148px;
     padding: 16px;
     color: #f5f9ff;
+    gap: 15px;
     text-align: center;
     border-right: 1px solid rgba(173, 200, 235, 0.14);
     border-bottom: 1px solid rgba(173, 200, 235, 0.14);
@@ -134,51 +96,6 @@
     background-color: rgba(173, 200, 235, 0.14);
 }
 
-.bloco-indicadores .pendente,
-.bloco-indicadores .atrasadas {
-    display: flex;
-    flex-direction: column; /* 🔹 Organiza os itens na vertical */
-    align-items: flex-start; /* 🔹 Alinha os elementos à esquerda */
-    justify-content: center;
-    gap: 8px;
-    width: 180px;
-    height: 100%;
-    padding: 16px;
-}
-
-.bloco-indicadores svg {
-    width: 20px;
-    height: 20px;
-    color: #f5f9ff;
-    margin-bottom: 8px; /* 🔹 Dá um pequeno espaço entre o ícone e o texto */
-}
-
-.texto-numero {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* 🔹 Alinha os textos à esquerda */
-    justify-content: center;
-    width: 104px;
-    height: 54px;
-    gap: 4px;
-}
-
-.texto-numero .texto {
-    font-weight: 600;
-    font-size: 13px;
-    line-height: 125%;
-    letter-spacing: 3%;
-    text-transform: uppercase;
-    color: #f5f9ff;
-}
-
-.texto-numero .numero {
-    font-weight: 600;
-    font-size: 40px;
-    line-height: 125%;
-    color: #f5f9ff;
-}
-
 /* ====================== */
 /* BLOCO FILTRO */
 /* ====================== */
@@ -201,12 +118,7 @@
     text-align: left;
   }
   
-  .campos-data {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    margin-top: 10px;
-  }
+  
   
   .date-wrapper {
     position: relative;
@@ -294,6 +206,28 @@
     color: white;
   }
   
+.dashboard-toggle-analytics {
+    margin-top: 8px;
+}
+
+.campos-data-personalizado {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 44px;
+    /* Ajuste aqui para igualar a altura do bloco do select */
+    margin-top: 0;
+    /* Tire o espaço extra */
+}
+
+.campos-data {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* Igual ao .campo-selecao */
+    min-height: 35px;
+    /* Mesma altura do select + botão */
+}
 
 /* ====================== */
 /* BLOCO QUADROS */
@@ -492,8 +426,11 @@
     padding: 16px;
 }
 
-.btn-detalhes {
+.btn-detalhes,
+.btn-analytics,
+.btn-voltar {
     width: 117px;
+    margin-right: 8px;
     height: 36px;
     border-radius: var(--Border-Radius-M, 8px);
     border: none;
@@ -504,10 +441,46 @@
     color: #90BDF9;
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
+
+  .btn-detalhes:active,
+  .btn-analytics:active {
+      color: #90BDF9;
+      /* ✅ Mantém a cor original */
+  }
   
-  .btn-detalhes:hover {
+  .btn-detalhes:hover,
+  .btn-analytics:hover,
+  .btn-voltar:hover {
     background-color: rgba(173, 200, 235, 0.25); /* um pouco mais forte */
     transform: scale(1.03);
+  }
+
+  /* Estilo para o container do gráfico dentro do card */
+ 
+
+ apx-chart {
+     width: 100% !important;
+     max-width: 320px;
+     margin: 0 auto;
+     min-height: 190px;
+ }
+
+ .quadro-grafico {
+     min-height: 180px;
+     padding: 8px 0 0 0;
+ }
+
+  
+
+  @media (max-width: 600px) {
+      .quadro-grafico {
+          min-height: 140px;
+          padding: 8px 0;
+      }
+
+      apx-chart {
+          max-width: 200px;
+      }
   }
   
 

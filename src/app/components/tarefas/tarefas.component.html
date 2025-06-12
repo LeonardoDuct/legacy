@@ -43,21 +43,38 @@
                 </div>
             </div>
 
-            <!-- Linha Separadora -->
-            <div class="linha-separadora"></div>
-
             <div class="atrasadas">
                 <div class="icon">
-                    <!-- Ícone Atrasadas -->
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
                     </svg>
                 </div>
                 <div class="texto-numero">
                     <div class="texto">Atrasadas</div>
-                    <div class="numero">{{ atrasadasTotal }}</div>
+                    <div class="numero numero-interativo" (click)="ordenarAtrasadasPrimeiro()">
+                      {{ atrasadasTotal }}
+                    </div>
                 </div>
             </div>
+
+            <div class="aguardando-setor">
+              <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="16"
+                  style="width: 22px; height: 22px;" class="size-6">
+                  <path d="M64 48h128M64 208h128M128 128l56-56V48H72v24l56 56ZM128 128l-56 56v24h112v-24l-56-56Z" stroke="currentColor"
+                    stroke-width="16" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                </svg>
+              </div>
+              <div class="texto-numero">
+                <div class="texto">Aguardando</div>
+                <div class="numero numero-interativo" (click)="ordenarAguardandoSetorPrimeiro()">
+                  {{ totalAguardandoSetor }}
+                </div>
+              </div>
+              
+            </div>
+            <div class="divider div1"></div>
+            <div class="divider div2"></div>
             
         </article>
 
@@ -268,8 +285,6 @@
                 <span class="tooltip">{{ tarefa.titulo }}</span>
               </span>
             </td>
-
-
 
             <td>{{ tarefa.repositorio }}</td>
             <td class="coluna-cliente"><span class="texto-cliente">{{ tarefa.cliente }}</span></td>

@@ -154,6 +154,10 @@ getQuantidadeSucessoras(idIssue: number): number {
     }
     return null;
   }
+
+  get totalAguardandoSetor(): number {
+    return this.tarefas.filter(tarefa => this.getMotivoAtraso(tarefa)).length;
+  }
   
   get tarefasFiltradas() {
     if (!this.filtroColuna || !this.filtroValor) {
@@ -201,6 +205,27 @@ getQuantidadeSucessoras(idIssue: number): number {
   }
   hideTooltip() {
     this.openedTooltip = null;
+  }
+
+  ordenarAguardandoSetorPrimeiro(): void {
+    this.tarefas.sort((a, b) => {
+      const aAguardando = !!this.getMotivoAtraso(a);
+      const bAguardando = !!this.getMotivoAtraso(b);
+
+      if (aAguardando && !bAguardando) return -1;
+      if (!aAguardando && bAguardando) return 1;
+      return 0; // mantém a ordem entre iguais
+    });
+  }
+
+  ordenarAtrasadasPrimeiro(): void {
+    this.tarefas.sort((a, b) => {
+      const aAtrasada = !!(a.prazo && this.prazoAtrasado(a.prazo) && !this.getMotivoAtraso(a));
+      const bAtrasada = !!(b.prazo && this.prazoAtrasado(b.prazo) && !this.getMotivoAtraso(b));
+      if (aAtrasada && !bAtrasada) return -1;
+      if (!aAtrasada && bAtrasada) return 1;
+      return 0;
+    });
   }
   
 }

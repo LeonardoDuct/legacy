@@ -48,39 +48,64 @@
 
         <!-- Bloco de Filtros -->
         <aside class="bloco-filtro">
+        
           <h3 class="titulo-filtro">Filtro</h3>
         
-          <!-- 🔹 Select para escolher o período + botão -->
-          <div class="campo-selecao">
+          <!-- Filtro padrão -->
+          <div class="campo-selecao" *ngIf="periodoSelecionado !== 'personalizado'">
             <select class="dropdown" [(ngModel)]="periodoSelecionado">
               <option value="" disabled selected hidden>Selecione um período</option>
+              <option value="hoje">Hoje</option>
+              <option value="ontem">Ontem</option>
               <option value="7d">Últimos 7 dias</option>
-              <option value="15d">Últimos 15 dias</option>
               <option value="30d">Últimos 30 dias</option>
+              <option value="este-mes">Este Mês</option>
+              <option value="ultimo-mes">Último Mês</option>
               <option value="personalizado">Personalizado</option>
-            </select>            
-        
-            <button
-              class="btn btn-search"
-              (click)="atualizarFiltro()"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                  stroke-width="1.5" stroke="currentColor" class="icon-search">
+            </select>
+            <button class="btn btn-search" (click)="atualizarFiltro()">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                class="icon-search">
                 <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
+                  d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
               </svg>
             </button>
           </div>
         
-          <!-- 🔹 Inputs de data -->
-          <div class="campos-data" *ngIf="periodoSelecionado === 'personalizado'">
-            <div class="date-wrapper">
-              <input type="text" id="data-de" class="data" [(ngModel)]="dataInicio" placeholder="De: Selecione um Período" />
+          <!-- Filtro personalizado -->
+          <div class="campos-data-personalizado" *ngIf="periodoSelecionado === 'personalizado'">
+            <div class="campos-data">
+              <div class="date-wrapper">
+                <input type="text" id="data-de" class="data" [(ngModel)]="dataInicio" placeholder="De: Selecione um Período" />
+              </div>
+              <div class="date-wrapper">
+                <input type="text" id="data-ate" class="data" [(ngModel)]="dataFim" placeholder="Até: Selecione um Período" />
+              </div>
+              <button class="btn btn-search" (click)="atualizarFiltro()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                  class="icon-search">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
+                </svg>
+              </button>
+              <button class="btn btn-voltar" (click)="periodoSelecionado = ''">
+                Voltar
+              </button>
             </div>
-            <div class="date-wrapper">
-              <input type="text" id="data-ate" class="data" [(ngModel)]="dataFim" placeholder="Até: Selecione um Período" />
+            <div class="dashboard-toggle-analytics">
+              <button class="btn btn-analytics" (click)="toggleTodosGraficos()">
+                {{ mostrarTodosGraficos ? 'Tabela' : 'Analytics' }}
+              </button>
             </div>
           </div>
+        
+          <!-- Analytics para o filtro padrão -->
+          <div class="dashboard-toggle-analytics" *ngIf="periodoSelecionado !== 'personalizado'">
+            <button class="btn btn-analytics" (click)="toggleTodosGraficos()">
+              {{ mostrarTodosGraficos ? 'Tabela' : 'Analytics' }}
+            </button>
+          </div>
+        
         </aside>
         
     </section>
@@ -120,8 +145,9 @@
           </div>
       
           <!-- Parte 3: Tabela -->
-          <div class="quadro-tabela">
-            <!-- Abertas -->
+          <!-- Parte 3: Tabela ou Gráfico -->
+          <div *ngIf="!(mostrarTodosGraficos || showAnalytics[projeto.nome]); else graficoBarra" class="quadro-tabela">
+            <!-- ... seu código da tabela, igual já está ... -->
             <div class="linha categoria">
               <div class="coluna-esquerda">Abertas</div>
               <div class="coluna-direita">{{ projeto.abertas }}</div>
@@ -134,8 +160,6 @@
               <div class="coluna-esquerda">Fora do prazo</div>
               <div class="coluna-direita">{{ projeto.abertasForaPrazo }}</div>
             </div>
-      
-            <!-- Fechadas -->
             <div class="linha categoria">
               <div class="coluna-esquerda">Fechadas</div>
               <div class="coluna-direita">{{ projeto.fechadas }}</div>
@@ -149,6 +173,28 @@
               <div class="coluna-direita">{{ projeto.fechadasFora }}</div>
             </div>
           </div>
+          <ng-template #graficoBarra>
+            <div class="quadro-grafico">
+              <apx-chart [series]="gerarGroupedBarSeries(projeto)" [chart]="{ type: 'bar', height: 190, stacked: false }"
+                [plotOptions]="{
+                  bar: {
+                    horizontal: false,
+                    columnWidth: '45%',
+                    borderRadius: 4
+                  }
+                }" [xaxis]="{
+                  categories: ['Abertas', 'Fechadas'],
+                  labels: { style: { colors: '#bfc9d4', fontSize: '15px' } }
+                }" [yaxis]="{
+                  min: 0.1,
+                  logarithmic: true,
+                  labels: { style: { colors: '#bfc9d4', fontSize: '12px' } }
+                }" [colors]="['#2ecc71', '#e74c3c']" [dataLabels]="{
+                  enabled: true,
+                  style: { fontSize: '16px', fontWeight: 'bold', colors: ['#fff'] }
+                }" [legend]="{ position: 'bottom', labels: { colors: '#bfc9d4' } }"></apx-chart>
+            </div>
+          </ng-template>
       
           <!-- Parte 4: Pendências -->
           <div class="quadro-rodape">
