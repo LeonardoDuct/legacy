@@ -51,7 +51,7 @@
                 </div>
                 <div class="texto-numero">
                     <div class="texto">Atrasadas</div>
-                    <div class="numero numero-interativo" (click)="ordenarAtrasadasPrimeiro()">
+                    <div class="numero numero-interativo" (click)="ordenarTarefas(ordenarAtrasadasPrimeiro)">
                       {{ atrasadasTotal }}
                     </div>
                 </div>
@@ -67,7 +67,7 @@
               </div>
               <div class="texto-numero">
                 <div class="texto">Aguardando</div>
-                <div class="numero numero-interativo" (click)="ordenarAguardandoSetorPrimeiro()">
+                <div class="numero numero-interativo" (click)="ordenarTarefas(ordenarAguardandoSetorPrimeiro)">
                   {{ totalAguardandoSetor }}
                 </div>
               </div>
@@ -116,7 +116,7 @@
       <table class="tabela-tarefas">
         <thead>
           <tr>
-            <th (click)="sortTable('prioridade')">
+            <th (click)="ordenarTarefas('prioridade')">
               <span class="titulo-coluna">
                 Prioridade
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
@@ -129,7 +129,7 @@
                 </svg>
               </span>
             </th>
-            <th (click)="sortTable('scoreTotal')">
+            <th (click)="ordenarTarefas('scoreTotal')">
               <span class="titulo-coluna">
                 Score Total
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
@@ -142,7 +142,7 @@
                 </svg>
               </span>
             </th>
-            <th (click)="sortTable('codigo')">
+            <th (click)="ordenarTarefas('codigo')">
               <span class="titulo-coluna">
                 Código IS
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
@@ -155,7 +155,7 @@
                 </svg>
               </span>
             </th>
-            <th (click)="sortTable('repositorio')">
+            <th (click)="ordenarTarefas('repositorio')">
               <span class="titulo-coluna">
                 Repositório
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
@@ -168,7 +168,7 @@
                 </svg>
               </span>
             </th>
-            <th (click)="sortTable('cliente')">
+            <th (click)="ordenarTarefas('cliente')">
               <span class="titulo-coluna">
                 Cliente
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
@@ -181,7 +181,7 @@
                 </svg>
               </span>
             </th>
-            <th (click)="sortTable('status')" class="coluna-status">
+            <th (click)="ordenarTarefas('status')" class="coluna-status">
               <span class="titulo-coluna">
                 Status
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
@@ -194,7 +194,7 @@
                 </svg>
               </span>
             </th>
-            <th (click)="sortTable('prazo')">
+            <th (click)="ordenarTarefas('prazo')">
               <span class="titulo-coluna">
                 Prazo
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
@@ -207,7 +207,7 @@
                 </svg>
               </span>
             </th>
-            <th (click)="sortTable('responsavel')" class="cabecalho-responsavel">
+            <th (click)="ordenarTarefas('responsavel')" class="cabecalho-responsavel">
               <span class="titulo-coluna">
                 Responsável
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"

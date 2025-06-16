@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
-import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
-import { GitlabService } from '../../services/gitlab.service';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { getScoreClass, removerAcentos } from 'src/app/shared/utils/functions';
-import { obterStatusGeral } from 'src/app/shared/utils/functions';
-import { prazoAtrasado } from 'src/app/shared/utils/functions';
+import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
+import { GitlabService } from '../../services/gitlab.service';
+import { getScoreClass, obterStatusGeral, prazoAtrasado, removerAcentos } from 'src/app/shared/utils/functions';
 
 interface Issue {
   codigo_issue: number;
@@ -42,12 +41,10 @@ export class TarefasComponent implements OnInit {
   removerAcentos = removerAcentos
   prazoAtrasado = prazoAtrasado
 
-  // Variáveis de filtro
   filtroColuna: string = '';
   filtroValor: string = '';
 
   LABEL_STATUS_COLORS: { [label: string]: string } = {
-    // Sustentação
     "Status / Não Iniciado": "#e86f5b",
     "Status / Iniciado": "#e88e3d",
     "Status / Liberado": "#18aa61",
@@ -86,18 +83,17 @@ export class TarefasComponent implements OnInit {
   sucessorasMap: { [id_issue: number]: number } = {};
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params: ParamMap) => {
+    combineLatest([
+      this.route.paramMap,
+      this.route.queryParamMap
+    ]).subscribe(([params, queryParams]) => {
       this.nomeProjeto = params.get('projeto') ?? '';
-  
-      // Pegue os query params e converta null para undefined
-      this.route.queryParamMap.subscribe((queryParams) => {
-        const dataInicio = queryParams.get('dataInicio') || undefined;
-        const dataFim = queryParams.get('dataFim') || undefined;
-  
-        if (this.nomeProjeto) {
-          this.carregarTarefas(this.nomeProjeto, dataInicio, dataFim);
-        }
-      });
+      const dataInicio = queryParams.get('dataInicio') || undefined;
+      const dataFim = queryParams.get('dataFim') || undefined;
+
+      if (this.nomeProjeto) {
+        this.carregarTarefas(this.nomeProjeto, dataInicio, dataFim);
+      }
     });
   }
 
@@ -170,22 +166,6 @@ getQuantidadeSucessoras(idIssue: number): number {
     });
   }
 
-  sortTable(column: string): void {
-    if (this.sortColumn === column) {
-      this.sortDirection = !this.sortDirection;
-    } else {
-      this.sortColumn = column;
-      this.sortDirection = true;
-    }
-
-    this.tarefas.sort((a, b) => {
-      const key = column as keyof typeof a;
-      if (a[key] < b[key]) return this.sortDirection ? -1 : 1;
-      if (a[key] > b[key]) return this.sortDirection ? 1 : -1;
-      return 0;
-    });
-  }
-
   corDeStatus(status: string): string {
     if (this.LABEL_STATUS_COLORS[status]) {
       return this.LABEL_STATUS_COLORS[status];
@@ -207,25 +187,77 @@ getQuantidadeSucessoras(idIssue: number): number {
     this.openedTooltip = null;
   }
 
-  ordenarAguardandoSetorPrimeiro(): void {
-    this.tarefas.sort((a, b) => {
-      const aAguardando = !!this.getMotivoAtraso(a);
-      const bAguardando = !!this.getMotivoAtraso(b);
+  ordenarTarefas(criterio: string | ((a: Issue, b: Issue) => number)): void {
+    if (typeof criterio === 'function') {
+      this.tarefas.sort(criterio);
+      return;
+    }
 
-      if (aAguardando && !bAguardando) return -1;
-      if (!aAguardando && bAguardando) return 1;
-      return 0; // mantém a ordem entre iguais
+    if (this.sortColumn === criterio) {
+      this.sortDirection = !this.sortDirection;
+    } else {
+      this.sortColumn = criterio;
+      this.sortDirection = true;
+    }
+
+    const direction = this.sortDirection ? 1 : -1;
+
+    this.tarefas.sort((a, b) => {
+      const key = criterio as keyof Issue;
+      let aValue = a[key];
+      let bValue = b[key];
+
+      function parsePossiblyNumeric(val: any): number | null {
+        if (typeof val === 'number') return val;
+        if (typeof val === 'string') {
+          const num = parseFloat(val.replace(/[^0-9.]+/g, ''));
+          return isNaN(num) ? null : num;
+        }
+        return null;
+      }
+
+      const aNum = parsePossiblyNumeric(aValue);
+      const bNum = parsePossiblyNumeric(bValue);
+      if (aNum !== null && bNum !== null) {
+        if (aNum < bNum) return -1 * direction;
+        if (aNum > bNum) return 1 * direction;
+        return 0;
+      }
+
+      if (
+        (criterio.toLowerCase().includes('prazo') ||
+          criterio.toLowerCase().includes('data')) &&
+        aValue &&
+        bValue
+      ) {
+        const aDate = new Date(aValue as string).getTime();
+        const bDate = new Date(bValue as string).getTime();
+        return (aDate - bDate) * direction;
+      }
+
+      const aStr = (aValue ?? '').toString().toLowerCase();
+      const bStr = (bValue ?? '').toString().toLowerCase();
+      if (aStr < bStr) return -1 * direction;
+      if (aStr > bStr) return 1 * direction;
+      return 0;
     });
   }
 
-  ordenarAtrasadasPrimeiro(): void {
-    this.tarefas.sort((a, b) => {
-      const aAtrasada = !!(a.prazo && this.prazoAtrasado(a.prazo) && !this.getMotivoAtraso(a));
-      const bAtrasada = !!(b.prazo && this.prazoAtrasado(b.prazo) && !this.getMotivoAtraso(b));
-      if (aAtrasada && !bAtrasada) return -1;
-      if (!aAtrasada && bAtrasada) return 1;
-      return 0;
-    });
+  // Critérios de ordenação especiais:
+  ordenarAguardandoSetorPrimeiro = (a: Issue, b: Issue) => {
+    const aAguardando = !!a.motivoAtraso;
+    const bAguardando = !!b.motivoAtraso;
+    if (aAguardando && !bAguardando) return -1;
+    if (!aAguardando && bAguardando) return 1;
+    return 0;
+  }
+
+  ordenarAtrasadasPrimeiro = (a: Issue, b: Issue) => {
+    const aAtrasada = !!(a.prazo && this.prazoAtrasado(a.prazo) && !a.motivoAtraso);
+    const bAtrasada = !!(b.prazo && this.prazoAtrasado(b.prazo) && !b.motivoAtraso);
+    if (aAtrasada && !bAtrasada) return -1;
+    if (!aAtrasada && bAtrasada) return 1;
+    return 0;
   }
   
 }

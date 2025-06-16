@@ -4,12 +4,23 @@
 
 <section class="header-bottom">
   <!-- Bloco de Tecnologia -->
+   
+   
   <article class="bloco-tecnologia">
+    <div class="topo-bloco">
+      <button class="btn-voltar" (click)="voltar()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="icone-voltar">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+      </button>
       <div class="conteudo">
-          <h2 class="titulo">Cadastro</h2>
-          <span class="status">Score</span>
+        <h2 class="titulo">Cadastro</h2>
+        <span class="status">Score</span>
       </div>
-  </article>
+    </div>
+    </article>
+  
 
   <!-- Bloco de Filtros -->
   <aside class="bloco-filtro">
@@ -232,7 +243,27 @@
                 <label>Score</label>
                 <div class="score-input" [ngClass]="getScoreClass(novaClassificacao.score)">
                   <button (click)="decrementarScore()">-</button>
-                  <span>{{ novaClassificacao.score }}</span>
+                  
+                  <span 
+                    *ngIf="!editandoScore"
+                    (click)="editandoScore = true"
+                    [ngClass]="getScoreClass(novaClassificacao.score)"
+                    style="cursor:pointer; display: inline-block; min-width: 40px; text-align: center;"
+                  >
+                    {{ novaClassificacao.score | number:'1.1-1' }}
+                  </span>
+                  
+                  <input 
+                    *ngIf="editandoScore"
+                    type="number"
+                    [(ngModel)]="novaClassificacao.score"
+                    [min]="0" 
+                    [max]="10"
+                    [step]="0.1"
+                    (blur)="ajustaScoreManual(); editandoScore = false"
+                    [ngClass]="getScoreClass(novaClassificacao.score)"
+                    autofocus
+                  />
                   <button (click)="incrementarScore()">+</button>
                 </div>
               </div>

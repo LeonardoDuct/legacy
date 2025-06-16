@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule, NgIf, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GitlabService } from '../../services/gitlab.service';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
@@ -28,7 +28,8 @@ export class UsuariosComponent implements OnInit {
 
   constructor(
     private gitlabService: GitlabService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -127,5 +128,9 @@ export class UsuariosComponent implements OnInit {
 
   editarUsuario(usuario: any) {
     this.abrirModalEdicao(usuario);
+  }
+
+  voltar(): void {
+    this.location.back()
   }
 }
