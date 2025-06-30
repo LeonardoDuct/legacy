@@ -17,6 +17,7 @@ export class UsuariosComponent implements OnInit {
   email = '';
   senha = '';
   admin = false;
+  head = false;
   erroCadastro = '';
   sucessoCadastro = '';
   loading = false;
@@ -59,6 +60,7 @@ export class UsuariosComponent implements OnInit {
     this.nome = usuario.nome;
     this.email = usuario.email;
     this.admin = usuario.admin;
+    this.head = usuario.head;
     this.senha = '';
     this.erroCadastro = '';
     this.sucessoCadastro = '';
@@ -75,6 +77,7 @@ export class UsuariosComponent implements OnInit {
     this.email = '';
     this.senha = '';
     this.admin = false;
+    this.head = false;
     this.erroCadastro = '';
     this.sucessoCadastro = '';
     this.usuarioEditandoId = null;
@@ -93,7 +96,7 @@ export class UsuariosComponent implements OnInit {
     this.sucessoCadastro = '';
     this.loading = true;
 
-    this.gitlabService.cadastrarUsuario(this.nome, this.email, this.senha, this.admin).subscribe({
+    this.gitlabService.cadastrarUsuario(this.nome, this.email, this.senha, this.admin, this.head).subscribe({
       next: (res) => {
         this.loading = false;
         this.sucessoCadastro = res.mensagem || 'Usuário cadastrado com sucesso!';
@@ -112,7 +115,7 @@ export class UsuariosComponent implements OnInit {
     this.sucessoCadastro = '';
     this.loading = true;
 
-    this.gitlabService.atualizarUsuario(this.usuarioEditandoId, this.nome, this.email, this.admin).subscribe({
+    this.gitlabService.atualizarUsuario(this.usuarioEditandoId, this.nome, this.email, this.admin, this.head).subscribe({
       next: (res) => {
         this.loading = false;
         this.sucessoCadastro = res.mensagem || 'Usuário atualizado com sucesso!';
@@ -122,6 +125,23 @@ export class UsuariosComponent implements OnInit {
       error: (err) => {
         this.loading = false;
         this.erroCadastro = err.error?.mensagem || 'Erro ao atualizar usuário.';
+      }
+    });
+  }
+
+  resetarSenhaUsuario() {
+    if (!this.usuarioEditandoId) return;
+    this.loading = true;
+    this.erroCadastro = '';
+    this.sucessoCadastro = '';
+    this.gitlabService.resetarSenhaUsuario(this.usuarioEditandoId).subscribe({
+      next: (res) => {
+        this.loading = false;
+        this.sucessoCadastro = res.mensagem || 'Senha resetada com sucesso para o padrão "jallcard"';
+      },
+      error: (err) => {
+        this.loading = false;
+        this.erroCadastro = err.error?.mensagem || 'Erro ao resetar senha.';
       }
     });
   }

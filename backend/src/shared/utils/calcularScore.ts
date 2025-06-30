@@ -47,12 +47,21 @@ export function calcularScoreCompleto(
         const hoje = new Date();
         prazoDate.setHours(0, 0, 0, 0);
         hoje.setHours(0, 0, 0, 0);
-        const diasAtraso = Math.floor((hoje.getTime() - prazoDate.getTime()) / (1000 * 60 * 60 * 24));
-        if (diasAtraso > 0) {
-            if (diasAtraso <= 10) scorePrazo = diasAtraso * 1;
-            else if (diasAtraso <= 20) scorePrazo = 10 + (diasAtraso - 10) * 2;
-            else if (diasAtraso <= 30) scorePrazo = 30 + (diasAtraso - 20) * 3;
-            else scorePrazo = 60 + (diasAtraso - 30) * 5;
+        const diasAtePrazo = Math.floor((prazoDate.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24)); // positivo = falta, negativo = atraso
+
+        if (diasAtePrazo > 30) {
+            scorePrazo = 0;
+        } else if (diasAtePrazo >= 0) {
+            // De 30 até 0 dias (no prazo): score sobe gradativamente até 10
+            scorePrazo = 10 - (diasAtePrazo * 10 / 30);
+            scorePrazo = Math.round(scorePrazo * 100) / 100; // arredonda para 2 casas
+        } else {
+            // Atraso: nota máxima + penalização do atraso
+            const diasAtraso = Math.abs(diasAtePrazo);
+            if (diasAtraso <= 10) scorePrazo = 10 + diasAtraso * 1;
+            else if (diasAtraso <= 20) scorePrazo = 20 + (diasAtraso - 10) * 2;
+            else if (diasAtraso <= 30) scorePrazo = 40 + (diasAtraso - 20) * 3;
+            else scorePrazo = 70 + (diasAtraso - 30) * 5;
         }
     }
     const pesoPrazo = categoriaPesoMap['Prazo'] ?? 30;

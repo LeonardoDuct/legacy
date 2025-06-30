@@ -22,8 +22,8 @@ export class GitlabService {
     }
   }
 
-  cadastrarUsuario(nome: string, email: string, senha: string, admin: boolean): Observable<any> {
-    return this.http.post(`${this.apiUrl}/usuarios`, { nome, email, senha, admin });
+  cadastrarUsuario(nome: string, email: string, senha: string, admin: boolean, head:boolean): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios`, { nome, email, senha, admin, head });
   }
   
   login(email: string, senha: string): Observable<any> {
@@ -39,8 +39,12 @@ export class GitlabService {
     });
   }  
 
-  atualizarUsuario(id: number, nome: string, email: string, admin: boolean) {
-    return this.http.put<{ mensagem: string }>(`${this.apiUrl}/usuarios/${id}`, { nome, email, admin });
+  resetarSenhaUsuario(id: number) {
+    return this.http.post<{ mensagem: string }>(`${this.apiUrl}/usuarios/${id}/resetar-senha`, {});
+  }
+
+  atualizarUsuario(id: number, nome: string, email: string, admin: boolean, head: boolean) {
+    return this.http.put<{ mensagem: string }>(`${this.apiUrl}/usuarios/${id}`, { nome, email, admin, head });
   }  
 
   alterarSenha(novaSenha: string) {
@@ -130,6 +134,22 @@ export class GitlabService {
     return this.http.get<{ tituloOrigem: string; repositorioOrigem: string; numeroIsOrigem: number; scoreOrigemTotal: number; sucessoras: Issue[] }>(`${this.apiUrl}/issues/${id}/sucessoras`);
   }
 
+  obterRelatorioPorCliente(dataInicio?: string, dataFim?: string): Observable<any> {
+    let params = new HttpParams();
+    if (dataInicio) params = params.set('dataInicio', dataInicio);
+    if (dataFim) params = params.set('dataFim', dataFim);
+
+    return this.http.get(`${this.apiUrl}/issues/relatorio/por-cliente`, { params });
+  }
+
+  obterRelatorioIssuesFechadas(nomeProjeto: string, dataInicio?: string, dataFim?: string): Observable<any[]> {
+    let params = new HttpParams();
+    if (dataInicio) params = params.set('dataInicio', dataInicio);
+    if (dataFim) params = params.set('dataFim', dataFim);
+
+    return this.http.get<any[]>(`${this.apiUrl}/issues/relatorio-fechadas/${encodeURIComponent(nomeProjeto)}`, { params });
+  }
+  
   logout(): void {
     localStorage.removeItem('token');
   }

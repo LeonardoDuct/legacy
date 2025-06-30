@@ -235,6 +235,11 @@
   border-color: #FFD600;
 }
 
+.status-bolinha.azul {
+  background: #a359e8;
+  border-color: #a359e8;
+}
+
 /* ====================== */
 /* SCORES */
 /* ====================== */
@@ -339,7 +344,9 @@
   font-size: var(--font-medium);
   cursor: pointer;
 }
-
+.apexcharts-legend-text {
+  font-size: 18px !important;
+}
 
 /* Reset básico */
 * {

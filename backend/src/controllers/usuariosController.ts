@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { handleError, handleNotFound } from '../shared/helpers/errorHandler';
 
 export const createUsuario = async (req: Request, res: Response) => {
-    const { nome, email, senha, admin } = req.body;
+    const { nome, email, senha, admin, head } = req.body;
 
     try {
         const existente = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
@@ -17,8 +17,8 @@ export const createUsuario = async (req: Request, res: Response) => {
         const senhaHash = await bcrypt.hash(senha, 10);
 
         await pool.query(
-            'INSERT INTO usuarios (nome, email, senha_hash, admin) VALUES ($1, $2, $3, $4)',
-            [nome, email, senhaHash, !!admin]
+            'INSERT INTO usuarios (nome, email, senha_hash, admin, head) VALUES ($1, $2, $3, $4, $5)',
+            [nome, email, senhaHash, !!admin, !!head]
         );
 
         res.status(201).json({ mensagem: 'Usuário criado com sucesso' });
@@ -29,12 +29,12 @@ export const createUsuario = async (req: Request, res: Response) => {
 
 export const updateUsuario = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { nome, email, admin } = req.body;
+    const { nome, email, admin, head } = req.body;
 
     try {
         await pool.query(
-            'UPDATE usuarios SET nome = $1, email = $2, admin = $3 WHERE id = $4',
-            [nome, email, admin, id]
+            'UPDATE usuarios SET nome = $1, email = $2, admin = $3, head = $4 WHERE id = $5',
+            [nome, email, admin, head, id]
         );
         res.status(200).json({ mensagem: 'Usuário atualizado com sucesso' });
     } catch (error) {
@@ -71,6 +71,7 @@ export const login = async (req: Request, res: Response) => {
                 nome: usuario.nome,
                 email: usuario.email,
                 admin: usuario.admin,
+                head: usuario.head, 
             },
             process.env.JWT_SECRET || 'sua_chave_secreta',
             { expiresIn: '8h' }
@@ -85,6 +86,7 @@ export const login = async (req: Request, res: Response) => {
                 nome: usuario.nome,
                 email: usuario.email,
                 admin: usuario.admin,
+                head: usuario.head,
             }
         });
     } catch (error) {
@@ -124,10 +126,25 @@ export const alterarSenha = async (req: Request, res: Response) => {
 export const getUsuarios = async (_req: Request, res: Response) => {
     try {
         const resultado = await pool.query(
-            'SELECT id, nome, email, admin, criado_em FROM usuarios ORDER BY id DESC'
+            'SELECT id, nome, email, admin, head, criado_em FROM usuarios ORDER BY id DESC'
         );
         res.json(resultado.rows);
     } catch (error) {
         handleError(res, error, 'Erro ao buscar usuários');
+    }
+};
+
+export const resetarSenhaPadrao = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const senhaPadrao = 'jallcard';
+    try {
+        const senhaHash = await bcrypt.hash(senhaPadrao, 10);
+        await pool.query(
+            'UPDATE usuarios SET senha_hash = $1, troca_senha = true WHERE id = $2',
+            [senhaHash, id]
+        );
+        res.status(200).json({ mensagem: 'Senha resetada para o padrão com sucesso!' });
+    } catch (error) {
+        handleError(res, error, 'Erro ao resetar senha.');
     }
 };

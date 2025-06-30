@@ -13,6 +13,8 @@ router.get('/issues', issuesController.getIssues);
 router.get('/issues/detalhes/:projetoPrincipal', issuesController.getDetalhesProjeto);
 router.get('/issues/filtrar', issuesController.getResumoFiltrado);
 router.get('/issues/:id/sucessoras', issuesController.getSucessoras);
+router.get('/issues/relatorio/por-cliente', issuesController.getRelatorioPorCliente);
+router.get('/issues/relatorio-fechadas/:projetoPrincipal', issuesController.getRelatorioIssuesFechadas);
 
 // --------------------- Categorias: Usando controller ---------------------
 router.get('/categorias', categoriasController.getCategorias);
@@ -31,5 +33,6 @@ router.put('/usuarios/:id', usuariosController.updateUsuario);
 router.post('/login', usuariosController.login);
 router.post('/usuarios/:id/alterar-senha', authMiddleware, usuariosController.alterarSenha);
 router.get('/usuarios', usuariosController.getUsuarios);
+router.post('/usuarios/:id/resetar-senha', usuariosController.resetarSenhaPadrao);
 
 export default router;

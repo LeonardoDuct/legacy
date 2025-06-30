@@ -18,6 +18,7 @@ export interface UsuarioBody {
     email: string;
     senha: string;
     admin: boolean;
+    head: boolean;
 }
 
 export interface Cliente {

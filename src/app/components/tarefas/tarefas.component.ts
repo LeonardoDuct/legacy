@@ -19,6 +19,8 @@ interface Issue {
   labels?: string[];
   motivoAtraso?: string | null;
   id_issue: number;
+  autor?: string; 
+  data_abertura?: string; 
 }
 
 @Component({

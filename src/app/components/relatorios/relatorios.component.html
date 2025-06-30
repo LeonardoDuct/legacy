@@ -1,0 +1,84 @@
+<app-cabecalho></app-cabecalho>
+<section class="header-bottom">
+    <article class="bloco-tecnologia">
+        <div class="topo-bloco">
+            <button class="btn-voltar" (click)="voltar()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                    class="icone-voltar">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+            </button>
+            <div class="conteudo">
+                <h2 class="titulo">Relatórios</h2>
+                <span class="status">Clientes / Responsáveis</span>
+            </div>
+        </div>
+    </article>
+
+    <div class="botoes-filtro">
+        <div>
+            <span>Projeto:</span>
+            <button *ngFor="let p of projetos" (click)="selecionarProjeto(p)" [class.selected]="projetoSelecionado === p">
+                {{ p }}
+            </button>
+        </div>
+        <div>
+            <span>Ano:</span>
+            <button *ngFor="let a of anos" (click)="selecionarAno(a)" [class.selected]="anoSelecionado === a">
+                {{ a }}
+            </button>
+        </div>
+        <div>
+            <span>Meses:</span>
+            <button *ngFor="let m of meses" (click)="selecionarMes(m.valor)"
+                [class.selected]="mesesSelecionados.includes(m.valor)">
+                {{ m.nome }}
+            </button>
+        </div>
+        <!-- <button (click)="carregarRelatorio()">Atualizar</button>
+            <button (click)="exportarCSV()" [disabled]="!issuesFechadas.length">Exportar CSV</button>
+            <button (click)="exportarExcel()" [disabled]="!issuesFechadas.length">Exportar Excel</button> -->
+        </div>
+</section>
+
+<!-- Filtros de Projeto e Ano -->
+
+
+<div class="relatorio-container">
+    <div *ngIf="loading" style="margin: 24px 0;">Carregando...</div>
+    <div *ngIf="erro" class="erro">{{ erro }}</div>
+
+    <div *ngIf="issuesFechadas.length">
+        <!-- Gráfico de Projetos em fullscreen ao clicar -->
+        <div #graficoProjetoContainer class="grafico-wrapper" (click)="expandirFullScreen(graficoProjetoContainer)"
+            style="cursor: pointer;">
+            <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"
+                [title]="chartOptions.title" [legend]="chartOptions.legend" [dataLabels]="chartOptions.dataLabels"
+                [plotOptions]="chartOptions.plotOptions" [tooltip]="chartOptions.tooltip" [fill]="chartOptions.fill"
+                [grid]="chartOptions.grid" [colors]="chartOptions.colors || []"
+                style="max-width: 100vw; min-width: 900px; margin: 32px auto 0 auto;">
+            </apx-chart>
+        </div>
+
+        <!-- Gráfico de Responsáveis em fullscreen ao clicar -->
+        <div #graficoResponsavelContainer class="grafico-wrapper"
+            (click)="expandirFullScreen(graficoResponsavelContainer)" style="cursor: pointer; margin-top: 24px;">
+            <apx-chart [series]="chartOptionsResponsavel.series" [chart]="chartOptionsResponsavel.chart"
+                [xaxis]="chartOptionsResponsavel.xaxis" [title]="chartOptionsResponsavel.title"
+                [legend]="chartOptionsResponsavel.legend" [dataLabels]="chartOptionsResponsavel.dataLabels"
+                [plotOptions]="chartOptionsResponsavel.plotOptions" [tooltip]="chartOptionsResponsavel.tooltip"
+                [fill]="chartOptionsResponsavel.fill" [grid]="chartOptionsResponsavel.grid"
+                [colors]="chartOptionsResponsavel.colors || []"
+                style="max-width: 100vw; min-width: 900px; margin: 32px auto 0 auto;">
+            </apx-chart>
+        </div>
+    </div>
+
+    <div *ngIf="!issuesFechadas.length && !loading" style="margin-top:32px;">
+        Nenhum dado para exibir.
+    </div>
+
+    <div *ngIf="!issuesFechadas.length && !loading" style="margin-top:32px;">
+        Nenhum dado para exibir.
+    </div>
+</div>

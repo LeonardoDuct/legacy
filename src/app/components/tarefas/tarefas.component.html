@@ -89,6 +89,8 @@
                 <option value="cliente">Cliente</option>
                 <option value="status">Status</option>
                 <option value="responsavel">Responsável</option>
+                <option value="data_abertura">Data abertura</option>
+                <option value="autor">Solicitante</option>
               </select>
             </div>
         
@@ -181,7 +183,7 @@
                 </svg>
               </span>
             </th>
-            <th (click)="ordenarTarefas('status')" class="coluna-status">
+            <th (click)="ordenarTarefas('status')" class="coluna-status" >
               <span class="titulo-coluna">
                 Status
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"
@@ -220,6 +222,13 @@
                 </svg>
               </span>
             </th>
+            <th (click)="ordenarTarefas('data_abertura')">
+              <span class="titulo-coluna">Data Abertura</span>
+            </th>
+            <th (click)="ordenarTarefas('autor')">
+              <span class="titulo-coluna">Solicitante</span>
+            </th>
+            
             <th>Ações</th>
           </tr>
         </thead>
@@ -300,7 +309,7 @@
                   'amarela': tarefa.motivoAtraso
                 }"
               ></span>
-              {{ tarefa.prazo ? (tarefa.prazo | date: 'dd/MM/yyyy') : 'Indefinido' }}
+              {{ tarefa.prazo ? (tarefa.prazo | date: 'dd/MM/yyyy':'UTC') : 'Indefinido' }}
             
               <span class="tooltip" *ngIf="tarefa.motivoAtraso">
                 {{ tarefa.motivoAtraso }}
@@ -309,6 +318,13 @@
             <td class="coluna-responsavel">
               {{ tarefa.responsavel }}
             </td>
+
+            <td class="tooltip-container">
+              <span class="status-bolinha azul"></span>
+              {{ tarefa.data_abertura | date: 'dd/MM/yyyy' }}
+            </td>
+            
+            <td>{{ tarefa.autor }}</td>
             
             <td class="coluna-sucessoras">
               <a *ngIf="getQuantidadeSucessoras(tarefa.id_issue) > 0"

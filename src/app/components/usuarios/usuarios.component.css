@@ -113,6 +113,16 @@
     margin-bottom: 0.2rem;
     color: #ccc;
   }
+
+    .checkbox-row {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      margin-top: 24px;
+      /* aumenta o espaço acima dos checkboxes */
+      margin-bottom: 24px;
+      /* mantém o espaço abaixo */
+      justify-content: flex-start; }
   
   .cadastro-box form input {
     padding: 0.7rem;
@@ -252,7 +262,7 @@
 }
 
 .btn:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 .btn:active {
