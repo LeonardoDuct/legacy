@@ -83,6 +83,13 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  get detalhesQueryParams() {
+    const params: any = {};
+    if (this.dataInicio && this.dataInicio.trim() !== '') params.dataInicio = this.dataInicio;
+    if (this.dataFim && this.dataFim.trim() !== '') params.dataFim = this.dataFim;
+    return params;
+  }
+
   private processarProjetos(dados: any[]): Projeto[] {
     return dados.map(projeto => {
       const abertasDentroPrazo = Number(projeto.abertas_dentro_prazo) || 0;

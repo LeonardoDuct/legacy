@@ -10,6 +10,7 @@ import { LoginComponent } from './components/login/login.component';
 import { UsuariosComponent } from './components/usuarios/usuarios.component';
 import { SucessorasComponent } from './components/sucessoras/sucessoras.component';
 import { RelatoriosComponent } from './components/relatorios/relatorios.component';
+import { ProjetosInternosComponent } from './components/projetos-internos/projetos-internos.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'usuarios', component: UsuariosComponent, canActivate: [AdminGuard] },
   { path: 'sucessoras/:id', component: SucessorasComponent },
   { path: 'relatorios', component: RelatoriosComponent, canActivate: [HeadGuard] },
+  { path: 'projetosInternos', component: ProjetosInternosComponent},
   { path: '**', redirectTo: 'dashboard' }
 ];
 

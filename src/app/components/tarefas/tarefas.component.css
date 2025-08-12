@@ -26,8 +26,6 @@
     background: var(--semantic-colors-warning-10, #FFAA0033);
     color: #FFAA00;
 }
-
-
   
 /* Bloco de Indicadores */
 .bloco-indicadores {
@@ -228,7 +226,7 @@
 }
 
 .coluna-status {
-    width: 280px; /* Defina uma largura fixa */
+    width: 250px; /* Defina uma largura fixa */
     text-align: center; /* Centraliza o título */
   }
 
