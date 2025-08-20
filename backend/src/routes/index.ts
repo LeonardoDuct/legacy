@@ -15,6 +15,9 @@ router.get('/issues/filtrar', issuesController.getResumoFiltrado);
 router.get('/issues/:id/sucessoras', issuesController.getSucessoras);
 router.get('/issues/relatorio/por-cliente', issuesController.getRelatorioPorCliente);
 router.get('/issues/relatorio-fechadas/:projetoPrincipal', issuesController.getRelatorioIssuesFechadas);
+router.get('/projetosInternos', issuesController.getProjetosInternosResumo);
+router.post('/issues/:id/observacao', issuesController.upsertObservacao); 
+router.delete('/issues/:id/observacao', issuesController.deleteObservacao);
 
 // --------------------- Categorias: Usando controller ---------------------
 router.get('/categorias', categoriasController.getCategorias);

@@ -3,8 +3,8 @@
     <article class="bloco-tecnologia">
         <div class="topo-bloco">
             <button class="btn-voltar" (click)="voltar()">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                    class="icone-voltar">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="icone-voltar">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
             </button>
@@ -18,7 +18,8 @@
     <div class="botoes-filtro">
         <div>
             <span>Projeto:</span>
-            <button *ngFor="let p of projetos" (click)="selecionarProjeto(p)" [class.selected]="projetoSelecionado === p">
+            <button *ngFor="let p of projetos" (click)="selecionarProjeto(p)"
+                [class.selected]="projetoSelecionado === p">
                 {{ p }}
             </button>
         </div>
@@ -38,11 +39,10 @@
         <!-- <button (click)="carregarRelatorio()">Atualizar</button>
             <button (click)="exportarCSV()" [disabled]="!issuesFechadas.length">Exportar CSV</button>
             <button (click)="exportarExcel()" [disabled]="!issuesFechadas.length">Exportar Excel</button> -->
-        </div>
+    </div>
 </section>
 
 <!-- Filtros de Projeto e Ano -->
-
 
 <div class="relatorio-container">
     <div *ngIf="loading" style="margin: 24px 0;">Carregando...</div>

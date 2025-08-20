@@ -17,7 +17,6 @@
 /* BLOCO FILTRO */
 /* ====================== */
 
-/* Input de pesquisa */
 .input-wrapper {
   width: 100%;
   height: var(--height-small);
@@ -51,169 +50,179 @@
   background: #1d2b3a;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 20px; 
+  padding-top: 20px;
 }
-  
-  .form-side {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .cadastro-box {
-    width: 100%;
-    max-width: 350px;
-    background-color: #1d2b3a;
-    color: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 24px 0 rgba(0,0,0,0.15);
-    position: relative;
-  }
-  
-  .cadastro-box .logo {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-  }
 
-  .btn-fechar {
-    background: none;
-    color: white;
-    font-size: 24px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
+.form-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  }
-  
-  .btn-fechar:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
+.cadastro-box {
+  width: 100%;
+  max-width: 350px;
+  background-color: #1d2b3a;
+  color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.15);
+  position: relative;
+}
 
-  .icon-close {
-    width: 24px; /* Tamanho do ícone */
-    height: 24px; /* Tamanho do ícone */
-  }
-  
-  .cadastro-box .logo img {
-    height: 32px;
-  }
-  
-  .cadastro-box form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .cadastro-box form label {
-    font-size: 0.95rem;
-    margin-bottom: 0.2rem;
-    color: #ccc;
-  }
+.cadastro-box .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
 
-    .checkbox-row {
-      display: flex;
-      gap: 30px;
-      align-items: center;
-      margin-top: 24px;
-      /* aumenta o espaço acima dos checkboxes */
-      margin-bottom: 24px;
-      /* mantém o espaço abaixo */
-      justify-content: flex-start; }
-  
-  .cadastro-box form input {
-    padding: 0.7rem;
-    margin-bottom: 1rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #2e3b4e;
-    color: white;
-    font-size: 1rem;
-    transition: outline 0.2s;
-  }
-  
-  .cadastro-box form input::placeholder {
-    color: #aaa;
-  }
-  
-  .cadastro-box form input:focus {
-    outline: 2px solid #0a66ff;
-  }
-  
-  .erro-msg {
-    color: #ff7f7f;
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
-  }
-  
-  .sucesso-msg {
-    color: #90ee90;
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
-  }
-  
-  .cadastro-box form button {
-    padding: 0.9rem;
-    background-color: #0a66ff;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    font-weight: bold;
-    margin-bottom: 0.8rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .cadastro-box form button:hover:not(:disabled) {
-    background-color: #004fc1;
-  }
-  
-  .cadastro-box form button:disabled {
-    background-color: #90caf9;
-    cursor: not-allowed;
-  }
+.btn-fechar {
+  background: none;
+  color: white;
+  font-size: 24px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 
-  .cadastro-title {
-    text-align: center;
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #fff;
-    margin-bottom: 2rem;
-  }
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Garantindo que esteja acima dos outros elementos */
-  }
-  
-  .tabela-container {
-    padding: 1rem;
-    width: 100%;
-    max-width: 1920px; /* Ajuste para um tamanho maior */
-  }
-  
-  .tabela-tarefas {
-    width: 100%;
-    min-width: 600px; /* Define um tamanho mínimo */
-    border-collapse: separate; /* Use separate para suportar bordas arredondadas */
-    background-color: #223348;
-    border-spacing: 0; /* Garante que não haja espaçamento entre células */
-    border-radius: 7px; /* Adiciona bordas arredondadas */
-    overflow: hidden; /* Garante que o arredondamento seja aplicado */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Contorno externo da tabela */
-  }
-  
-  .tabela-tarefas th,
+}
+
+.btn-fechar:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.icon-close {
+  width: 24px;
+  height: 24px;
+}
+
+.cadastro-box .logo img {
+  height: 32px;
+}
+
+.cadastro-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cadastro-box form label {
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+  color: #ccc;
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  margin-top: 24px;
+  /* aumenta o espaço acima dos checkboxes */
+  margin-bottom: 24px;
+  /* mantém o espaço abaixo */
+  justify-content: flex-start;
+}
+
+.cadastro-box form input {
+  padding: 0.7rem;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #2e3b4e;
+  color: white;
+  font-size: 1rem;
+  transition: outline 0.2s;
+}
+
+.cadastro-box form input::placeholder {
+  color: #aaa;
+}
+
+.cadastro-box form input:focus {
+  outline: 2px solid #0a66ff;
+}
+
+.erro-msg {
+  color: #ff7f7f;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.sucesso-msg {
+  color: #90ee90;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.cadastro-box form button {
+  padding: 0.9rem;
+  background-color: #0a66ff;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  margin-bottom: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cadastro-box form button:hover:not(:disabled) {
+  background-color: #004fc1;
+}
+
+.cadastro-box form button:disabled {
+  background-color: #90caf9;
+  cursor: not-allowed;
+}
+
+.cadastro-title {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 2rem;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  /* Garantindo que esteja acima dos outros elementos */
+}
+
+.tabela-container {
+  padding: 1rem;
+  width: 100%;
+  max-width: 1920px;
+  /* Ajuste para um tamanho maior */
+}
+
+.tabela-tarefas {
+  width: 100%;
+  min-width: 600px;
+  /* Define um tamanho mínimo */
+  border-collapse: separate;
+  /* Use separate para suportar bordas arredondadas */
+  background-color: #223348;
+  border-spacing: 0;
+  /* Garante que não haja espaçamento entre células */
+  border-radius: 7px;
+  /* Adiciona bordas arredondadas */
+  overflow: hidden;
+  /* Garante que o arredondamento seja aplicado */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Contorno externo da tabela */
+}
+
+.tabela-tarefas th,
 .tabela-tarefas td {
   padding: 10px;
   text-align: inherit;
@@ -222,31 +231,39 @@
 /* Cabeçalho da tabela */
 .tabela-tarefas th {
   color: #EBF4FFE5;
-  font-weight: var(--font-weight-bold) !important; /* Font weight 600 para o título */
+  font-weight: var(--font-weight-bold) !important;
+  /* Font weight 600 para o título */
   font-size: var(--font-small);
 }
 
 /* Linhas da tabela */
 .tabela-tarefas tr {
-  position: relative; /* Necessário para posicionar o pseudo-elemento */
+  position: relative;
+  /* Necessário para posicionar o pseudo-elemento */
 }
 
 .tabela-tarefas tr:after {
   content: '';
   position: absolute;
-  bottom: 0; /* Alinha no final da linha */
-  left: 10px; /* Define o início da linha */
-  right: 10px; /* Define o final da linha antes da borda */
+  bottom: 0;
+  /* Alinha no final da linha */
+  left: 10px;
+  /* Define o início da linha */
+  right: 10px;
+  /* Define o final da linha antes da borda */
   height: 1px;
-  background-color: rgba(255, 255, 255, 0.2); /* Cor da linha */
+  background-color: rgba(255, 255, 255, 0.2);
+  /* Cor da linha */
 }
 
 .tabela-tarefas td {
   color: #EBF4FFE5;
   font-size: var(--font-normal) !important;
   font-weight: var(--font-weight-light) !important;
-  border-bottom: none; /* Remove a borda padrão entre as células */
+  border-bottom: none;
+  /* Remove a borda padrão entre as células */
 }
+
 /* Estilo base para todos os botões */
 .btn {
   display: flex;
@@ -278,7 +295,8 @@
 .btn-cadastro {
   width: 169px;
   height: var(--field-height, 40px);
-  margin-left: auto; /* Alinha o botão à direita */
+  margin-left: auto;
+  /* Alinha o botão à direita */
   padding: 8px var(--button-horizontal-padding, 16px);
   background: var(--Semantic-colors-Primary, #0C6CE9);
   color: white;
@@ -294,13 +312,12 @@
 .btn-cadastro:active {
   background: #084BA3;
 }
-  
-  /* Responsivo */
-  @media (max-width: 600px) {
-    .cadastro-box {
-      max-width: 98vw;
-      padding: 1rem;
-      border-radius: 4px;
-      box-shadow: none;
-    }
+
+@media (max-width: 600px) {
+  .cadastro-box {
+    max-width: 98vw;
+    padding: 1rem;
+    border-radius: 4px;
+    box-shadow: none;
   }
+}

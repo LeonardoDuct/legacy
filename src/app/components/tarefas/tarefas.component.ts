@@ -37,12 +37,13 @@ export class TarefasComponent implements OnInit {
   tarefas: any[] = [];
   atrasadasTotal: number = 0;
   pendentesTotal: number = 0;
+  valoresFiltro: string[] = [];
   statusGeral: string = 'Estável';
   openedTooltip: number | null = null;
   getScoreClass = getScoreClass
   removerAcentos = removerAcentos
   prazoAtrasado = prazoAtrasado
-
+  selectFiltroColunas = ['autor', 'responsavel', 'cliente', 'status', 'repositorio'];
   filtroColuna: string = '';
   filtroValor: string = '';
 
@@ -131,7 +132,6 @@ export class TarefasComponent implements OnInit {
     });
   }
   
-
 getQuantidadeSucessoras(idIssue: number): number {
     return this.sucessorasMap[idIssue] || 0;
 }
@@ -166,6 +166,20 @@ getQuantidadeSucessoras(idIssue: number): number {
       const campo = (tarefa[this.filtroColuna] || '').toString().toLowerCase();
       return campo.includes(valor);
     });
+  }
+
+  onFiltroColunaChange(event: Event) {
+    const coluna = (event.target as HTMLSelectElement).value;
+    this.filtroColuna = coluna;
+    if (this.selectFiltroColunas.includes(coluna)) {
+      this.valoresFiltro = Array.from(
+        new Set(this.tarefas.map(t => t[coluna]).filter(v => v && v !== 'Indefinido'))
+      );
+      this.filtroValor = '';
+    } else {
+      this.valoresFiltro = [];
+      this.filtroValor = '';
+    }
   }
 
   corDeStatus(status: string): string {

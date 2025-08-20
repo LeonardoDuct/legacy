@@ -72,11 +72,11 @@
 .bloco-tecnologia {
     min-width: 320px;
     height: 167px !important;
- }
+}
 
- .bloco-tecnologia .status {
+.bloco-tecnologia .status {
     width: 168px;
-  }
+}
 
 /* No seu CSS global, ou do componente */
 :fullscreen .grafico-wrapper,
@@ -118,4 +118,5 @@
     .botoes-filtro>div {
         flex-wrap: wrap;
         gap: 6px;
-    } }
+    }
+}

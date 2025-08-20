@@ -149,6 +149,18 @@ export class GitlabService {
 
     return this.http.get<any[]>(`${this.apiUrl}/issues/relatorio-fechadas/${encodeURIComponent(nomeProjeto)}`, { params });
   }
+
+  obterProjetosInternosResumo(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/projetosInternos`);
+  }
+
+  upsertObservacaoIssue(id: number, descricao: string, percentual: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/issues/${id}/observacao`, { descricao, percentual });
+  }
+
+  deletarObservacaoIssue(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/issues/${id}/observacao`);
+  }
   
   logout(): void {
     localStorage.removeItem('token');

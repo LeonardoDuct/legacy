@@ -265,6 +265,125 @@ export const getResumoFiltrado = async (req: Request, res: Response) => {
     }
 };
 
+export const getProjetosInternosResumo = async (_req: Request, res: Response) => {
+    try {
+        const projetosInfo = [
+            //{ id: 123, nome: 'BI' },
+            { id: 124, nome: 'Sistemas PRO+' }
+        ];
+
+        // Busca todas as issues dos projetos internos, pegando id, status, titulo, descricao (obs) E percentual
+        const result = await pool.query(
+            `SELECT i.id_projeto, i.status, i.id, i.titulo, io.descricao as obs, io.percentual as percentual,
+                    i.prazo, i.data_fechamento
+             FROM issues i
+             LEFT JOIN issues_observacoes io ON io.id_issue = i.id
+             WHERE i.id_projeto IN (123, 124) AND i.status_ativa = TRUE`
+        );
+
+        // Calcula o percentual e lista as issues de cada projeto
+        const resumo = projetosInfo.map(projeto => {
+            const issues = result.rows.filter(row => row.id_projeto === projeto.id);
+
+            const issues_abertas = issues
+                .filter(row => row.status === 'opened')
+                .map(row => ({
+                    id: row.id,
+                    titulo: row.titulo,
+                    obs: row.obs ?? "",
+                    percentual: row.percentual ?? 0,
+                    prazo: row.prazo
+                }));
+
+            const issues_fechadas = issues
+                .filter(row => row.status === 'closed')
+                .map(row => ({
+                    id: row.id,
+                    titulo: row.titulo,
+                    obs: row.obs ?? "",
+                    percentual: 100, // <-- sempre 100 para fechadas!
+                    prazo: row.prazo,
+                    data_fechamento: row.data_fechamento
+                }));
+
+            const total = issues.length;
+            const fechadas = issues_fechadas.length;
+            const abertas = issues_abertas.length;
+            const percentual = total > 0 ? Math.round((fechadas / total) * 100) : 0;
+
+            // Calcula abertas dentro e fora do prazo
+            const abertasDentroPrazo = issues_abertas.filter(issue => !issue.prazo || new Date(issue.prazo) >= new Date()).length;
+            const abertasForaPrazo = issues_abertas.filter(issue => issue.prazo && new Date(issue.prazo) < new Date()).length;
+
+            // Calcula fechadas dentro e fora do prazo
+            const fechadasDentroPrazo = issues_fechadas.filter(issue =>
+                issue.data_fechamento &&
+                new Date(issue.data_fechamento) <= (issue.prazo ? new Date(issue.prazo) : new Date(issue.data_fechamento))
+            ).length;
+            const fechadasForaPrazo = issues_fechadas.filter(issue =>
+                issue.data_fechamento &&
+                new Date(issue.data_fechamento) > (issue.prazo ? new Date(issue.prazo) : new Date(issue.data_fechamento))
+            ).length;
+
+            return {
+                nome: projeto.nome,
+                id: projeto.id,
+                percentual,
+                abertas,
+                fechadas,
+                issues_abertas,
+                issues_fechadas,
+                abertasDentroPrazo,
+                abertasForaPrazo,
+                fechadasDentroPrazo,
+                fechadasForaPrazo
+            };
+        });
+
+        res.json(resumo);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar projetos internos.' });
+    }
+};
+
+export const upsertObservacao = async (req: Request, res: Response): Promise<void> => {
+    const id_issue = parseInt(req.params.id);
+    const { descricao, percentual } = req.body; // <-- recebe percentual junto!
+
+    try {
+        const updateResult = await pool.query(
+            `UPDATE issues_observacoes SET descricao = $1, percentual = $2, data_atualizacao = NOW() WHERE id_issue = $3 RETURNING *`,
+            [descricao, percentual, id_issue]
+        );
+
+        if (updateResult.rowCount === 0) {
+            const insertResult = await pool.query(
+                `INSERT INTO issues_observacoes (id_issue, descricao, percentual) VALUES ($1, $2, $3) RETURNING *`,
+                [id_issue, descricao, percentual]
+            );
+            res.json(insertResult.rows[0]);
+        } else {
+            res.json(updateResult.rows[0]);
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao salvar observação.' });
+    }
+};
+
+export const deleteObservacao = async (req: Request, res: Response) => {
+    const id_issue = parseInt(req.params.id);
+
+    try {
+        await pool.query(
+            `DELETE FROM issues_observacoes WHERE id_issue = $1`,
+            [id_issue]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao deletar observação.' });
+    }
+};
+
 export const getSucessoras = async (req: Request, res: Response) => {
     let { id } = req.params;
 

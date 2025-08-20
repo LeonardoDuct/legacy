@@ -1,10 +1,10 @@
 .dashboard {
-    background-color: #2b3d52;
+    background-color: var(--general-bg);
 }
 
 .arrow {
-    font-size: 14px;
-    transition: transform 0.3s ease;
+    font-size: var(--font-medium);
+    transition: transform var(--transition-normal);
 }
 
 .arrow.rotated {
@@ -14,17 +14,17 @@
 .submenu {
     list-style: none;
     margin: 0;
-    padding: 0 16px;
+    padding: 0 var(--spacing-sm);
 }
 
 .submenu-item {
-    padding: 4px 0;
-    font-size: 14px;
-    color: #b0c4de;
+    padding: var(--spacing-xs) 0;
+    font-size: var(--font-medium);
+    color: var(--text-muted);
 }
 
 .submenu-item:hover {
-    color: #f5f9ff;
+    color: var(--text-primary);
 }
 
 /* Bloco de Indicadores */
@@ -35,12 +35,12 @@
     width: 360px;
     min-width: 320px;
     height: 148px;
-    padding: 16px;
-    color: #f5f9ff;
-    gap: 15px;
+    padding: var(--spacing-sm);
+    color: var(--text-primary);
+    gap: var(--spacing-md);
     text-align: center;
-    border-right: 1px solid rgba(173, 200, 235, 0.14);
-    border-bottom: 1px solid rgba(173, 200, 235, 0.14);
+    border-right: 1px solid var(--border-contrast);
+    border-bottom: 1px solid var(--border-contrast);
 }
 
 .bloco-indicadores::after {
@@ -63,15 +63,15 @@
     gap: 8px;
     color: #f5f9ff;
     border-bottom: 1px solid rgba(173, 200, 235, 0.14);
-  }
-    
-  .date-wrapper {
+}
+
+.date-wrapper {
     position: relative;
     width: 336px;
     min-width: 300px;
-  }
-  
-  .data {
+}
+
+.data {
     width: 100%;
     height: 36px;
     padding: 8px 12px;
@@ -83,30 +83,33 @@
     background-clip: padding-box;
     z-index: 1;
     position: relative;
-  }
-  
-  .date-wrapper::after {
+}
+
+.date-wrapper::after {
     content: "";
     position: absolute;
     top: 50%;
-    right: 10px; /* Ajuste conforme necessário */
+    right: 10px;
+    /* Ajuste conforme necessário */
     transform: translateY(-50%);
-    width: 18px; /* Tamanho do ícone */
-    height: 18px; /* Tamanho do ícone */
+    width: 18px;
+    /* Tamanho do ícone */
+    height: 18px;
+    /* Tamanho do ícone */
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="%23D1E3FA"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>');
     background-size: contain;
     background-repeat: no-repeat;
-  }
+}
 
-  .campo-selecao {
+.campo-selecao {
     display: flex;
     min-width: 696px;
     align-items: center;
     gap: 8px;
     flex-wrap: nowrap;
-  }
-  
-  .campo-selecao select {
+}
+
+.campo-selecao select {
     padding: 8px;
     border-radius: 6px;
     background-color: #ADC8EB24;
@@ -116,8 +119,8 @@
     font-size: var(--font-medium);
     cursor: pointer;
     flex-grow: 1;
-  }
-  
+}
+
 .dashboard-toggle-analytics {
     margin-top: 8px;
 }
@@ -162,7 +165,8 @@
 
 .quadro:hover {
     outline-offset: -4px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* sombra mais escura */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    /* sombra mais escura */
 
     cursor: pointer;
 }
@@ -171,23 +175,23 @@
 .quadro-header {
     display: flex;
     justify-content: space-between;
-    align-items: center; /* Alinha verticalmente todos os elementos */
-    height: 78px; /* Define a altura fixa */
+    align-items: center;
+    height: 78px;
     border: 1px solid rgba(173, 200, 235, 0.14);
-    padding: 0; /* Remove o padding externo */
+    padding: 0;
     position: relative;
-    overflow: hidden; /* Garante que nada saia dos limites */
+    overflow: hidden;
 }
 
 .projeto-info {
-    flex: 1; /* Ocupa metade do espaço */
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 8px;
     padding: 16px;
-    min-width: 160px; /* Garante um tamanho mínimo */
-    border-right: 1px solid rgba(173, 200, 235, 0.14); /* Adiciona a linha divisória */
-    justify-content: center; /* Centraliza verticalmente */
+    min-width: 160px;
+    border-right: 1px solid rgba(173, 200, 235, 0.14);
+    justify-content: center;
 }
 
 .projeto-nome {
@@ -207,6 +211,7 @@
     font-weight: 500;
     font-size: 14px;
 }
+
 /* Estável */
 .projeto-status.estavel {
     background: var(--semantic-colors-success-10, #0FF56F1A);
@@ -227,16 +232,15 @@
 
 
 .quadro-indicadores {
-    flex: 1; /* Ocupa a outra metade do espaço */
+    flex: 1;
     display: flex;
     align-items: center;
-    justify-content: space-evenly; /* Espaçamento uniforme entre os indicadores */
+    justify-content: space-evenly;
     height: 60px;
     position: relative;
     padding: 0 20px;
     color: white;
-    margin-bottom: 8px; /* ou 12px, se quiser mais espaço */
-    
+    margin-bottom: 8px;
 }
 
 .quadro-indicadores::after {
@@ -255,9 +259,9 @@
     content: "";
     display: block;
     width: 1px;
-    height: 115%; /* altura maior */
+    height: 115%;
     position: absolute;
-    top: -0.5%; /* empurra para cima para compensar a altura extra */
+    top: -0.5%;
     left: 50%;
     transform: translateX(-50%);
     background-color: rgba(173, 200, 235, 0.14);
@@ -302,7 +306,7 @@
 }
 
 .linha.subcategoria .coluna-esquerda {
-    color: #ADBED4; /* um tom mais claro que o branco puro */
+    color: #ADBED4;
     font-size: 13px;
 }
 
@@ -335,7 +339,7 @@
 }
 
 .btn-detalhes,
-.btn-analytics{
+.btn-analytics {
     width: 117px;
     margin-right: 8px;
     height: 36px;
@@ -347,47 +351,46 @@
     background-color: rgba(173, 200, 235, 0.14);
     color: #90BDF9;
     transition: background-color 0.3s ease, transform 0.2s ease;
-  }
+}
 
-  .btn-detalhes:active,
-  .btn-analytics:active {
-      color: #90BDF9;
-  }
-  
-  .btn-detalhes:hover,
-  .btn-analytics:hover {
+.btn-detalhes:active,
+.btn-analytics:active {
+    color: #90BDF9;
+}
+
+.btn-detalhes:hover,
+.btn-analytics:hover {
     background-color: rgba(173, 200, 235, 0.25);
     transform: scale(1.03);
-  }
+}
 
- apx-chart {
-     width: 100% !important;
-     max-width: 320px;
-     margin: 0 auto;
-     min-height: 190px;
- }
+apx-chart {
+    width: 100% !important;
+    max-width: 320px;
+    margin: 0 auto;
+    min-height: 190px;
+}
 
- .quadro-grafico {
-     min-height: 180px;
-     padding: 8px 0 0 0;
- }
+.quadro-grafico {
+    min-height: 180px;
+    padding: 8px 0 0 0;
+}
 
-  
 
-  @media (max-width: 600px) {
-      .quadro-grafico {
-          min-height: 140px;
-          padding: 8px 0;
-      }
 
-      apx-chart {
-          max-width: 200px;
-      }
-  }
-  
+@media (max-width: 600px) {
+    .quadro-grafico {
+        min-height: 140px;
+        padding: 8px 0;
+    }
+
+    apx-chart {
+        max-width: 200px;
+    }
+}
 
 @media (min-width: 1200px) {
     .quadros-container {
-        padding: 8px; /* Reduza o padding lateral em telas maiores */
+        padding: 8px;
     }
 }

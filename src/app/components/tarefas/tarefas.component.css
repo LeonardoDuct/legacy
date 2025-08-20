@@ -1,32 +1,33 @@
 .projeto-status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 8px;
-    width: 86px;
-    height: 29px;
-    border-radius: 8px;
-    font-weight: 500;
-    font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  width: 86px;
+  height: 29px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
 }
+
 /* Estável */
 .projeto-status.estavel {
-    background: var(--semantic-colors-success-10, #0FF56F1A);
-    color: #0FF56F;
+  background: var(--semantic-colors-success-10, #0FF56F1A);
+  color: #0FF56F;
 }
 
 /* Crítico */
 .projeto-status.critico {
-    background: var(--semantic-colors-error-10, #E75D5524);
-    color: #E75D55;
+  background: var(--semantic-colors-error-10, #E75D5524);
+  color: #E75D55;
 }
 
 /* Instável */
 .projeto-status.instavel {
-    background: var(--semantic-colors-warning-10, #FFAA0033);
-    color: #FFAA00;
+  background: var(--semantic-colors-warning-10, #FFAA0033);
+  color: #FFAA00;
 }
-  
+
 /* Bloco de Indicadores */
 .bloco-indicadores {
   position: relative;
@@ -92,52 +93,57 @@
 /* ====================== */
 /* BLOCO FILTRO */
 /* ====================== */
-  
-  /* Input de pesquisa */
-  .input-wrapper {
-    /* width: 656px; */
-    width: 100%;
-    height: var(--height-small);
-    min-width: 320px;
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    position: relative;
-  }
-  
-  /* Campo de texto */
-  .input-text {
-    min-width: 320px;
-    width: 100%;
-    height: var(--height-small);
-    padding: var(--spacing-xs);
-    border: none;
-    border-radius: var(--border-radius-sm);
-    background: var(--secondary-bg);
-    color: var(--text-primary);
-    font-size: var(--font-medium);
-  }
-  
-  .input-text::placeholder {
-    color: var(--placeholder-text);
-  }
-  
-  .tabela-container {
-    margin: 0 auto;
-    padding: 1rem;
-  }
-  
-  .tabela-tarefas {
-    width: 100%;
-    border-collapse: separate; /* Use separate para suportar bordas arredondadas */
-    background-color: #223348;
-    border-spacing: 0; /* Garante que não haja espaçamento entre células */
-    border-radius: 7px; /* Adiciona bordas arredondadas */
-    overflow: hidden; /* Garante que o arredondamento seja aplicado */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Contorno externo da tabela */
-  }
-  
-  .tabela-tarefas th,
+
+/* Input de pesquisa */
+.input-wrapper {
+  /* width: 656px; */
+  width: 100%;
+  height: var(--height-small);
+  min-width: 320px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  position: relative;
+}
+
+/* Campo de texto */
+.input-text {
+  min-width: 320px;
+  width: 100%;
+  height: var(--height-small);
+  padding: var(--spacing-xs);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  background: var(--secondary-bg);
+  color: var(--text-primary);
+  font-size: var(--font-medium);
+}
+
+.input-text::placeholder {
+  color: var(--placeholder-text);
+}
+
+.tabela-container {
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.tabela-tarefas {
+  width: 100%;
+  border-collapse: separate;
+  /* Use separate para suportar bordas arredondadas */
+  background-color: #223348;
+  border-spacing: 0;
+  /* Garante que não haja espaçamento entre células */
+  border-radius: 7px;
+  /* Adiciona bordas arredondadas */
+  overflow: hidden;
+  /* Garante que o arredondamento seja aplicado */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Contorno externo da tabela */
+}
+
+.tabela-tarefas th,
 .tabela-tarefas td {
   padding: 10px;
   text-align: inherit;
@@ -146,124 +152,144 @@
 /* Cabeçalho da tabela */
 .tabela-tarefas th {
   color: #EBF4FFE5;
-  font-weight: var(--font-weight-bold) !important; /* Font weight 600 para o título */
+  font-weight: var(--font-weight-bold) !important;
+  /* Font weight 600 para o título */
   font-size: var(--font-small);
 }
 
 /* Linhas da tabela */
 .tabela-tarefas tr {
-  position: relative; /* Necessário para posicionar o pseudo-elemento */
+  position: relative;
+  /* Necessário para posicionar o pseudo-elemento */
 }
 
 .tabela-tarefas tr:after {
   content: '';
   position: absolute;
-  bottom: 0; /* Alinha no final da linha */
-  left: 10px; /* Define o início da linha */
-  right: 10px; /* Define o final da linha antes da borda */
+  bottom: 0;
+  /* Alinha no final da linha */
+  left: 10px;
+  /* Define o início da linha */
+  right: 10px;
+  /* Define o final da linha antes da borda */
   height: 1px;
-  background-color: rgba(255, 255, 255, 0.2); /* Cor da linha */
+  background-color: rgba(255, 255, 255, 0.2);
+  /* Cor da linha */
 }
 
 .tabela-tarefas td {
   color: #EBF4FFE5;
   font-size: var(--font-normal) !important;
   font-weight: var(--font-weight-light) !important;
-  border-bottom: none; /* Remove a borda padrão entre as células */
+  border-bottom: none;
+  /* Remove a borda padrão entre as células */
 }
 
 .cabecalho-responsavel {
-    align-items: center;
-    padding-right: 16px;        /* Padding adequado à direita */
-    padding-left: 0;            /* Garante que não empurre da esquerda */
-    height: 100%;
-  }
-  
-  /* CÉLULA: conteúdo do responsável */
-  .coluna-responsavel {
-    text-align: right;          /* Alinha conteúdo à direita */
-    padding-right: 16px;        /* Padding à direita */
-    padding-left: 0;            /* Remove padding à esquerda */
-  }
-  
-  .titulo-coluna {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    height: 35px;
-  }
-  
-  .icone-seta {
-    width: 12px;
-    height: 12px;
-    margin-left: 5px;
-    fill: #B4CDEE3B;
-    transition: transform 0.2s ease;
-  }
-  
-  .ascending {
-    transform: rotate(180deg);
-  }
-  
-  .descending {
-    transform: rotate(0deg);
-  }
+  align-items: center;
+  padding-right: 16px;
+  /* Padding adequado à direita */
+  padding-left: 0;
+  /* Garante que não empurre da esquerda */
+  height: 100%;
+}
 
-  .texto-cliente {
-    display: inline-block;
-    background-color: #C0D5F20F;
-    border-radius: var(--border-radius-md);
-    padding: 4px 8px; /* Ajuste conforme necessário */
+/* CÉLULA: conteúdo do responsável */
+.coluna-responsavel {
+  text-align: right;
+  /* Alinha conteúdo à direita */
+  padding-right: 16px;
+  /* Padding à direita */
+  padding-left: 0;
+  /* Remove padding à esquerda */
+}
+
+.titulo-coluna {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 35px;
+}
+
+.icone-seta {
+  width: 12px;
+  height: 12px;
+  margin-left: 5px;
+  fill: #B4CDEE3B;
+  transition: transform 0.2s ease;
+}
+
+.ascending {
+  transform: rotate(180deg);
+}
+
+.descending {
+  transform: rotate(0deg);
+}
+
+.texto-cliente {
+  display: inline-block;
+  background-color: #C0D5F20F;
+  border-radius: var(--border-radius-md);
+  padding: 4px 8px;
+  /* Ajuste conforme necessário */
 }
 
 .texto-status {
-    display: inline-block;
-    padding: 4px 10px; /* Ajuste conforme necessário */
-    background-color: #2c3e50; /* Cor de fundo - ajuste para corresponder à imagem */
-    border-radius: var(--border-radius-md);
-    text-align: center;
-    min-width: 80px; /* Define um tamanho mínimo */
+  display: inline-block;
+  padding: 4px 10px;
+  /* Ajuste conforme necessário */
+  background-color: #2c3e50;
+  /* Cor de fundo - ajuste para corresponder à imagem */
+  border-radius: var(--border-radius-md);
+  text-align: center;
+  min-width: 80px;
+  /* Define um tamanho mínimo */
 }
 
 .coluna-status {
-    width: 250px; /* Defina uma largura fixa */
-    text-align: center; /* Centraliza o título */
-  }
+  width: 250px;
+  /* Defina uma largura fixa */
+  text-align: center;
+  /* Centraliza o título */
+}
 
 .score.verde {
-    color: #2ecc71;
-    background: rgba(46, 204, 113, 0.1);
-    padding: 4px 10px;
-    border-radius: 8px;
-  }
-  
-  .score.amarelo {
-    color: #f1c40f;
-    background: rgba(241, 196, 15, 0.1);
-    padding: 4px 10px;
-    border-radius: 8px;
-  }
-  
-  .score.vermelho-claro {
-    color: #e67e22;
-    background: rgba(230, 126, 34, 0.1);
-    padding: 4px 10px;
-    border-radius: 8px;
-  }
-  
-  .score.vermelho-escuro {
-    color: #e74c3c;
-    background: rgba(231, 76, 60, 0.1);
-    padding: 4px 10px;
-    border-radius: 8px;
-  }
+  color: #2ecc71;
+  background: rgba(46, 204, 113, 0.1);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
 
-  .texto-score {
-    display: inline-block;
-    padding: 6px 12px; /* Ajuste para dar um espaço uniforme */
-    border-radius: 8px;
-    min-width: 60px; /* Define uma largura mínima para padronizar */
-    text-align: center;
+.score.amarelo {
+  color: #f1c40f;
+  background: rgba(241, 196, 15, 0.1);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.score.vermelho-claro {
+  color: #e67e22;
+  background: rgba(230, 126, 34, 0.1);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.score.vermelho-escuro {
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.1);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.texto-score {
+  display: inline-block;
+  padding: 6px 12px;
+  /* Ajuste para dar um espaço uniforme */
+  border-radius: 8px;
+  min-width: 60px;
+  /* Define uma largura mínima para padronizar */
+  text-align: center;
 }
 
 
@@ -302,7 +328,8 @@ table {
   border-spacing: 0;
 }
 
-th, td {
+th,
+td {
   padding: 8px;
   text-align: center;
 }
@@ -343,13 +370,16 @@ th, td {
 
 .tooltip {
   visibility: hidden;
-  background-color: #2B3D52; /* Fundo escuro */
-  color: #fff; /* Texto branco */
+  background-color: #2B3D52;
+  /* Fundo escuro */
+  color: #fff;
+  /* Texto branco */
   text-align: center;
   padding: 10px 15px;
   border-radius: 5px;
   position: absolute;
-  bottom: 100%; /* Posiciona acima do elemento */
+  bottom: 100%;
+  /* Posiciona acima do elemento */
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
@@ -371,7 +401,8 @@ th, td {
 
 .quantidade-sucessoras {
   position: relative;
-  top: -10px;       /* Estava -4px ou -1px, agora sobe mais */
+  top: -10px;
+  /* Estava -4px ou -1px, agora sobe mais */
   right: -4px;
   font-size: 10px;
   color: #D1E3FA94;
