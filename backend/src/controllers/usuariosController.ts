@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { handleError, handleNotFound } from '../shared/helpers/errorHandler';
 
 export const createUsuario = async (req: Request, res: Response) => {
-    const { nome, email, senha, admin, head, iprojetos } = req.body;
+    const { nome, email, senha, admin, head, iprojetos, adm_categorias, adm_usuarios } = req.body;
 
     try {
         const existente = await pool.query('SELECT * FROM usuarios WHERE email = $1', [email]);
@@ -17,8 +17,8 @@ export const createUsuario = async (req: Request, res: Response) => {
         const senhaHash = await bcrypt.hash(senha, 10);
 
         await pool.query(
-            'INSERT INTO usuarios (nome, email, senha_hash, admin, head, iprojetos) VALUES ($1, $2, $3, $4, $5, $6)',
-            [nome, email, senhaHash, !!admin, !!head, !!iprojetos]
+            'INSERT INTO usuarios (nome, email, senha_hash, admin, head, iprojetos, adm_categorias, adm_usuarios) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+            [nome, email, senhaHash, !!admin, !!head, !!iprojetos, !!adm_categorias, !!adm_usuarios]
         );
 
         res.status(201).json({ mensagem: 'Usuário criado com sucesso' });
@@ -29,12 +29,12 @@ export const createUsuario = async (req: Request, res: Response) => {
 
 export const updateUsuario = async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { nome, email, admin, head, iprojetos } = req.body;
+    const { nome, email, admin, head, iprojetos, adm_categorias, adm_usuarios } = req.body;
 
     try {
         await pool.query(
-            'UPDATE usuarios SET nome = $1, email = $2, admin = $3, head = $4, iprojetos = $5 WHERE id = $6',
-            [nome, email, admin, head, iprojetos, id]
+            'UPDATE usuarios SET nome = $1, email = $2, admin = $3, head = $4, iprojetos = $5, adm_categorias = $6, adm_usuarios = $7 WHERE id = $8',
+            [nome, email, admin, head, iprojetos, adm_categorias, adm_usuarios, id]
         );
         res.status(200).json({ mensagem: 'Usuário atualizado com sucesso' });
     } catch (error) {
@@ -72,7 +72,9 @@ export const login = async (req: Request, res: Response) => {
                 email: usuario.email,
                 admin: usuario.admin,
                 head: usuario.head,
-                iprojetos: usuario.iprojetos // Adiciona a flag no token
+                iprojetos: usuario.iprojetos,
+                adm_categorias: usuario.adm_categorias,
+                adm_usuarios: usuario.adm_usuarios
             },
             process.env.JWT_SECRET || 'sua_chave_secreta',
             { expiresIn: '8h' }
@@ -88,7 +90,9 @@ export const login = async (req: Request, res: Response) => {
                 email: usuario.email,
                 admin: usuario.admin,
                 head: usuario.head,
-                iprojetos: usuario.iprojetos // Adiciona a flag na resposta
+                iprojetos: usuario.iprojetos,
+                adm_categorias: usuario.adm_categorias,
+                adm_usuarios: usuario.adm_usuarios
             }
         });
     } catch (error) {
@@ -128,7 +132,7 @@ export const alterarSenha = async (req: Request, res: Response) => {
 export const getUsuarios = async (_req: Request, res: Response) => {
     try {
         const resultado = await pool.query(
-            'SELECT id, nome, email, admin, head, iprojetos, criado_em FROM usuarios ORDER BY id DESC'
+            'SELECT id, nome, email, admin, head, iprojetos, adm_categorias, adm_usuarios, criado_em FROM usuarios ORDER BY id DESC'
         );
         res.json(resultado.rows);
     } catch (error) {

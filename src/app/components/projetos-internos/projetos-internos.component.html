@@ -13,15 +13,20 @@
                 <h2 class="titulo">Projetos Internos</h2>
                 <span class="status">Score</span>
             </div>
-            <div class="topo-bloco-direita">
-                <span class="projeto-principal">Sistema PRO+</span>
+            <div *ngFor="let projeto of projetos" class="topo-bloco-direita">
+                <span class="projeto-principal">{{ projeto.nome }}</span>
             </div>
         </div>
     </article>
-
-    <!-- Cards das issues do projeto expandido ficam sempre abaixo da linha dos projetos -->
-    <section class="quadros-container" *ngIf="projetoExpandidoIndex !== null">
-        <div class="quadro" *ngFor="let issue of getTodasIssues(projetos[projetoExpandidoIndex])">
+<label class="switch-abertas">
+    <input type="checkbox" [(ngModel)]="mostrarApenasAbertas" />
+    <span class="slider"></span>
+    <span class="switch-text">
+        {{ mostrarApenasAbertas ? 'Só abertas' : 'Todas' }}
+    </span>
+</label>
+    <section class="quadros-container" *ngIf="projetoExpandidoIndex !== null && projetos[projetoExpandidoIndex]">
+        <div class="quadro" *ngFor="let issue of getIssuesOrdenadas(projetos[projetoExpandidoIndex])">
             <div class="quadro-header">
                 <div class="projeto-info">
                     <div class="projeto-nome">{{ issue.titulo }}</div>

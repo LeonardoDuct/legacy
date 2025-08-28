@@ -6,22 +6,25 @@ import { TarefasComponent } from './components/tarefas/tarefas.component';
 import { AdminGuard } from './guards/admin.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { HeadGuard } from './guards/head.guard';
-import { AdminOrHeadGuard } from './guards/adminOrHead.guard';
 import { LoginComponent } from './components/login/login.component';
 import { UsuariosComponent } from './components/usuarios/usuarios.component';
 import { SucessorasComponent } from './components/sucessoras/sucessoras.component';
 import { RelatoriosComponent } from './components/relatorios/relatorios.component';
 import { ProjetosInternosComponent } from './components/projetos-internos/projetos-internos.component';
+import { IProjetosGuard } from './guards/iProjetos.guard';
+import { AdmUsuariosGuard } from './guards/AdmUsuarios.guard';
+import { FluxosComponent } from './components/fluxos/fluxos.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'cadastro', component: CadastroComponent, canActivate: [AdminGuard] },
   { path: 'dashboard/:projeto', component: TarefasComponent },
-  { path: 'usuarios', component: UsuariosComponent, canActivate: [AdminGuard] },
+  { path: 'usuarios', component: UsuariosComponent, canActivate: [AdmUsuariosGuard] },
   { path: 'sucessoras/:id', component: SucessorasComponent },
   { path: 'relatorios', component: RelatoriosComponent, canActivate: [HeadGuard] },
-  { path: 'projetosInternos', component: ProjetosInternosComponent, canActivate: [AdminOrHeadGuard] },
+  { path: 'projetosInternos', component: ProjetosInternosComponent, canActivate: [IProjetosGuard] },
+  { path: 'fluxos', component: FluxosComponent },
   { path: '**', redirectTo: 'dashboard' }
 ];
 

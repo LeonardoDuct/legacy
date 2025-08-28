@@ -58,6 +58,7 @@ export class CadastroComponent implements OnInit {
   modalConfirmacaoAberto = false;
   categoriaSelecionada: Categoria | undefined;
   dadoSelecionado: DadoCategoria | undefined;
+  usuarioLogado: any = {};
 
   constructor(
     private gitlabService: GitlabService,
@@ -66,8 +67,8 @@ export class CadastroComponent implements OnInit {
 
   ngOnInit() {
     this.carregarCategorias();
+    this.carregarPermissoes();
   }
-
 
   carregarCategorias() {
     this.gitlabService.obterCategorias().subscribe({
@@ -122,6 +123,13 @@ export class CadastroComponent implements OnInit {
         console.error('Erro ao carregar categorias:', error);
       }
     });
+  }
+
+  carregarPermissoes(): void {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.usuarioLogado = JSON.parse(atob(token.split('.')[1]));
+    }
   }
 
   toggleCategoria(id: string) {

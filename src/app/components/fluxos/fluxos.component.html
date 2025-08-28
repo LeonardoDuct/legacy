@@ -1,0 +1,125 @@
+<section class="kickoff-fluxo">
+    <app-cabecalho></app-cabecalho>
+
+    <section class="header-bottom">
+        <article class="bloco-tecnologia">
+            <div class="conteudo">
+                <div class="topo-bloco">
+                    <button class="btn-voltar" (click)="voltar()">
+                        <!-- SVG do botão voltar -->
+                    </button>
+                    <div class="info-projeto">
+                        <span class="breadcrumb">Dashboard / Kickoff</span>
+                        <div class="linha-titulo">
+                            <h2 class="titulo">Fluxo de IS - Kickoff</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="bloco-indicadores">
+            <!-- Indicadores personalizáveis aqui (ex: total ISs, em andamento, concluídas, atrasadas etc) -->
+            <div class="indicador">
+                <div class="icon">
+                    <!-- SVG -->
+                </div>
+                <div class="texto-numero">
+                    <div class="texto">Kickoff</div>
+                    <div class="numero">{{ totalKickoff }}</div>
+                </div>
+            </div>
+            <div class="indicador">
+                <div class="icon">
+                    <!-- SVG -->
+                </div>
+                <div class="texto-numero">
+                    <div class="texto">Em andamento</div>
+                    <div class="numero">{{ totalEmAndamento }}</div>
+                </div>
+            </div>
+            <div class="indicador">
+                <div class="icon">
+                    <!-- SVG -->
+                </div>
+                <div class="texto-numero">
+                    <div class="texto">Concluídas</div>
+                    <div class="numero">{{ totalConcluidas }}</div>
+                </div>
+            </div>
+        </article>
+
+        <aside class="bloco-filtro">
+            <div class="filtro-container">
+                <div class="dropdown-wrapper">
+                    <select id="tipo-filtro" class="dropdown" [(ngModel)]="filtroColuna"
+                        (change)="onFiltroColunaChange($event)">
+                        <option value="" disabled selected>Selecione uma coluna</option>
+                        <option value="kickoff">Kickoff</option>
+                        <option value="abert_kickoff">Abert x Kickoff</option>
+                        <option value="abert_analise">Abert Análise</option>
+                        <option value="kickoff_analise">Kickoff x Análise</option>
+                        <option value="abert_dev">Abert DEV</option>
+                        <option value="analise_dev">Análise x DEV</option>
+                        <option value="abert_qa">Abert QA</option>
+                        <option value="dev_qa">DEV x QA</option>
+                        <option value="em_prod">Em Prod</option>
+                        <option value="qa_prod">QA x Prod</option>
+                        <option value="total_dias">Total Dias</option>
+                    </select>
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" id="filtro-descricao" class="input-text" placeholder="Digite o filtro"
+                        [(ngModel)]="filtroValor" />
+                    <button class="btn btn-search" type="button">
+                        <!-- SVG lupa -->
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <section class="tabela-container">
+        <div class="tabela-scroll">
+            <table class="tabela-fluxo">
+                <thead>
+                    <tr>
+                        <th>IS</th>
+                        <th>Kickoff</th>
+                        <th>Abert x Kickoff</th>
+                        <th>Abert Análise</th>
+                        <th>Kickoff x Análise</th>
+                        <th>Abert DEV</th>
+                        <th>Análise x DEV</th>
+                        <th>Abert QA</th>
+                        <th>DEV x QA</th>
+                        <th>Em Prod</th>
+                        <th>QA x Prod</th>
+                        <th>Total dias</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let is of isListFiltrada">
+                        <td>{{ is.nome }}</td>
+                        <td>{{ is.kickoff | date: 'dd/MM/yyyy HH:mm' }}</td>
+                        <td>{{ is.abertKickoff }}</td>
+                        <td>{{ is.abertAnalise }}</td>
+                        <td>{{ is.kickoffAnalise }}</td>
+                        <td>{{ is.abertDev }}</td>
+                        <td>{{ is.analiseDev }}</td>
+                        <td>{{ is.abertQa }}</td>
+                        <td>{{ is.devQa }}</td>
+                        <td>{{ is.emProd }}</td>
+                        <td>{{ is.qaProd }}</td>
+                        <td>{{ is.totalDias }}</td>
+                        <td>
+                            <!-- Botão ou ícone para ação, ex: detalhes, editar, etc -->
+                            <button class="btn btn-detalhes" type="button" (click)="abrirDetalhe(is)">Detalhes</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</section>

@@ -42,7 +42,8 @@ export class ProjetosInternosComponent implements OnInit {
   issueSelecionada: Issue | null = null;
   novaObs: string = '';
   novoPercentual: number = 0;
-  usuarioHead: boolean = false; // <-- agora só Head pode editar
+  usuarioHead: boolean = false;
+  mostrarApenasAbertas: boolean = false;
 
   constructor(
     private gitlabService: GitlabService,
@@ -118,6 +119,14 @@ export class ProjetosInternosComponent implements OnInit {
     this.projetoExpandidoIndex = this.projetoExpandidoIndex === index ? null : index;
   }
 
+  getIssuesOrdenadas(projeto: ProjetoInterno): Array<Issue & { status: 'opened' | 'closed' }> {
+    let todas = this.getTodasIssues(projeto);
+    if (this.mostrarApenasAbertas) {
+      todas = todas.filter(issue => issue.status === 'opened');
+    }
+    return todas.slice().sort((a, b) => this.getPercentualIssue(b) - this.getPercentualIssue(a));
+  }
+  
   getTodasIssues(projeto: ProjetoInterno): Array<Issue & { status: 'opened' | 'closed' }> {
     const abertas = (projeto.issues_abertas ?? []).map(issue => ({ ...issue, status: 'opened' as const }));
     const fechadas = (projeto.issues_fechadas ?? []).map(issue => ({ ...issue, status: 'closed' as const }));

@@ -265,86 +265,84 @@ export const getResumoFiltrado = async (req: Request, res: Response) => {
     }
 };
 
-export const getProjetosInternosResumo = async (_req: Request, res: Response) => {
+export const getProjetosInternosResumo = async (_req: Request, res: Response): Promise<void> => {
     try {
-        const projetosInfo = [
-            //{ id: 123, nome: 'BI' },
-            { id: 124, nome: 'Sistemas PRO+' }
-        ];
+        const projetoResult = await pool.query(
+            `SELECT id, nome FROM projeto WHERE id = 144`
+        );
+        if (projetoResult.rows.length === 0) {
+            res.status(404).json({ error: 'Projeto não encontrado.' });
+            return;
+        }
 
-        // Busca todas as issues dos projetos internos, pegando id, status, titulo, descricao (obs) E percentual
+        const projeto = projetoResult.rows[0];
+
         const result = await pool.query(
             `SELECT i.id_projeto, i.status, i.id, i.titulo, io.descricao as obs, io.percentual as percentual,
                     i.prazo, i.data_fechamento
              FROM issues i
              LEFT JOIN issues_observacoes io ON io.id_issue = i.id
-             WHERE i.id_projeto IN (123, 124) AND i.status_ativa = TRUE`
+             WHERE i.id_projeto = 144 AND i.status_ativa = TRUE`
         );
 
-        // Calcula o percentual e lista as issues de cada projeto
-        const resumo = projetosInfo.map(projeto => {
-            const issues = result.rows.filter(row => row.id_projeto === projeto.id);
+        const issues = result.rows;
 
-            const issues_abertas = issues
-                .filter(row => row.status === 'opened')
-                .map(row => ({
-                    id: row.id,
-                    titulo: row.titulo,
-                    obs: row.obs ?? "",
-                    percentual: row.percentual ?? 0,
-                    prazo: row.prazo
-                }));
+        const issues_abertas = issues
+            .filter(row => row.status === 'opened')
+            .map(row => ({
+                id: row.id,
+                titulo: row.titulo,
+                obs: row.obs ?? "",
+                percentual: row.percentual ?? 0,
+                prazo: row.prazo
+            }));
 
-            const issues_fechadas = issues
-                .filter(row => row.status === 'closed')
-                .map(row => ({
-                    id: row.id,
-                    titulo: row.titulo,
-                    obs: row.obs ?? "",
-                    percentual: 100, // <-- sempre 100 para fechadas!
-                    prazo: row.prazo,
-                    data_fechamento: row.data_fechamento
-                }));
+        const issues_fechadas = issues
+            .filter(row => row.status === 'closed')
+            .map(row => ({
+                id: row.id,
+                titulo: row.titulo,
+                obs: row.obs ?? "",
+                percentual: 100,
+                prazo: row.prazo,
+                data_fechamento: row.data_fechamento
+            }));
 
-            const total = issues.length;
-            const fechadas = issues_fechadas.length;
-            const abertas = issues_abertas.length;
-            const percentual = total > 0 ? Math.round((fechadas / total) * 100) : 0;
+        const total = issues.length;
+        const fechadas = issues_fechadas.length;
+        const abertas = issues_abertas.length;
+        const percentual = total > 0 ? Math.round((fechadas / total) * 100) : 0;
 
-            // Calcula abertas dentro e fora do prazo
-            const abertasDentroPrazo = issues_abertas.filter(issue => !issue.prazo || new Date(issue.prazo) >= new Date()).length;
-            const abertasForaPrazo = issues_abertas.filter(issue => issue.prazo && new Date(issue.prazo) < new Date()).length;
+        const abertasDentroPrazo = issues_abertas.filter(issue => !issue.prazo || new Date(issue.prazo) >= new Date()).length;
+        const abertasForaPrazo = issues_abertas.filter(issue => issue.prazo && new Date(issue.prazo) < new Date()).length;
 
-            // Calcula fechadas dentro e fora do prazo
-            const fechadasDentroPrazo = issues_fechadas.filter(issue =>
-                issue.data_fechamento &&
-                new Date(issue.data_fechamento) <= (issue.prazo ? new Date(issue.prazo) : new Date(issue.data_fechamento))
-            ).length;
-            const fechadasForaPrazo = issues_fechadas.filter(issue =>
-                issue.data_fechamento &&
-                new Date(issue.data_fechamento) > (issue.prazo ? new Date(issue.prazo) : new Date(issue.data_fechamento))
-            ).length;
+        const fechadasDentroPrazo = issues_fechadas.filter(issue =>
+            issue.data_fechamento &&
+            new Date(issue.data_fechamento) <= (issue.prazo ? new Date(issue.prazo) : new Date(issue.data_fechamento))
+        ).length;
+        const fechadasForaPrazo = issues_fechadas.filter(issue =>
+            issue.data_fechamento &&
+            new Date(issue.data_fechamento) > (issue.prazo ? new Date(issue.prazo) : new Date(issue.data_fechamento))
+        ).length;
 
-            return {
-                nome: projeto.nome,
-                id: projeto.id,
-                percentual,
-                abertas,
-                fechadas,
-                issues_abertas,
-                issues_fechadas,
-                abertasDentroPrazo,
-                abertasForaPrazo,
-                fechadasDentroPrazo,
-                fechadasForaPrazo
-            };
-        });
-
-        res.json(resumo);
+        res.json([{
+            nome: projeto.nome,
+            id: projeto.id,
+            percentual,
+            abertas,
+            fechadas,
+            issues_abertas,
+            issues_fechadas,
+            abertasDentroPrazo,
+            abertasForaPrazo,
+            fechadasDentroPrazo,
+            fechadasForaPrazo
+        }]);
     } catch (error) {
         res.status(500).json({ error: 'Erro ao buscar projetos internos.' });
     }
 };
+
 
 export const upsertObservacao = async (req: Request, res: Response): Promise<void> => {
     const id_issue = parseInt(req.params.id);

@@ -18,6 +18,9 @@ export class UsuariosComponent implements OnInit {
   senha = '';
   admin = false;
   head = false;
+  iprojetos = false;
+  adm_categorias = false;
+  adm_usuarios = false;
   erroCadastro = '';
   sucessoCadastro = '';
   loading = false;
@@ -31,7 +34,7 @@ export class UsuariosComponent implements OnInit {
     private gitlabService: GitlabService,
     private router: Router,
     private location: Location
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.carregarUsuarios();
@@ -56,11 +59,14 @@ export class UsuariosComponent implements OnInit {
 
   abrirModalEdicao(usuario: any) {
     this.modoEdicao = true;
-    this.usuarioEditandoId = usuario.id; 
+    this.usuarioEditandoId = usuario.id;
     this.nome = usuario.nome;
     this.email = usuario.email;
     this.admin = usuario.admin;
     this.head = usuario.head;
+    this.iprojetos = usuario.iprojetos;
+    this.adm_categorias = usuario.adm_categorias ?? false;
+    this.adm_usuarios = usuario.adm_usuarios ?? false;
     this.senha = '';
     this.erroCadastro = '';
     this.sucessoCadastro = '';
@@ -78,6 +84,9 @@ export class UsuariosComponent implements OnInit {
     this.senha = '';
     this.admin = false;
     this.head = false;
+    this.iprojetos = false;
+    this.adm_categorias = false;
+    this.adm_usuarios = false;
     this.erroCadastro = '';
     this.sucessoCadastro = '';
     this.usuarioEditandoId = null;
@@ -96,7 +105,16 @@ export class UsuariosComponent implements OnInit {
     this.sucessoCadastro = '';
     this.loading = true;
 
-    this.gitlabService.cadastrarUsuario(this.nome, this.email, this.senha, this.admin, this.head).subscribe({
+    this.gitlabService.cadastrarUsuario(
+      this.nome,
+      this.email,
+      this.senha,
+      this.admin,
+      this.head,
+      this.iprojetos,
+      this.adm_categorias,
+      this.adm_usuarios
+    ).subscribe({
       next: (res) => {
         this.loading = false;
         this.sucessoCadastro = res.mensagem || 'Usuário cadastrado com sucesso!';
@@ -115,7 +133,16 @@ export class UsuariosComponent implements OnInit {
     this.sucessoCadastro = '';
     this.loading = true;
 
-    this.gitlabService.atualizarUsuario(this.usuarioEditandoId, this.nome, this.email, this.admin, this.head).subscribe({
+    this.gitlabService.atualizarUsuario(
+      this.usuarioEditandoId,
+      this.nome,
+      this.email,
+      this.admin,
+      this.head,
+      this.iprojetos,
+      this.adm_categorias,
+      this.adm_usuarios
+    ).subscribe({
       next: (res) => {
         this.loading = false;
         this.sucessoCadastro = res.mensagem || 'Usuário atualizado com sucesso!';

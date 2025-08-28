@@ -115,13 +115,29 @@
 
 .checkbox-row {
   display: flex;
-  gap: 30px;
+  flex-wrap: wrap;
+  gap: 28px;
+  justify-content: center;
+  margin: 32px 0 24px 0;
+}
+
+.checkbox-row label {
+  display: flex;
   align-items: center;
-  margin-top: 24px;
-  /* aumenta o espaço acima dos checkboxes */
-  margin-bottom: 24px;
-  /* mantém o espaço abaixo */
-  justify-content: flex-start;
+  gap: 7px;
+  font-size: 1rem;
+  color: #caddf6;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  /* Tira a largura fixa! */
+  margin-bottom: 0;
+}
+
+.checkbox-row input[type="checkbox"] {
+  accent-color: #39a2f0;
+  width: 20px;
+  height: 20px;
 }
 
 .cadastro-box form input {

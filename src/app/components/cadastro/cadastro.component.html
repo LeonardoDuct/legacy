@@ -54,13 +54,14 @@
   <!-- Botões de ação -->
   <div class="acoes">
     <!-- Botão Editar Categorias -->
-    <button class="btn btn-editar-categorias" (click)="abrirModal()">
+    <button class="btn btn-editar-categorias" (click)="abrirModal()"
+      *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias">
       <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
       Editar categorias
     </button>
 
     <!-- Modal Principal -->
-    <div class="modal" *ngIf="modalAberto">
+    <div class="modal" *ngIf="modalAberto && usuarioLogado?.admin && usuarioLogado?.adm_categorias">
       <div class="modal-content modal-content-principal">
         <div class="modal-header">
           <h2 class="modal-title">Categorias</h2>
@@ -93,13 +94,16 @@
                     [(ngModel)]="categoria.porcentagem" />%
                 </td>
                 <td class="btn btn-acoes">
-                  <button *ngIf="!categoria.editando" class="btn btn-editar" (click)="habilitarEdicao(categoria)">
+                  <button *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias && !categoria.editando"
+                  class="btn btn-editar" (click)="habilitarEdicao(categoria)">
                     <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
                   </button>
-                  <button *ngIf="categoria.editando" class="btn btn-salvar" (click)="salvarEdicao(categoria)">
+                  <button *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias && categoria.editando"
+                   class="btn btn-salvar" (click)="salvarEdicao(categoria)">
                     Salvar
                   </button>
-                  <button *ngIf="categoria.titulo !== 'Cliente' && categoria.titulo !== 'Prazo'" class="btn btn-excluir"
+                  <button
+                    *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias && categoria.titulo !== 'Cliente' && categoria.titulo !== 'Prazo'" class="btn btn-excluir"
                     (click)="excluirCategoria(categoria.id)">
                     <img class="size-6" src="assets/images/icon_primary_text/delete.svg" alt="Ícone de exclusão" />
                   </button>
@@ -111,7 +115,8 @@
 
           <!-- Botão "+ Nova Categoria" -->
           <div class="nova-categoria-container">
-            <button class="btn btn-categoria" (click)="novaCategoria()">+ Nova Categoria</button>
+            <button class="btn btn-categoria" (click)="novaCategoria()"
+              *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias">+ Nova Categoria</button>
           </div>
 
           <div class="peso-total" [class.exibe-erro]="calcularPesoTotal() !== 100">
@@ -134,7 +139,7 @@
     </div>
 
     <!-- Modal Secundário -->
-    <div class="modal" *ngIf="modalNovaCategoriaAberto">
+    <div class="modal" *ngIf="modalNovaCategoriaAberto && usuarioLogado?.admin && usuarioLogado?.adm_categorias">
       <div class="modal-content modal-content-secundario">
         <div class="modal-header">
           <h2 class="modal-title">Nova Categoria</h2>
@@ -185,7 +190,7 @@
     </div>
 
     <!-- Modal Classificação -->
-    <div class="modal" *ngIf="modalNovaClassificacaoAberto">
+    <div class="modal" *ngIf="modalNovaClassificacaoAberto && usuarioLogado?.admin && usuarioLogado?.adm_categorias">
       <div class="modal-content modal-content-classificacao">
         <div class="modal-header">
           <h2 class="modal-title">
@@ -264,7 +269,7 @@
     </div>
 
     <!-- Modal de Confirmação de Exclusão -->
-    <div class="modal" *ngIf="modalConfirmacaoAberto">
+    <div class="modal" *ngIf="modalConfirmacaoAberto && usuarioLogado?.admin && usuarioLogado?.adm_categorias">
       <div class="modal-content modal-content-confirmacao">
         <div class="modal-header">
           <h2 class="modal-title">Confirmação</h2>
@@ -286,7 +291,8 @@
     </div>
 
     <!-- Botão Nova Classificação -->
-    <button class="btn btn-nova-classificacao" (click)="abrirModalNovaClassificacao()">
+    <button class="btn btn-nova-classificacao" (click)="abrirModalNovaClassificacao()"
+      *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
         class="size-6">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -338,10 +344,12 @@
                 </span>
               </td>
               <td>
-                <button class="btn btn-editar" (click)="editarClassificacao(categoria, dado)">
+                <button class="btn btn-editar" *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias"
+                  (click)="editarClassificacao(categoria, dado)">
                   <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
                 </button>
-                <button class="btn btn-excluir" (click)="abrirModalConfirmacao(categoria, dado)">
+                <button class="btn btn-excluir" *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias"
+                  (click)="abrirModalConfirmacao(categoria, dado)">
                   <img class="size-6" src="assets/images/icon_primary_text/delete.svg" alt="Ícone de exclusão" />
                 </button>
               </td>

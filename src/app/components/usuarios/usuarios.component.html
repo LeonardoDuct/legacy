@@ -56,7 +56,10 @@
           <th>E-mail</th>
           <th>Data de Criação</th>
           <th>Administrador</th>
+          <th>Editar Categorias</th>
+          <th>Editar Usuários</th>
           <th>Head</th>
+          <th>Projetos Internos</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -66,7 +69,10 @@
           <td>{{ usuario.email }}</td>
           <td>{{ usuario.criado_em | date: 'dd/MM/yyyy' }}</td>
           <td>{{ usuario.admin ? 'Sim' : 'Não' }}</td>
+          <td>{{ usuario.adm_categorias ? 'Sim' : 'Não' }}</td>
+          <td>{{ usuario.adm_usuarios ? 'Sim' : 'Não' }}</td>
           <td>{{ usuario.head ? 'Sim' : 'Não' }}</td>
+          <td>{{ usuario.iprojetos ? 'Sim' : 'Não' }}</td>
           <td>
             <button class="btn btn-editar" (click)="editarUsuario(usuario)">
               <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
@@ -107,10 +113,19 @@
 
         <div class="checkbox-row">
           <label>
-            <input type="checkbox" name="admin" [(ngModel)]="admin" /> Administrador
+            <input type="checkbox" name="admin" [(ngModel)]="admin" /> ADM
           </label>
           <label>
             <input type="checkbox" name="head" [(ngModel)]="head" /> Head
+          </label>
+          <label>
+            <input type="checkbox" name="iprojetos" [(ngModel)]="iprojetos" /> iProjetos
+          </label>
+          <label>
+            <input type="checkbox" name="adm_categorias" [(ngModel)]="adm_categorias" /> Categorias
+          </label>
+          <label>
+            <input type="checkbox" name="adm_usuarios" [(ngModel)]="adm_usuarios" /> Usuários
           </label>
         </div>
 

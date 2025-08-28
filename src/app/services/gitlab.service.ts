@@ -22,8 +22,8 @@ export class GitlabService {
     }
   }
 
-  cadastrarUsuario(nome: string, email: string, senha: string, admin: boolean, head:boolean): Observable<any> {
-    return this.http.post(`${this.apiUrl}/usuarios`, { nome, email, senha, admin, head });
+  cadastrarUsuario(nome: string, email: string, senha: string, admin: boolean, head:boolean, iprojetos:boolean, adm_categorias:boolean, adm_usuarios:boolean): Observable<any> {
+    return this.http.post(`${this.apiUrl}/usuarios`, { nome, email, senha, admin, head, iprojetos, adm_categorias, adm_usuarios });
   }
   
   login(email: string, senha: string): Observable<any> {
@@ -43,8 +43,8 @@ export class GitlabService {
     return this.http.post<{ mensagem: string }>(`${this.apiUrl}/usuarios/${id}/resetar-senha`, {});
   }
 
-  atualizarUsuario(id: number, nome: string, email: string, admin: boolean, head: boolean) {
-    return this.http.put<{ mensagem: string }>(`${this.apiUrl}/usuarios/${id}`, { nome, email, admin, head });
+  atualizarUsuario(id: number, nome: string, email: string, admin: boolean, head: boolean, iprojetos: boolean, adm_categorias:boolean, adm_usuarios:boolean) {
+    return this.http.put<{ mensagem: string }>(`${this.apiUrl}/usuarios/${id}`, { nome, email, admin, head, iprojetos, adm_categorias, adm_usuarios });
   }  
 
   alterarSenha(novaSenha: string) {
