@@ -5,13 +5,13 @@
     <div class="header--sub">
       <div class="group--title">
         <button class="btn-voltar" (click)="voltar()">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-            class="icone-voltar">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="icone-voltar">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
           </svg>
         </button>
         <div class="title">
-          
+
           <div class="title--sub">
             <p class="tertiary">Dashboard / Tarefas / {{ repositorioOrigem }} / #{{ numeroIsOrigem }}</p>
             <h3>{{ tituloIssueOrigem }}</h3>
@@ -21,11 +21,11 @@
               <p>Em andamento</p>
             </div>
             <!-- <div class="badge success"><p>15.5</p></div> -->
-            
+
             <span class="texto-score" [ngClass]="getScoreClass(scoreOrigemTotal)">
               {{ scoreOrigemTotal }}
             </span>
-            
+
           </div>
         </div>
       </div>
@@ -90,9 +90,9 @@
               <div class="badge" [ngClass]="issue.status === 'closed' ? 'success' : getStatusBadgeClass(issue.status)">
                 <p>{{ issue.status === 'closed' ? 'Concluído' : 'Em andamento' }}</p>
               </div>
-            <span class="texto-score" [ngClass]="getScoreClass(issue.score_total)">
-              {{ issue.score_total }}
-            </span>
+              <span class="texto-score" [ngClass]="getScoreClass(issue.score_total)">
+                {{ issue.score_total }}
+              </span>
             </div>
           </div>
         </div>

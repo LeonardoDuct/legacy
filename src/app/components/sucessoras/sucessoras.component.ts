@@ -52,7 +52,6 @@ export class SucessorasComponent implements OnInit {
         this.repositorioOrigem = data.repositorioOrigem ?? 'Repositório desconhecido';
         this.numeroIsOrigem = data.numeroIsOrigem ?? 0;
 
-        // ✅ Agora você pode acessar `scoreOrigemTotal`
         this.scoreOrigemTotal = data.scoreOrigemTotal ?? 0;
 
         this.sucessoras = data.sucessoras.map((issue: Issue) => {
@@ -64,15 +63,11 @@ export class SucessorasComponent implements OnInit {
             conclusao = issue.prazo ? `Expectativa de conclusão ${new Date(issue.prazo).toLocaleDateString()}` : 'Sem expectativa de conclusão';
           }
 
-          if (this.sucessoras.length > 0) {
-            console.log('Link da primeira sucessora:', this.sucessoras[0].link);
-          }
-
           return {
             ...issue,
             conclusao,
-            score_total: issue.score_total ?? null, // ✅ Mantém `score_total` para sucessoras
-            score_breakdown: issue.score_breakdown ?? null // ✅ Garante que os dados estão presentes
+            score_total: issue.score_total ?? null,
+            score_breakdown: issue.score_breakdown ?? null
           };
         });
 

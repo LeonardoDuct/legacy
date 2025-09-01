@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
-import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
-import { GitlabService } from '../../services/gitlab.service';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { getScoreClass, removerAcentos } from 'src/app/shared/utils/functions';
-import { obterStatusGeral } from 'src/app/shared/utils/functions';
-import { prazoAtrasado } from 'src/app/shared/utils/functions';
+import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
+import { GitlabService } from '../../services/gitlab.service';
+import { getScoreClass, obterStatusGeral, prazoAtrasado, removerAcentos } from 'src/app/shared/utils/functions';
 
 interface Issue {
   codigo_issue: number;
@@ -20,6 +19,8 @@ interface Issue {
   labels?: string[];
   motivoAtraso?: string | null;
   id_issue: number;
+  autor?: string; 
+  data_abertura?: string; 
 }
 
 @Component({
@@ -36,18 +37,17 @@ export class TarefasComponent implements OnInit {
   tarefas: any[] = [];
   atrasadasTotal: number = 0;
   pendentesTotal: number = 0;
+  valoresFiltro: string[] = [];
   statusGeral: string = 'Estável';
   openedTooltip: number | null = null;
   getScoreClass = getScoreClass
   removerAcentos = removerAcentos
   prazoAtrasado = prazoAtrasado
-
-  // Variáveis de filtro
+  selectFiltroColunas = ['autor', 'responsavel', 'cliente', 'status', 'repositorio'];
   filtroColuna: string = '';
   filtroValor: string = '';
 
   LABEL_STATUS_COLORS: { [label: string]: string } = {
-    // Sustentação
     "Status / Não Iniciado": "#e86f5b",
     "Status / Iniciado": "#e88e3d",
     "Status / Liberado": "#18aa61",
@@ -86,18 +86,17 @@ export class TarefasComponent implements OnInit {
   sucessorasMap: { [id_issue: number]: number } = {};
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params: ParamMap) => {
+    combineLatest([
+      this.route.paramMap,
+      this.route.queryParamMap
+    ]).subscribe(([params, queryParams]) => {
       this.nomeProjeto = params.get('projeto') ?? '';
-  
-      // Pegue os query params e converta null para undefined
-      this.route.queryParamMap.subscribe((queryParams) => {
-        const dataInicio = queryParams.get('dataInicio') || undefined;
-        const dataFim = queryParams.get('dataFim') || undefined;
-  
-        if (this.nomeProjeto) {
-          this.carregarTarefas(this.nomeProjeto, dataInicio, dataFim);
-        }
-      });
+      const dataInicio = queryParams.get('dataInicio') || undefined;
+      const dataFim = queryParams.get('dataFim') || undefined;
+
+      if (this.nomeProjeto) {
+        this.carregarTarefas(this.nomeProjeto, dataInicio, dataFim);
+      }
     });
   }
 
@@ -133,7 +132,6 @@ export class TarefasComponent implements OnInit {
     });
   }
   
-
 getQuantidadeSucessoras(idIssue: number): number {
     return this.sucessorasMap[idIssue] || 0;
 }
@@ -154,6 +152,10 @@ getQuantidadeSucessoras(idIssue: number): number {
     }
     return null;
   }
+
+  get totalAguardandoSetor(): number {
+    return this.tarefas.filter(tarefa => this.getMotivoAtraso(tarefa)).length;
+  }
   
   get tarefasFiltradas() {
     if (!this.filtroColuna || !this.filtroValor) {
@@ -166,20 +168,18 @@ getQuantidadeSucessoras(idIssue: number): number {
     });
   }
 
-  sortTable(column: string): void {
-    if (this.sortColumn === column) {
-      this.sortDirection = !this.sortDirection;
+  onFiltroColunaChange(event: Event) {
+    const coluna = (event.target as HTMLSelectElement).value;
+    this.filtroColuna = coluna;
+    if (this.selectFiltroColunas.includes(coluna)) {
+      this.valoresFiltro = Array.from(
+        new Set(this.tarefas.map(t => t[coluna]).filter(v => v && v !== 'Indefinido'))
+      );
+      this.filtroValor = '';
     } else {
-      this.sortColumn = column;
-      this.sortDirection = true;
+      this.valoresFiltro = [];
+      this.filtroValor = '';
     }
-
-    this.tarefas.sort((a, b) => {
-      const key = column as keyof typeof a;
-      if (a[key] < b[key]) return this.sortDirection ? -1 : 1;
-      if (a[key] > b[key]) return this.sortDirection ? 1 : -1;
-      return 0;
-    });
   }
 
   corDeStatus(status: string): string {
@@ -201,6 +201,79 @@ getQuantidadeSucessoras(idIssue: number): number {
   }
   hideTooltip() {
     this.openedTooltip = null;
+  }
+
+  ordenarTarefas(criterio: string | ((a: Issue, b: Issue) => number)): void {
+    if (typeof criterio === 'function') {
+      this.tarefas.sort(criterio);
+      return;
+    }
+
+    if (this.sortColumn === criterio) {
+      this.sortDirection = !this.sortDirection;
+    } else {
+      this.sortColumn = criterio;
+      this.sortDirection = true;
+    }
+
+    const direction = this.sortDirection ? 1 : -1;
+
+    this.tarefas.sort((a, b) => {
+      const key = criterio as keyof Issue;
+      let aValue = a[key];
+      let bValue = b[key];
+
+      function parsePossiblyNumeric(val: any): number | null {
+        if (typeof val === 'number') return val;
+        if (typeof val === 'string') {
+          const num = parseFloat(val.replace(/[^0-9.]+/g, ''));
+          return isNaN(num) ? null : num;
+        }
+        return null;
+      }
+
+      const aNum = parsePossiblyNumeric(aValue);
+      const bNum = parsePossiblyNumeric(bValue);
+      if (aNum !== null && bNum !== null) {
+        if (aNum < bNum) return -1 * direction;
+        if (aNum > bNum) return 1 * direction;
+        return 0;
+      }
+
+      if (
+        (criterio.toLowerCase().includes('prazo') ||
+          criterio.toLowerCase().includes('data')) &&
+        aValue &&
+        bValue
+      ) {
+        const aDate = new Date(aValue as string).getTime();
+        const bDate = new Date(bValue as string).getTime();
+        return (aDate - bDate) * direction;
+      }
+
+      const aStr = (aValue ?? '').toString().toLowerCase();
+      const bStr = (bValue ?? '').toString().toLowerCase();
+      if (aStr < bStr) return -1 * direction;
+      if (aStr > bStr) return 1 * direction;
+      return 0;
+    });
+  }
+
+  // Critérios de ordenação especiais:
+  ordenarAguardandoSetorPrimeiro = (a: Issue, b: Issue) => {
+    const aAguardando = !!a.motivoAtraso;
+    const bAguardando = !!b.motivoAtraso;
+    if (aAguardando && !bAguardando) return -1;
+    if (!aAguardando && bAguardando) return 1;
+    return 0;
+  }
+
+  ordenarAtrasadasPrimeiro = (a: Issue, b: Issue) => {
+    const aAtrasada = !!(a.prazo && this.prazoAtrasado(a.prazo) && !a.motivoAtraso);
+    const bAtrasada = !!(b.prazo && this.prazoAtrasado(b.prazo) && !b.motivoAtraso);
+    if (aAtrasada && !bAtrasada) return -1;
+    if (!aAtrasada && bAtrasada) return 1;
+    return 0;
   }
   
 }

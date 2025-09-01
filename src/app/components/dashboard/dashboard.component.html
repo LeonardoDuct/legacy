@@ -1,167 +1,203 @@
 <section class="dashboard">
-    <app-cabecalho></app-cabecalho>
+  <app-cabecalho></app-cabecalho>
 
-    <!-- Cabeçalho inferior -->
-    <section class="header-bottom">
-        <!-- Bloco de Tecnologia -->
-        <article class="bloco-tecnologia">
-            <div class="conteudo">
-                <span class="breadcrumb">Dashboard / Tarefas</span>
-                <h2 class="titulo">Geral</h2>
-                <span class="projeto-status" [ngClass]="removerAcentos(statusGeral)">
-                  {{ statusGeral }}
-                </span>
-            </div>
-        </article>
+  <section class="header-bottom">
+    <article class="bloco-tecnologia">
+      <div class="conteudo">
+        <span class="breadcrumb">Dashboard / Tarefas</span>
+        <h2 class="titulo">Geral</h2>
+        <span class="projeto-status" [ngClass]="removerAcentos(statusGeral)">
+          {{ statusGeral }}
+        </span>
+      </div>
+    </article>
 
-        <!-- Bloco de Indicadores -->
-        <article class="bloco-indicadores">
-            <div class="pendente">
-                <div class="icon">
-                    <!-- Ícone Pendente -->
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3"/>
-                    </svg>
-                </div>
-                <div class="texto-numero">
-                    <div class="texto">Pendentes</div>
-                    <div class="numero">{{ pendentesTotal }}</div>
-                </div>
-            </div>
+    <!-- Bloco de Indicadores -->
+    <article class="bloco-indicadores">
+      <div class="pendente">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3" />
+          </svg>
+        </div>
+        <div class="texto-numero">
+          <div class="texto">Pendentes</div>
+          <div class="numero">{{ pendentesTotal }}</div>
+        </div>
+      </div>
 
-            <!-- Linha Separadora -->
-            <div class="linha-separadora"></div>
+      <div class="linha-separadora"></div>
 
-            <div class="atrasadas">
-                <div class="icon">
-                    <!-- Ícone Atrasadas -->
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
-                    </svg>
-                </div>
-                <div class="texto-numero">
-                    <div class="texto">Atrasadas</div>
-                    <div class="numero">{{ atrasadasTotal }}</div>
-                </div>
-            </div>
-        </article>
+      <div class="atrasadas">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+          </svg>
+        </div>
+        <div class="texto-numero">
+          <div class="texto">Atrasadas</div>
+          <div class="numero">{{ atrasadasTotal }}</div>
+        </div>
+      </div>
+    </article>
 
-        <!-- Bloco de Filtros -->
-        <aside class="bloco-filtro">
-          <h3 class="titulo-filtro">Filtro</h3>
-        
-          <!-- 🔹 Select para escolher o período + botão -->
-          <div class="campo-selecao">
-            <select class="dropdown" [(ngModel)]="periodoSelecionado">
-              <option value="" disabled selected hidden>Selecione um período</option>
-              <option value="7d">Últimos 7 dias</option>
-              <option value="15d">Últimos 15 dias</option>
-              <option value="30d">Últimos 30 dias</option>
-              <option value="personalizado">Personalizado</option>
-            </select>            
-        
-            <button
-              class="btn btn-search"
-              (click)="atualizarFiltro()"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                  stroke-width="1.5" stroke="currentColor" class="icon-search">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
-              </svg>
-            </button>
+    <aside class="bloco-filtro">
+
+      <h3 class="titulo-filtro">Filtro</h3>
+
+      <div class="campo-selecao" *ngIf="periodoSelecionado !== 'personalizado'">
+        <select class="dropdown" [(ngModel)]="periodoSelecionado">
+          <option value="" disabled selected hidden>Selecione um período</option>
+          <option value="hoje">Hoje</option>
+          <option value="ontem">Ontem</option>
+          <option value="7d">Últimos 7 dias</option>
+          <option value="30d">Últimos 30 dias</option>
+          <option value="este-mes">Este Mês</option>
+          <option value="ultimo-mes">Último Mês</option>
+          <option value="personalizado">Personalizado</option>
+        </select>
+        <button class="btn btn-search" (click)="atualizarFiltro()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="icon-search">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="campos-data-personalizado" *ngIf="periodoSelecionado === 'personalizado'">
+        <div class="campos-data">
+          <div class="date-wrapper">
+            <input type="text" id="data-de" class="data" [(ngModel)]="dataInicio"
+              placeholder="De: Selecione um Período" />
           </div>
-        
-          <!-- 🔹 Inputs de data -->
-          <div class="campos-data" *ngIf="periodoSelecionado === 'personalizado'">
-            <div class="date-wrapper">
-              <input type="text" id="data-de" class="data" [(ngModel)]="dataInicio" placeholder="De: Selecione um Período" />
-            </div>
-            <div class="date-wrapper">
-              <input type="text" id="data-ate" class="data" [(ngModel)]="dataFim" placeholder="Até: Selecione um Período" />
-            </div>
+          <div class="date-wrapper">
+            <input type="text" id="data-ate" class="data" [(ngModel)]="dataFim"
+              placeholder="Até: Selecione um Período" />
           </div>
-        </aside>
-        
-    </section>
+          <button class="btn btn-search" (click)="atualizarFiltro()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="icon-search">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
+            </svg>
+          </button>
+          <button class="btn btn-voltar" (click)="periodoSelecionado = ''">
+            Voltar
+          </button>
+        </div>
+        <div class="dashboard-toggle-analytics">
+          <button class="btn btn-analytics" (click)="toggleTodosGraficos()">
+            {{ mostrarTodosGraficos ? 'Tabela' : 'Analytics' }}
+          </button>
+        </div>
+      </div>
 
-    <!-- Quadros -->
-    <section class="quadros-container">
-        <div class="quadro" *ngFor="let projeto of projetos">
-          <div class="quadro-header">
-            <!-- Lado esquerdo: nome e status -->
-            <div class="projeto-info">
-              <div class="projeto-nome">{{ projeto.nome }}</div>
-              <div class="projeto-status" [ngClass]="removerAcentos(projeto.status)">
-                {{ projeto.status }}
-              </div>
-            </div>
-      
-            <!-- Lado direito: indicadores -->
-            <div class="quadro-indicadores">
-              <!-- Pendentes -->
-              <div class="indicador">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icone">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3"/>
-                </svg>
-                <span>{{ projeto.abertas }}</span>
-              </div>
-      
-              <div class="linha-separadora"></div>
-      
-              <!-- Atrasadas -->
-              <div class="indicador">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icone">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
-                </svg>
-                <span>{{ projeto.abertas_com_atraso }}</span>
-              </div>
-            </div>
-          </div>
-      
-          <!-- Parte 3: Tabela -->
-          <div class="quadro-tabela">
-            <!-- Abertas -->
-            <div class="linha categoria">
-              <div class="coluna-esquerda">Abertas</div>
-              <div class="coluna-direita">{{ projeto.abertas }}</div>
-            </div>
-            <div class="linha subcategoria">
-              <div class="coluna-esquerda">Dentro do prazo</div>
-              <div class="coluna-direita">{{ projeto.abertasDentroPrazo }}</div>
-            </div>
-            <div class="linha subcategoria">
-              <div class="coluna-esquerda">Fora do prazo</div>
-              <div class="coluna-direita">{{ projeto.abertasForaPrazo }}</div>
-            </div>
-      
-            <!-- Fechadas -->
-            <div class="linha categoria">
-              <div class="coluna-esquerda">Fechadas</div>
-              <div class="coluna-direita">{{ projeto.fechadas }}</div>
-            </div>
-            <div class="linha subcategoria">
-              <div class="coluna-esquerda">Dentro do prazo</div>
-              <div class="coluna-direita">{{ projeto.fechadasDentro }}</div>
-            </div>
-            <div class="linha subcategoria">
-              <div class="coluna-esquerda">Fora do prazo</div>
-              <div class="coluna-direita">{{ projeto.fechadasFora }}</div>
-            </div>
-          </div>
-      
-          <!-- Parte 4: Pendências -->
-          <div class="quadro-rodape">
-            <button
-              class="btn btn-detalhes"
-              type="button"
-              [routerLink]="['/dashboard', projeto.nome]"
-              [queryParams]="{ dataInicio: dataInicio, dataFim: dataFim }"
-            >
-              + Detalhes
-            </button>
+      <div class="dashboard-toggle-analytics" *ngIf="periodoSelecionado !== 'personalizado'">
+        <button class="btn btn-analytics" (click)="toggleTodosGraficos()">
+          {{ mostrarTodosGraficos ? 'Tabela' : 'Analytics' }}
+        </button>
+      </div>
+
+    </aside>
+
+  </section>
+
+  <section class="quadros-container">
+    <div class="quadro" *ngFor="let projeto of projetos">
+      <div class="quadro-header">
+        <div class="projeto-info">
+          <div class="projeto-nome">{{ projeto.nome }}</div>
+          <div class="projeto-status" [ngClass]="removerAcentos(projeto.status)">
+            {{ projeto.status }}
           </div>
         </div>
-      </section>
-      
+
+        <div class="quadro-indicadores">
+          <div class="indicador">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="icone">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3" />
+            </svg>
+            <span>{{ projeto.abertas }}</span>
+          </div>
+
+          <div class="linha-separadora"></div>
+
+          <!-- Atrasadas -->
+          <div class="indicador">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="icone">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            </svg>
+            <span>{{ projeto.abertas_com_atraso }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!(mostrarTodosGraficos || showAnalytics[projeto.nome]); else graficoBarra" class="quadro-tabela">
+        <div class="linha categoria">
+          <div class="coluna-esquerda">Abertas</div>
+          <div class="coluna-direita">{{ projeto.abertas }}</div>
+        </div>
+        <div class="linha subcategoria">
+          <div class="coluna-esquerda">Dentro do prazo</div>
+          <div class="coluna-direita">{{ projeto.abertasDentroPrazo }}</div>
+        </div>
+        <div class="linha subcategoria">
+          <div class="coluna-esquerda">Fora do prazo</div>
+          <div class="coluna-direita">{{ projeto.abertasForaPrazo }}</div>
+        </div>
+        <div class="linha categoria">
+          <div class="coluna-esquerda">Fechadas</div>
+          <div class="coluna-direita">{{ projeto.fechadas }}</div>
+        </div>
+        <div class="linha subcategoria">
+          <div class="coluna-esquerda">Dentro do prazo</div>
+          <div class="coluna-direita">{{ projeto.fechadasDentro }}</div>
+        </div>
+        <div class="linha subcategoria">
+          <div class="coluna-esquerda">Fora do prazo</div>
+          <div class="coluna-direita">{{ projeto.fechadasFora }}</div>
+        </div>
+      </div>
+      <ng-template #graficoBarra>
+        <div class="quadro-grafico">
+          <apx-chart [series]="gerarGroupedBarSeries(projeto)" [chart]="{ type: 'bar', height: 190, stacked: false }"
+            [plotOptions]="{
+                  bar: {
+                    horizontal: false,
+                    columnWidth: '45%',
+                    borderRadius: 4
+                  }
+                }" [xaxis]="{
+                  categories: ['Abertas', 'Fechadas'],
+                  labels: { style: { colors: '#bfc9d4', fontSize: '15px' } }
+                }" [yaxis]="{
+                  min: 0.1,
+                  logarithmic: true,
+                  labels: { style: { colors: '#bfc9d4', fontSize: '12px' } }
+                }" [colors]="['#2ecc71', '#e74c3c']" [dataLabels]="{
+                  enabled: true,
+                  style: { fontSize: '16px', fontWeight: 'bold', colors: ['#fff'] }
+                }" [legend]="{ position: 'bottom', labels: { colors: '#bfc9d4' } }"></apx-chart>
+        </div>
+      </ng-template>
+
+      <!-- Parte 4: Pendências -->
+      <div class="quadro-rodape">
+        <button class="btn btn-detalhes" type="button" [routerLink]="['/dashboard', projeto.nome]"
+          [queryParams]="detalhesQueryParams">
+          + Detalhes
+        </button>
+      </div>
+    </div>
+  </section>
+
 </section>

@@ -1,0 +1,83 @@
+<section class="dashboard">
+    <app-cabecalho></app-cabecalho>
+
+    <article class="bloco-tecnologia">
+        <div class="topo-bloco">
+            <button class="btn-voltar" (click)="voltar()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="icone-voltar">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+            </button>
+            <div class="conteudo">
+                <h2 class="titulo">Projetos Internos</h2>
+                <span class="status">Score</span>
+            </div>
+            <div *ngFor="let projeto of projetos" class="topo-bloco-direita">
+                <span class="projeto-principal">{{ projeto.nome }}</span>
+            </div>
+        </div>
+    </article>
+<label class="switch-abertas">
+    <input type="checkbox" [(ngModel)]="mostrarApenasAbertas" />
+    <span class="slider"></span>
+    <span class="switch-text">
+        {{ mostrarApenasAbertas ? 'Só abertas' : 'Todas' }}
+    </span>
+</label>
+    <section class="quadros-container" *ngIf="projetoExpandidoIndex !== null && projetos[projetoExpandidoIndex]">
+        <div class="quadro" *ngFor="let issue of getIssuesOrdenadas(projetos[projetoExpandidoIndex])">
+            <div class="quadro-header">
+                <div class="projeto-info">
+                    <div class="projeto-nome">{{ issue.titulo }}</div>
+                    <div class="percentual-concluidas">{{ getPercentualIssue(issue) }}% concluída</div>
+                </div>
+            </div>
+            <div class="barra-progresso">
+                <div class="barra-progresso-preenchida" [style.width.%]="getPercentualIssue(issue)"></div>
+            </div>
+            <div class="quadro-tabela">
+                <div class="linha categoria">
+                    <div class="coluna-esquerda">Observação</div>
+                </div>
+                <div class="linha linha-obs">
+                    <div class="obs-texto">
+                        {{ issue.obs || 'Nenhuma observação.' }}
+                    </div>
+                </div>
+            </div>
+            <div class="quadro-rodape" style="display: flex; align-items: center; justify-content: space-between;">
+                <span class="status-badge" [ngClass]="issue.status === 'opened' ? 'aberta' : 'fechada'">
+                    {{ issue.status === 'opened' ? 'Aberta' : 'Fechada' }}
+                </span>
+                <button *ngIf="usuarioHead" class="btn btn-detalhes" type="button"
+                    (click)="abrirModalAdicionarIssue(projetos[projetoExpandidoIndex], issue); $event.stopPropagation();">
+                    + OBS
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Adicionar Observação + Barra de edição de porcentagem -->
+    <div class="modal-overlay" *ngIf="modalAberto">
+        <div class="modal">
+            <button class="btn-fechar-modal" (click)="fecharModalAdicionar()" aria-label="Fechar modal">
+                &times;
+            </button>
+            <h3>Editar Issue: {{ issueSelecionada?.titulo }}</h3>
+            <label for="obs">Observação:</label>
+            <textarea id="obs" [(ngModel)]="novaObs" placeholder="Digite uma observação" rows="3"></textarea>
+
+            <label for="percentual">Porcentagem concluída:</label>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <input id="percentual" type="range" min="0" max="100" [(ngModel)]="novoPercentual" style="flex:1;" />
+                <span style="min-width: 40px;">{{ novoPercentual }}%</span>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-salvar" (click)="confirmarAdicionarObs()">Salvar</button>
+                <button class="btn btn-cancelar" (click)="fecharModalAdicionar()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</section>

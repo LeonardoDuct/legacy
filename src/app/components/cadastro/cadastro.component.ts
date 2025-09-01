@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { GitlabService } from 'src/app/services/gitlab.service';
@@ -46,6 +46,7 @@ export class CadastroComponent implements OnInit {
   modalNovaCategoriaAberto = false;
   modalNovaClassificacaoAberto = false;
   dropdownAberto = false;
+  editandoScore = false;
   novaCategoriaNome = '';
   novaCategoriaPeso = 0;
   selectedCategoria: Categoria | undefined;
@@ -57,13 +58,17 @@ export class CadastroComponent implements OnInit {
   modalConfirmacaoAberto = false;
   categoriaSelecionada: Categoria | undefined;
   dadoSelecionado: DadoCategoria | undefined;
+  usuarioLogado: any = {};
 
-  constructor(private gitlabService: GitlabService) {}
+  constructor(
+    private gitlabService: GitlabService,
+    private location: Location
+  ) {}
 
   ngOnInit() {
     this.carregarCategorias();
+    this.carregarPermissoes();
   }
-
 
   carregarCategorias() {
     this.gitlabService.obterCategorias().subscribe({
@@ -118,6 +123,13 @@ export class CadastroComponent implements OnInit {
         console.error('Erro ao carregar categorias:', error);
       }
     });
+  }
+
+  carregarPermissoes(): void {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.usuarioLogado = JSON.parse(atob(token.split('.')[1]));
+    }
   }
 
   toggleCategoria(id: string) {
@@ -294,13 +306,27 @@ export class CadastroComponent implements OnInit {
   
 
   incrementarScore() {
-    this.novaClassificacao.score = Math.min(this.novaClassificacao.score + 0.5, 10.0);
+    this.novaClassificacao.score = Math.min(
+      Math.round((this.novaClassificacao.score + 0.1) * 10) / 10,
+      10.0
+    );
   }
 
   decrementarScore() {
-    this.novaClassificacao.score = Math.max(this.novaClassificacao.score - 0.5, 0.0);
+    this.novaClassificacao.score = Math.max(
+      Math.round((this.novaClassificacao.score - 0.1) * 10) / 10,
+      0.0
+    );
   }
 
+  ajustaScoreManual() {
+    let val = this.novaClassificacao.score;
+    if (isNaN(val)) val = 0;
+    val = Math.max(0, Math.min(10, val));
+    // Garante uma casa decimal
+    this.novaClassificacao.score = Math.round(val * 10) / 10;
+  }
+  
   // --- Ordenação ---
 
   sortTable(column: string, categoriaId: string) {
@@ -412,6 +438,10 @@ export class CadastroComponent implements OnInit {
     } else {
       this.fecharModalConfirmacao();
     }
+  }
+
+  voltar(): void {
+    this.location.back()
   }
   
 }

@@ -4,349 +4,366 @@
 
 <section class="header-bottom">
   <!-- Bloco de Tecnologia -->
+
+
   <article class="bloco-tecnologia">
+    <div class="topo-bloco">
+      <button class="btn-voltar" (click)="voltar()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="icone-voltar">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+      </button>
       <div class="conteudo">
-          <h2 class="titulo">Cadastro</h2>
-          <span class="status">Score</span>
+        <h2 class="titulo">Cadastro</h2>
+        <span class="status">Score</span>
       </div>
+    </div>
   </article>
+
 
   <!-- Bloco de Filtros -->
   <aside class="bloco-filtro">
-      <div class="filtro-container">
-          <!-- Dropdown -->
-          <div class="dropdown-wrapper">
-              <select id="tipo-filtro" class="dropdown">
-                  <option value="" disabled selected>Selecione uma categoria</option>
-                  <option value="classificacao">Classificação</option>
-                  <option value="descricao">Descrição</option>
-                  <option value="score">Score</option>
-              </select>
-          </div>
-
-          <!-- Input de texto -->
-          <div class="input-wrapper">
-              <input type="text" id="filtro-descricao" class="input-text" placeholder="Digitar filtro de descrição" />
-              <button class="btn btn-search">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-search">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
-                  </svg>
-              </button>
-          </div>
+    <div class="filtro-container">
+      <!-- Dropdown -->
+      <div class="dropdown-wrapper">
+        <select id="tipo-filtro" class="dropdown">
+          <option value="" disabled selected>Selecione uma categoria</option>
+          <option value="classificacao">Classificação</option>
+          <option value="descricao">Descrição</option>
+          <option value="score">Score</option>
+        </select>
       </div>
+
+      <!-- Input de texto -->
+      <div class="input-wrapper">
+        <input type="text" id="filtro-descricao" class="input-text" placeholder="Digitar filtro de descrição" />
+        <button class="btn btn-search">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="icon-search">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
+          </svg>
+        </button>
+      </div>
+    </div>
   </aside>
 </section>
 
 <section class="categorias">
   <!-- Botões de ação -->
   <div class="acoes">
-      <!-- Botão Editar Categorias -->
-      <button class="btn btn-editar-categorias" (click)="abrirModal()">
-          <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
-          Editar categorias
-      </button>
+    <!-- Botão Editar Categorias -->
+    <button class="btn btn-editar-categorias" (click)="abrirModal()"
+      *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias">
+      <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
+      Editar categorias
+    </button>
 
-      <!-- Modal Principal -->
-      <div class="modal" *ngIf="modalAberto">
-          <div class="modal-content modal-content-principal">
-              <div class="modal-header">
-                  <h2 class="modal-title">Categorias</h2>
-                  <button class="btn btn-fechar" (click)="fecharModal()" aria-label="Fechar">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-close">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                      </svg>
+    <!-- Modal Principal -->
+    <div class="modal" *ngIf="modalAberto && usuarioLogado?.admin && usuarioLogado?.adm_categorias">
+      <div class="modal-content modal-content-principal">
+        <div class="modal-header">
+          <h2 class="modal-title">Categorias</h2>
+          <button class="btn btn-fechar" (click)="fecharModal()" aria-label="Fechar">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="icon-close">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body modal-body-principal">
+          <!-- Tabela de Categorias -->
+          <table class="tabela tabela-categorias">
+            <thead>
+              <tr>
+                <th (click)="ordenarModal('titulo')">CRITÉRIO</th>
+                <th (click)="ordenarModal('porcentagem')">PESO</th>
+                <th>AÇÕES</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let categoria of categorias">
+                <td>{{ categoria.titulo }}</td>
+                <td class="peso-cell">
+                  <img src="assets/images/icon_contrast_100/peso.svg" alt="Peso" class="icon icone-peso" />
+                  <span *ngIf="!categoria.editando" class="valor-peso">
+                    {{ categoria.porcentagem }}
+                  </span>
+                  <input *ngIf="categoria.editando" type="number" class="peso-input"
+                    [(ngModel)]="categoria.porcentagem" />%
+                </td>
+                <td class="btn btn-acoes">
+                  <button *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias && !categoria.editando"
+                  class="btn btn-editar" (click)="habilitarEdicao(categoria)">
+                    <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
                   </button>
-              </div>
-              <div class="modal-body modal-body-principal">
-                  <!-- Tabela de Categorias -->
-                  <table class="tabela tabela-categorias">
-                      <thead>
-                          <tr>
-                              <th (click)="ordenarModal('titulo')">CRITÉRIO</th>
-                              <th (click)="ordenarModal('porcentagem')">PESO</th>
-                              <th >AÇÕES</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <tr *ngFor="let categoria of categorias">
-                              <td>{{ categoria.titulo }}</td>
-                              <td class="peso-cell">
-                                  <img src="assets/images/icon_contrast_100/peso.svg" alt="Peso" class="icon icone-peso" />
-                                  <span *ngIf="!categoria.editando" class="valor-peso">
-                                      {{ categoria.porcentagem }}
-                                  </span>
-                                  <input *ngIf="categoria.editando" type="number" class="peso-input" [(ngModel)]="categoria.porcentagem" />%
-                              </td>
-                              <td class="btn btn-acoes">
-                                  <button *ngIf="!categoria.editando" class="btn btn-editar" (click)="habilitarEdicao(categoria)">
-                                      <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
-                                  </button>
-                                  <button *ngIf="categoria.editando" class="btn btn-salvar" (click)="salvarEdicao(categoria)">
-                                      Salvar
-                                  </button>
-                                  <button *ngIf="categoria.titulo !== 'Cliente' && categoria.titulo !== 'Prazo'" 
-                                          class="btn btn-excluir" 
-                                          (click)="excluirCategoria(categoria.id)">
-                                      <img class="size-6" src="assets/images/icon_primary_text/delete.svg" alt="Ícone de exclusão" />
-                                  </button>
+                  <button *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias && categoria.editando"
+                   class="btn btn-salvar" (click)="salvarEdicao(categoria)">
+                    Salvar
+                  </button>
+                  <button
+                    *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias && categoria.titulo !== 'Cliente' && categoria.titulo !== 'Prazo'" class="btn btn-excluir"
+                    (click)="excluirCategoria(categoria.id)">
+                    <img class="size-6" src="assets/images/icon_primary_text/delete.svg" alt="Ícone de exclusão" />
+                  </button>
 
-                              </td>
-                          </tr>
-                      </tbody>
-                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-                  <!-- Botão "+ Nova Categoria" -->
-                  <div class="nova-categoria-container">
-                      <button class="btn btn-categoria" (click)="novaCategoria()">+ Nova Categoria</button>
-                  </div>
-
-                  <div class="peso-total" [class.exibe-erro]="calcularPesoTotal() !== 100">
-                      <span>Peso Total:</span>
-                      <div class="resultado-container">
-                          <i class="icon icone-ancora">
-                              <img class="ancora-resultado-svg" src="assets/images/icon_contrast_100/peso.svg" alt="Ícone de peso" />
-                          </i>
-                          <span class="resultado">{{ calcularPesoTotal() }}</span>
-                      </div>
-                      <p class="error-text">O peso total deve ser 100%.</p>
-                  </div>
-              </div>
-              <div class="modal-footer">
-                  <button class="btn btn-cancelar" (click)="fecharModal()">Cancelar</button>
-                  <button class="btn btn-gravar" [disabled]="calcularPesoTotal() !== 100" (click)="gravarCategorias()">Gravar</button>
-              </div>
+          <!-- Botão "+ Nova Categoria" -->
+          <div class="nova-categoria-container">
+            <button class="btn btn-categoria" (click)="novaCategoria()"
+              *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias">+ Nova Categoria</button>
           </div>
+
+          <div class="peso-total" [class.exibe-erro]="calcularPesoTotal() !== 100">
+            <span>Peso Total:</span>
+            <div class="resultado-container">
+              <i class="icon icone-ancora">
+                <img class="ancora-resultado-svg" src="assets/images/icon_contrast_100/peso.svg" alt="Ícone de peso" />
+              </i>
+              <span class="resultado">{{ calcularPesoTotal() }}</span>
+            </div>
+            <p class="error-text">O peso total deve ser 100%.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-cancelar" (click)="fecharModal()">Cancelar</button>
+          <button class="btn btn-gravar" [disabled]="calcularPesoTotal() !== 100"
+            (click)="gravarCategorias()">Gravar</button>
+        </div>
       </div>
+    </div>
 
-      <!-- Modal Secundário -->
-      <div class="modal" *ngIf="modalNovaCategoriaAberto">
-          <div class="modal-content modal-content-secundario">
-              <div class="modal-header">
-                  <h2 class="modal-title">Nova Categoria</h2>
-                  <button class="btn btn-fechar" (click)="fecharModalNovaCategoria()" aria-label="Fechar">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-close">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                      </svg>
-                  </button>
-              </div>
-              <div class="modal-body modal-body-secundario">
-                  <div style="display: flex; gap: 10px;">
-                      <div style="flex: 1;">
-                          <label for="nomeCategoria">Categoria</label>
-                          <input id="nomeCategoria" type="text" [(ngModel)]="novaCategoriaNome" />
-                      </div>
-                      <div style="flex: 1; position: relative;">
-                          <label for="pesoCategoria">Peso</label>
-                          <div style="display: flex; align-items: center; position: relative;">
-                              <i class="icon icone-ancora-secundario">
-                                  <img class="ancora-resultado-svg" src="assets/images/icon_contrast_100/peso.svg" alt="Ícone de peso" />
-                              </i>
-                              <input id="pesoCategoria" type="number" [(ngModel)]="novaCategoriaPeso" />
-                              <i class="icon icone-porcentagem-secundario">
-                                  <svg class="porcentagem-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                                      <path d="M374.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-320 320c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l320-320zM128 128A64 64 0 1 0 0 128a64 64 0 1 0 128 0zM384 384a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
-                                  </svg>
-                              </i>
-                          </div>
-                          <p class="error-text error-text--visible error-text--small" *ngIf="novaCategoriaPeso < 0 || novaCategoriaPeso > 100">
-                              Apenas válidos pesos entre 0 e 100.
-                          </p>
-                      </div>
-                  </div>
-              </div>
-              <div class="modal-footer">
-                  <button class="btn btn-cancelar" (click)="fecharModalNovaCategoria()">Cancelar</button>
-                  <button class="btn btn-gravar" [disabled]="!novaCategoriaNome || novaCategoriaPeso < 0 || novaCategoriaPeso > 100" 
-                      (click)="gravarNovaCategoria(novaCategoriaNome, novaCategoriaPeso)">
-                      Gravar
-                  </button>
-              </div>
-          </div>
-      </div>
-
-      <!-- Modal Classificação -->
-      <div class="modal" *ngIf="modalNovaClassificacaoAberto">
-        <div class="modal-content modal-content-classificacao">
-          <div class="modal-header">
-            <h2 class="modal-title">
-              {{ modoEdicao ? 'Editar classificação' : 'Nova classificação' }}
-            </h2>
-            <button class="btn btn-fechar" (click)="fecharModalNovaClassificacao()">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-close">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <div class="modal-body modal-body-classificacao">
-            <div class="form-group">
-              <label for="categoria">Categoria</label>
-      
-              <div class="custom-dropdown" (click)="toggleDropdown()" *ngIf="!modoEdicao">
-                <div class="custom-dropdown-selected">
-                  {{ selectedCategoria?.titulo || 'Selecione uma categoria' }}
-      
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 512 512"
-                    class="dropdown-icon"
-                    [class.rotated]="dropdownAberto"
-                  >
+    <!-- Modal Secundário -->
+    <div class="modal" *ngIf="modalNovaCategoriaAberto && usuarioLogado?.admin && usuarioLogado?.adm_categorias">
+      <div class="modal-content modal-content-secundario">
+        <div class="modal-header">
+          <h2 class="modal-title">Nova Categoria</h2>
+          <button class="btn btn-fechar" (click)="fecharModalNovaCategoria()" aria-label="Fechar">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="icon-close">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body modal-body-secundario">
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+              <label for="nomeCategoria">Categoria</label>
+              <input id="nomeCategoria" type="text" [(ngModel)]="novaCategoriaNome" />
+            </div>
+            <div style="flex: 1; position: relative;">
+              <label for="pesoCategoria">Peso</label>
+              <div style="display: flex; align-items: center; position: relative;">
+                <i class="icon icone-ancora-secundario">
+                  <img class="ancora-resultado-svg" src="assets/images/icon_contrast_100/peso.svg"
+                    alt="Ícone de peso" />
+                </i>
+                <input id="pesoCategoria" type="number" [(ngModel)]="novaCategoriaPeso" />
+                <i class="icon icone-porcentagem-secundario">
+                  <svg class="porcentagem-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
                     <path
-                      fill="#caddf6"
-                      d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z"
-                    />
+                      d="M374.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-320 320c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l320-320zM128 128A64 64 0 1 0 0 128a64 64 0 1 0 128 0zM384 384a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z" />
                   </svg>
-                </div>
-      
-                <ul *ngIf="dropdownAberto" class="custom-dropdown-options">
-                  <li
-                    *ngFor="let categoria of categorias"
-                    (click)="selecionarCategoria(categoria, $event)"
-                  >
-                    {{ categoria.titulo }}
-                  </li>
-                </ul>
+                </i>
               </div>
-      
-              <input
-                id="categoria"
-                type="text"
-                [(ngModel)]="novaClassificacao.categoria"
-                [readonly]="modoEdicao"
-                *ngIf="modoEdicao"
-              />
+              <p class="error-text error-text--visible error-text--small"
+                *ngIf="novaCategoriaPeso < 0 || novaCategoriaPeso > 100">
+                Apenas válidos pesos entre 0 e 100.
+              </p>
             </div>
-      
-            <div class="form-group-horizontal">
-              <div>
-                <label for="classificacao">Classificação</label>
-                <input
-                  id="classificacao"
-                  type="text"
-                  [(ngModel)]="novaClassificacao.classificacao"
-                  placeholder="Insira a classificação"
-                  [readonly]="modoEdicao"
-                />
-              </div>
-              <div>
-                <label>Score</label>
-                <div class="score-input" [ngClass]="getScoreClass(novaClassificacao.score)">
-                  <button (click)="decrementarScore()">-</button>
-                  <span>{{ novaClassificacao.score }}</span>
-                  <button (click)="incrementarScore()">+</button>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="descricao">Descrição</label>
-<input
-id="descricao"
-type="text"
-[(ngModel)]="novaClassificacao.descricao"
-placeholder="Inserir descrição"
-/>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-cancelar" (click)="fecharModalNovaClassificacao()">Cancelar</button>
-            <button class="btn btn-gravar" (click)="gravarClassificacao()">
-              {{ modoEdicao ? 'Gravar' : 'Gravar' }}
-            </button>
           </div>
         </div>
-      </div>
-
-      <!-- Modal de Confirmação de Exclusão -->
-      <div class="modal" *ngIf="modalConfirmacaoAberto">
-        <div class="modal-content modal-content-confirmacao">
-          <div class="modal-header">
-            <h2 class="modal-title">Confirmação</h2>
-            <button class="btn btn-fechar" (click)="fecharModalConfirmacao()">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon-close">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <div class="modal-body">
-            <p class="texto-simples">Deseja mesmo excluir?</p>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-cancelar" (click)="fecharModalConfirmacao()">NÃO</button>
-            <button class="btn btn-confirmar" (click)="confirmarExclusao()">SIM</button>
-          </div>
+        <div class="modal-footer">
+          <button class="btn btn-cancelar" (click)="fecharModalNovaCategoria()">Cancelar</button>
+          <button class="btn btn-gravar"
+            [disabled]="!novaCategoriaNome || novaCategoriaPeso < 0 || novaCategoriaPeso > 100"
+            (click)="gravarNovaCategoria(novaCategoriaNome, novaCategoriaPeso)">
+            Gravar
+          </button>
         </div>
       </div>
+    </div>
 
-      <!-- Botão Nova Classificação -->
-      <button class="btn btn-nova-classificacao" (click)="abrirModalNovaClassificacao()">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          Nova classificação
-      </button>
+    <!-- Modal Classificação -->
+    <div class="modal" *ngIf="modalNovaClassificacaoAberto && usuarioLogado?.admin && usuarioLogado?.adm_categorias">
+      <div class="modal-content modal-content-classificacao">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            {{ modoEdicao ? 'Editar classificação' : 'Nova classificação' }}
+          </h2>
+          <button class="btn btn-fechar" (click)="fecharModalNovaClassificacao()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="icon-close">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body modal-body-classificacao">
+          <div class="form-group">
+            <label for="categoria">Categoria</label>
+
+            <div class="custom-dropdown" (click)="toggleDropdown()" *ngIf="!modoEdicao">
+              <div class="custom-dropdown-selected">
+                {{ selectedCategoria?.titulo || 'Selecione uma categoria' }}
+
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="dropdown-icon"
+                  [class.rotated]="dropdownAberto">
+                  <path fill="#caddf6"
+                    d="M233.4 105.4c12.5-12.5 32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L256 173.3 86.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l192-192z" />
+                </svg>
+              </div>
+
+              <ul *ngIf="dropdownAberto" class="custom-dropdown-options">
+                <li *ngFor="let categoria of categorias" (click)="selecionarCategoria(categoria, $event)">
+                  {{ categoria.titulo }}
+                </li>
+              </ul>
+            </div>
+
+            <input id="categoria" type="text" [(ngModel)]="novaClassificacao.categoria" [readonly]="modoEdicao"
+              *ngIf="modoEdicao" />
+          </div>
+
+          <div class="form-group-horizontal">
+            <div>
+              <label for="classificacao">Classificação</label>
+              <input id="classificacao" type="text" [(ngModel)]="novaClassificacao.classificacao"
+                placeholder="Insira a classificação" [readonly]="modoEdicao" />
+            </div>
+            <div>
+              <label>Score</label>
+              <div class="score-input" [ngClass]="getScoreClass(novaClassificacao.score)">
+                <button (click)="decrementarScore()">-</button>
+
+                <span *ngIf="!editandoScore" (click)="editandoScore = true"
+                  [ngClass]="getScoreClass(novaClassificacao.score)"
+                  style="cursor:pointer; display: inline-block; min-width: 40px; text-align: center;">
+                  {{ novaClassificacao.score | number:'1.1-1' }}
+                </span>
+
+                <input *ngIf="editandoScore" type="number" [(ngModel)]="novaClassificacao.score" [min]="0" [max]="10"
+                  [step]="0.1" (blur)="ajustaScoreManual(); editandoScore = false"
+                  [ngClass]="getScoreClass(novaClassificacao.score)" autofocus />
+                <button (click)="incrementarScore()">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <input id="descricao" type="text" [(ngModel)]="novaClassificacao.descricao"
+              placeholder="Inserir descrição" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-cancelar" (click)="fecharModalNovaClassificacao()">Cancelar</button>
+          <button class="btn btn-gravar" (click)="gravarClassificacao()">
+            {{ modoEdicao ? 'Gravar' : 'Gravar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal" *ngIf="modalConfirmacaoAberto && usuarioLogado?.admin && usuarioLogado?.adm_categorias">
+      <div class="modal-content modal-content-confirmacao">
+        <div class="modal-header">
+          <h2 class="modal-title">Confirmação</h2>
+          <button class="btn btn-fechar" (click)="fecharModalConfirmacao()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor" class="icon-close">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="texto-simples">Deseja mesmo excluir?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-cancelar" (click)="fecharModalConfirmacao()">NÃO</button>
+          <button class="btn btn-confirmar" (click)="confirmarExclusao()">SIM</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botão Nova Classificação -->
+    <button class="btn btn-nova-classificacao" (click)="abrirModalNovaClassificacao()"
+      *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      Nova classificação
+    </button>
   </div>
 
   <!-- Categorias -->
   <div *ngFor="let categoria of categorias" class="categoria" [class.expandida]="categoria.expandida">
     <div class="categoria-minimizada" (click)="toggleCategoria(categoria.id)">
-        <span class="categoria-titulo">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"  
-                class="icon seta-icone" [class.expanded]="categoria.expandida">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>
-            {{ categoria.titulo }}
-        </span>        
-        <div class="indicador">
-            <i class="icon icone-ancora">
-                <img class="ancora-svg" src="assets/images/icon_contrast_100/peso.svg" alt="Ícone de peso" />
-            </i>
-            <span class="porcentagem">{{ categoria.porcentagem }}%</span>
-        </div>
+      <span class="categoria-titulo">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="icon seta-icone" [class.expanded]="categoria.expandida">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
+        {{ categoria.titulo }}
+      </span>
+      <div class="indicador">
+        <i class="icon icone-ancora">
+          <img class="ancora-svg" src="assets/images/icon_contrast_100/peso.svg" alt="Ícone de peso" />
+        </i>
+        <span class="porcentagem">{{ categoria.porcentagem }}%</span>
+      </div>
     </div>
 
     <div class="categoria-detalhes" *ngIf="categoria.expandida">
-        <div class="scroll-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th (click)="sortTable('classificacao', categoria.id)">CLASSIFICAÇÃO</th>
-                        <th (click)="sortTable('descricao', categoria.id)">DESCRIÇÃO</th>
-                        <th (click)="sortTable('score', categoria.id)">SCORE</th>
-                        <th>AÇÕES</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let dado of categoria.dados">
-                        <td><span class="nivel">{{ dado.classificacao }}</span></td>
-                        <td>{{ dado.descricao }}</td>
-                        <td>
-                            <span class="score" [ngClass]="{
+      <div class="scroll-container">
+        <table>
+          <thead>
+            <tr>
+              <th (click)="sortTable('classificacao', categoria.id)">CLASSIFICAÇÃO</th>
+              <th (click)="sortTable('descricao', categoria.id)">DESCRIÇÃO</th>
+              <th (click)="sortTable('score', categoria.id)">SCORE</th>
+              <th>AÇÕES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let dado of categoria.dados">
+              <td><span class="nivel">{{ dado.classificacao }}</span></td>
+              <td>{{ dado.descricao }}</td>
+              <td>
+                <span class="score" [ngClass]="{
                                 'verde': dado.score < 4,  
                                 'amarelo': dado.score >= 4 && dado.score < 7,  
                                 'vermelho-claro': dado.score >= 7 && dado.score < 9,  
                                 'vermelho-escuro': dado.score >= 9}">
-                                {{ dado.score }}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-editar" (click)="editarClassificacao(categoria, dado)">
-                                <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
-                            </button>
-                            <button class="btn btn-excluir" (click)="abrirModalConfirmacao(categoria, dado)">
-                                <img class="size-6" src="assets/images/icon_primary_text/delete.svg" alt="Ícone de exclusão" />
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                  {{ dado.score }}
+                </span>
+              </td>
+              <td>
+                <button class="btn btn-editar" *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias"
+                  (click)="editarClassificacao(categoria, dado)">
+                  <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
+                </button>
+                <button class="btn btn-excluir" *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias"
+                  (click)="abrirModalConfirmacao(categoria, dado)">
+                  <img class="size-6" src="assets/images/icon_primary_text/delete.svg" alt="Ícone de exclusão" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-</div>
-
-<div *ngIf="mensagemSucesso" class="modal-sucesso-overlay">
-  <div class=" modal-content modal-sucesso-content">
-    {{ mensagemSucesso }}
   </div>
-  
-</div>
+
+  <div *ngIf="mensagemSucesso" class="modal-sucesso-overlay">
+    <div class=" modal-content modal-sucesso-content">
+      {{ mensagemSucesso }}
+    </div>
+
+  </div>
 </section>

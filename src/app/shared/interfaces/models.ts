@@ -1,5 +1,6 @@
   export interface Issue {
     id: number;
+    id_issue:number;
     numero_is: number;
     id_projeto: number;
     sigla_cliente: string;
@@ -10,7 +11,10 @@
     autor: string;
     labels: string[];
     status: 'opened' | 'closed';
+    cliente: string;
     link: string;
+    codigo_issue: string;
+    repositorio:string;
     avatar_responsavel: string | null;
     avatar_author: string;
     projeto_principal: string;
@@ -19,5 +23,6 @@
     total_sucessoras?: number;
     score_total?: number | null;
   score_breakdown?: { categoria: string; peso: number; classificacao: string; score: number; subTotal: number }[] | null;
+    prioridade?: number;
 
   }
