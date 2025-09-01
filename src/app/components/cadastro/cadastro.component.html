@@ -4,8 +4,6 @@
 
 <section class="header-bottom">
   <!-- Bloco de Tecnologia -->
-
-
   <article class="bloco-tecnologia">
     <div class="topo-bloco">
       <button class="btn-voltar" (click)="voltar()">
@@ -95,16 +93,16 @@
                 </td>
                 <td class="btn btn-acoes">
                   <button *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias && !categoria.editando"
-                  class="btn btn-editar" (click)="habilitarEdicao(categoria)">
+                    class="btn btn-editar" (click)="habilitarEdicao(categoria)">
                     <img class="size-6" src="assets/images/icon_primary_text/edit.svg" alt="Ícone de edição" />
                   </button>
                   <button *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias && categoria.editando"
-                   class="btn btn-salvar" (click)="salvarEdicao(categoria)">
+                    class="btn btn-salvar" (click)="salvarEdicao(categoria)">
                     Salvar
                   </button>
                   <button
-                    *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias && categoria.titulo !== 'Cliente' && categoria.titulo !== 'Prazo'" class="btn btn-excluir"
-                    (click)="excluirCategoria(categoria.id)">
+                    *ngIf="usuarioLogado?.admin && usuarioLogado?.adm_categorias && categoria.titulo !== 'Cliente' && categoria.titulo !== 'Prazo'"
+                    class="btn btn-excluir" (click)="excluirCategoria(categoria.id)">
                     <img class="size-6" src="assets/images/icon_primary_text/delete.svg" alt="Ícone de exclusão" />
                   </button>
 

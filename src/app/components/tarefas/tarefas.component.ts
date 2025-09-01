@@ -28,7 +28,7 @@ interface Issue {
   standalone: true,
   imports: [CommonModule, CabecalhoComponent, FormsModule, RouterModule],
   templateUrl: './tarefas.component.html',
-  styleUrl: './tarefas.component.css',
+  styleUrls: ['./tarefas.component.css'],
 })
 export class TarefasComponent implements OnInit {
   nomeProjeto: string = '';

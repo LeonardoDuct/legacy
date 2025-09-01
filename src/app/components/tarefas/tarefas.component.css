@@ -441,3 +441,71 @@ td {
 .link-is:hover {
   text-decoration: underline;
 }
+
+/* Tamanhos personalizados para cada coluna da tabela de fluxo */
+.tabela-fluxo .col-is {
+  width: 180px;
+  min-width: 150px;
+}
+
+.tabela-fluxo .col-kickoff {
+  width: 120px;
+  min-width: 100px;
+}
+
+.tabela-fluxo .col-abert-kickoff {
+  width: 180px;
+  min-width: 150px;
+}
+
+.tabela-fluxo .col-abert-analise {
+  width: 180px;
+  min-width: 150px;
+}
+
+.tabela-fluxo .col-kickoff-analise {
+  width: 180px;
+  min-width: 150px;
+}
+
+.tabela-fluxo .col-abert-dev {
+  width: 180px;
+  min-width: 150px;
+}
+
+.tabela-fluxo .col-analise-dev {
+  width: 100px;
+  min-width: 80px;
+}
+
+.tabela-fluxo .col-abert-qa {
+  width: 140px;
+  min-width: 120px;
+}
+
+.tabela-fluxo .col-dev-qa {
+  width: 140px;
+  min-width: 120px;
+}
+
+.tabela-fluxo .col-em-prod {
+  width: 140px;
+  min-width: 120px;
+}
+
+.tabela-fluxo .col-qa-prod {
+  width: 140px;
+  min-width: 120px;
+}
+
+.tabela-fluxo .col-total-dias {
+  width: 80px;
+  min-width: 60px;
+  text-align: right;
+}
+
+.tabela-fluxo .col-acoes {
+  width: 80px;
+  min-width: 60px;
+  text-align: center;
+}

@@ -34,7 +34,7 @@ export type ChartOptions = {
   selector: 'app-relatorios',
   imports: [CommonModule, CabecalhoComponent, NgApexchartsModule],
   templateUrl: './relatorios.component.html',
-  styleUrl: './relatorios.component.css',
+  styleUrls: ['./relatorios.component.css'],
   standalone: true
 })
 export class RelatoriosComponent implements OnInit {

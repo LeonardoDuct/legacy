@@ -6,12 +6,16 @@
             <div class="conteudo">
                 <div class="topo-bloco">
                     <button class="btn-voltar" (click)="voltar()">
-                        <!-- SVG do botão voltar -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="icone-voltar">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                        </svg>
                     </button>
                     <div class="info-projeto">
                         <span class="breadcrumb">Dashboard / Kickoff</span>
                         <div class="linha-titulo">
-                            <h2 class="titulo">Fluxo de IS - Kickoff</h2>
+                            <h2 class="titulo">Fluxo de IS</h2>
                         </div>
                     </div>
                 </div>
@@ -19,34 +23,51 @@
         </article>
 
         <article class="bloco-indicadores">
-            <!-- Indicadores personalizáveis aqui (ex: total ISs, em andamento, concluídas, atrasadas etc) -->
-            <div class="indicador">
+            <div class="pendente">
                 <div class="icon">
-                    <!-- SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3" />
+                    </svg>
                 </div>
                 <div class="texto-numero">
-                    <div class="texto">Kickoff</div>
-                    <div class="numero">{{ totalKickoff }}</div>
+                    <div class="texto">Pendentes</div>
                 </div>
             </div>
-            <div class="indicador">
+
+            <div class="atrasadas">
                 <div class="icon">
-                    <!-- SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                    </svg>
                 </div>
                 <div class="texto-numero">
-                    <div class="texto">Em andamento</div>
-                    <div class="numero">{{ totalEmAndamento }}</div>
+                    <div class="texto">Atrasadas</div>
+
                 </div>
             </div>
-            <div class="indicador">
+
+            <div class="aguardando-setor">
                 <div class="icon">
-                    <!-- SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none" stroke="currentColor"
+                        stroke-width="16" style="width: 22px; height: 22px;" class="size-6">
+                        <path d="M64 48h128M64 208h128M128 128l56-56V48H72v24l56 56ZM128 128l-56 56v24h112v-24l-56-56Z"
+                            stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"
+                            fill="none" />
+                    </svg>
                 </div>
                 <div class="texto-numero">
-                    <div class="texto">Concluídas</div>
-                    <div class="numero">{{ totalConcluidas }}</div>
+                    <div class="texto">Aguardando</div>
+
                 </div>
+
             </div>
+            <div class="divider div1"></div>
+            <div class="divider div2"></div>
+
         </article>
 
         <aside class="bloco-filtro">
@@ -72,7 +93,11 @@
                     <input type="text" id="filtro-descricao" class="input-text" placeholder="Digite o filtro"
                         [(ngModel)]="filtroValor" />
                     <button class="btn btn-search" type="button">
-                        <!-- SVG lupa -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                            class="icon-search">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -84,37 +109,99 @@
             <table class="tabela-fluxo">
                 <thead>
                     <tr>
-                        <th>IS</th>
-                        <th>Kickoff</th>
-                        <th>Abert x Kickoff</th>
-                        <th>Abert Análise</th>
-                        <th>Kickoff x Análise</th>
-                        <th>Abert DEV</th>
-                        <th>Análise x DEV</th>
-                        <th>Abert QA</th>
-                        <th>DEV x QA</th>
-                        <th>Em Prod</th>
-                        <th>QA x Prod</th>
-                        <th>Total dias</th>
-                        <th>Ações</th>
+                        <th class="col-is">IS</th>
+                        <th class="col-kickoff">Kickoff</th>
+                        <th class="col-abert-analise">Abert Análise</th>
+                        <th class="col-abert-dev">Abert DEV</th>
+                        <th class="col-abert-qa">Abert QA</th>
+                        <th class="col-prod">Prod</th>
+                        <th class="col-total-dias">Total dias</th>
+                        <th class="col-acoes">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let is of isListFiltrada">
-                        <td>{{ is.nome }}</td>
-                        <td>{{ is.kickoff | date: 'dd/MM/yyyy HH:mm' }}</td>
-                        <td>{{ is.abertKickoff }}</td>
-                        <td>{{ is.abertAnalise }}</td>
-                        <td>{{ is.kickoffAnalise }}</td>
-                        <td>{{ is.abertDev }}</td>
-                        <td>{{ is.analiseDev }}</td>
-                        <td>{{ is.abertQa }}</td>
-                        <td>{{ is.devQa }}</td>
-                        <td>{{ is.emProd }}</td>
-                        <td>{{ is.qaProd }}</td>
-                        <td>{{ is.totalDias }}</td>
-                        <td>
-                            <!-- Botão ou ícone para ação, ex: detalhes, editar, etc -->
+                        <td class="col-is">{{ is.nome }}</td>
+                        <!-- Kickoff -->
+                        <td class="col-kickoff cell-tooltip">
+                            {{ is.kickOffDate | date: 'dd/MM/yyyy HH:mm' }}
+                            <div class="tooltip-content">
+                                <div>
+                                    <strong>Abertura Sustentação x Kickoff:</strong>
+                                    {{ calcularDias(is.kickOffDate, is.setores.analise.entrada) }} dias
+                                </div>
+                                <div>
+                                    <strong>Interações (comentários/reunião Kickoff):</strong>
+                                    {{ getInteracoes(is, 'analise') }}
+                                </div>
+                            </div>
+                        </td>
+                        <!-- Abert Análise -->
+                        <td class="col-abert-analise cell-tooltip">
+                            {{ is.setores.analise.entrada | date:'dd/MM/yyyy HH:mm' }}
+                            <div class="tooltip-content">
+                                <div>
+                                    <strong>Desde Kickoff até abert Análise:</strong>
+                                    {{ calcularDias(is.kickOffDate, is.setores.analise.entrada) }} dias
+                                </div>
+                                <div>
+                                    <strong>Interações (da Sustentação p/ Análise):</strong>
+                                    {{ getInteracoes(is, 'analise') }}
+                                </div>
+                            </div>
+                        </td>
+                        <!-- Abert DEV -->
+                        <td class="col-abert-dev cell-tooltip">
+                            {{ is.setores.dev.entrada | date:'dd/MM/yyyy HH:mm' }}
+                            <div class="tooltip-content">
+                                <div>
+                                    <strong>Desde Abert Análise até abert DEV:</strong>
+                                    {{ calcularDias(is.setores.analise.saida, is.setores.dev.entrada) }} dias
+                                </div>
+                                <div>
+                                    <strong>Interações (da Análise para DEV):</strong>
+                                    {{ getInteracoes(is, 'dev') }}
+                                </div>
+                            </div>
+                        </td>
+                        <!-- Abert QA -->
+                        <td class="col-abert-qa cell-tooltip">
+                            {{ is.setores.qa.entrada | date:'dd/MM/yyyy HH:mm' }}
+                            <div class="tooltip-content">
+                                <div>
+                                    <strong>Desde abert DEV até disponível para QA Homolog:</strong>
+                                    {{ calcularDias(is.setores.dev.saida, is.setores.qa.entrada) }} dias
+                                </div>
+                                <div>
+                                    <strong>Interações (de volta para DEV após QA):</strong>
+                                    {{ getInteracoes(is, 'qa') }}
+                                </div>
+                            </div>
+                        </td>
+                        <!-- Prod -->
+                        <td class="col-prod cell-tooltip">
+                            {{ is.setores.prod.entrada | date:'dd/MM/yyyy HH:mm' }}
+                            <div class="tooltip-content">
+                                <div>
+                                    <strong>Desde que aberto em QA até subida em Prod:</strong>
+                                    {{ calcularDias(is.setores.qa.saida, is.setores.prod.entrada) }} dias
+                                </div>
+                                <div>
+                                    <strong>Interações (de volta para QA para Infra/Prod):</strong>
+                                    {{ getInteracoes(is, 'prod') }}
+                                </div>
+                            </div>
+                        </td>
+                        <!-- Total dias -->
+                        <td class="col-total-dias cell-tooltip">
+                            {{ calcularTotalDias(is) }} dias
+                            <div class="tooltip-content">
+                                <strong>Total de interações (soma de todas interações):</strong>
+                                {{ getTotalInteracoes(is) }}
+                            </div>
+                        </td>
+                        <!-- AÇÕES -->
+                        <td class="col-acoes">
                             <button class="btn btn-detalhes" type="button" (click)="abrirDetalhe(is)">Detalhes</button>
                         </td>
                     </tr>
