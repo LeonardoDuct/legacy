@@ -13,9 +13,8 @@
                 </span>
                 <span>Dashboard</span>
                 <span class="arrow" [class.rotated]="subMenuStates['dashboard']">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <use href="#icone-seta-categoria"></use>
                     </svg>
                 </span>
             </div>
@@ -37,16 +36,18 @@
                     </svg>
                 </span>
                 <span>Cadastro</span>
-                <span class="arrow" [class.rotated]="subMenuStates['cadastro']"><svg xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg></span>
+                <span class="arrow" [class.rotated]="subMenuStates['cadastro']">
+                    <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <use href="#icone-seta-categoria"></use>
+                    </svg>
+                </span>
             </div>
             <ul class="submenu" *ngIf="subMenuStates['cadastro']">
                 <li><a [routerLink]="['/cadastro']">Score</a></li>
             </ul>
         </li>
 
+        <!-- Configurações -->
         <li class="menu-item">
             <div class="menu-header" (click)="toggleSubMenu('configuracoes')">
                 <span class="icon">
@@ -58,11 +59,11 @@
                     </svg>
                 </span>
                 <span>Configurações</span>
-                <span class="arrow" [class.rotated]="subMenuStates['configuracoes']"><svg
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                    </svg></span>
+                <span class="arrow" [class.rotated]="subMenuStates['configuracoes']">
+                    <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <use href="#icone-seta-categoria"></use>
+                    </svg>
+                </span>
             </div>
             <ul class="submenu" *ngIf="subMenuStates['configuracoes']">
                 <li class="submenu-item">
@@ -80,12 +81,10 @@
             <img src="assets/images/login_logo.svg" alt="Logo" class="logo-img" style="cursor: pointer;" />
         </a>
     </div>
-
     <div class="right-section">
         <button *ngIf="estaLogado(); else loginBtn" class="logout-button" (click)="logout()">Logout</button>
         <ng-template #loginBtn>
             <button class="logout-button" [routerLink]="['/login']">Login</button>
         </ng-template>
     </div>
-
 </header>

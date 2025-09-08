@@ -26,10 +26,8 @@
       <div class="input-wrapper">
         <input type="text" id="filtro-descricao" class="input-text" placeholder="Digitar filtro" />
         <button class="btn btn-search">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="icon-search">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
+          <svg class="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <use href="#icone-lupa"></use>
           </svg>
         </button>
       </div>
@@ -43,7 +41,6 @@
   <!-- Tabela dentro de um container -->
   <section class="tabela-container">
     <button (click)="abrirModalCadastro()" class="btn btn-cadastro">Cadastrar Usuário</button>
-
     <table class="tabela-tarefas">
       <thead>
         <tr>
@@ -82,9 +79,8 @@
   <section class="form-side modal" *ngIf="mostrarModal">
     <div class="cadastro-box">
       <button class="btn btn-fechar" (click)="fecharModal()" aria-label="Fechar">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          class="icon-close">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <use href="#icone-close"></use>
         </svg>
       </button>
       <div class="logo">

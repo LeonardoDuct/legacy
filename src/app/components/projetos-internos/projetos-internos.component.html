@@ -13,19 +13,23 @@
             </div>
         </div>
     </article>
-<label class="switch-abertas">
-    <input type="checkbox" [(ngModel)]="mostrarApenasAbertas" />
-    <span class="slider"></span>
-    <span class="switch-text">
-        {{ mostrarApenasAbertas ? 'Só abertas' : 'Todas' }}
-    </span>
-</label>
+
+    <label class="switch-abertas">
+        <input type="checkbox" [(ngModel)]="mostrarApenasAbertas" />
+        <span class="slider"></span>
+        <span class="switch-text">
+            {{ mostrarApenasAbertas ? 'Só abertas' : 'Todas' }}
+        </span>
+    </label>
+
     <section class="quadros-container" *ngIf="projetoExpandidoIndex !== null && projetos[projetoExpandidoIndex]">
         <div class="quadro" *ngFor="let issue of getIssuesOrdenadas(projetos[projetoExpandidoIndex])">
             <div class="quadro-header">
                 <div class="projeto-info">
                     <div class="projeto-nome">{{ issue.titulo }}</div>
-                    <div class="percentual-concluidas">{{ getPercentualIssue(issue) }}% concluída</div>
+                    <div class="percentual-concluidas">
+                        {{ getPercentualIssue(issue) }}% concluída
+                    </div>
                 </div>
             </div>
             <div class="barra-progresso">
@@ -41,7 +45,7 @@
                     </div>
                 </div>
             </div>
-            <div class="quadro-rodape" style="display: flex; align-items: center; justify-content: space-between;">
+            <div class="quadro-rodape">
                 <span class="status-badge" [ngClass]="issue.status === 'opened' ? 'aberta' : 'fechada'">
                     {{ issue.status === 'opened' ? 'Aberta' : 'Fechada' }}
                 </span>
@@ -53,7 +57,6 @@
         </div>
     </section>
 
-    <!-- Modal de Adicionar Observação + Barra de edição de porcentagem -->
     <div class="modal-overlay" *ngIf="modalAberto">
         <div class="modal">
             <button class="btn-fechar-modal" (click)="fecharModalAdicionar()" aria-label="Fechar modal">
@@ -64,9 +67,9 @@
             <textarea id="obs" [(ngModel)]="novaObs" placeholder="Digite uma observação" rows="3"></textarea>
 
             <label for="percentual">Porcentagem concluída:</label>
-            <div style="display:flex; align-items:center; gap:12px;">
-                <input id="percentual" type="range" min="0" max="100" [(ngModel)]="novoPercentual" style="flex:1;" />
-                <span style="min-width: 40px;">{{ novoPercentual }}%</span>
+            <div class="modal-range-row">
+                <input id="percentual" type="range" min="0" max="100" [(ngModel)]="novoPercentual" class="modal-range-input" />
+                <span class="modal-range-value">{{ novoPercentual }}%</span>
             </div>
 
             <div class="modal-actions">

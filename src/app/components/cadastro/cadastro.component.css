@@ -35,10 +35,6 @@
   color: var(--placeholder-text);
 }
 
-/* Botão de pesquisa */
-
-
-
 /* ======================
    BLOCO CATEGORIA
 ====================== */
@@ -66,9 +62,6 @@
   border-radius: var(--border-radius-md);
   cursor: pointer;
 }
-
-/* Botões principais */
-
 
 /* Categoria container */
 .categoria {
@@ -638,7 +631,6 @@ input#classificacao {
   transition: background-color 0.3s ease; 
 }
 
-
 .score-input button {
   background: none;
   border: none;
@@ -712,8 +704,6 @@ input#classificacao {
   transform: rotate(0deg);
 }
 
-
-
 .modal-content-confirmacao {
   width: 350px; 
 }
@@ -722,7 +712,6 @@ input#classificacao {
   color: #ffffff; 
   text-align: center; 
 }
-
 
 /* ====================== */
 /* BOTÃO BASE */

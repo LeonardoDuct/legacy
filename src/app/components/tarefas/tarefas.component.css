@@ -241,60 +241,24 @@
 .texto-status {
   display: inline-block;
   padding: 4px 10px;
-  /* Ajuste conforme necessário */
   background-color: #2c3e50;
-  /* Cor de fundo - ajuste para corresponder à imagem */
   border-radius: var(--border-radius-md);
   text-align: center;
   min-width: 80px;
-  /* Define um tamanho mínimo */
 }
 
 .coluna-status {
   width: 250px;
-  /* Defina uma largura fixa */
   text-align: center;
-  /* Centraliza o título */
-}
-
-.score.verde {
-  color: #2ecc71;
-  background: rgba(46, 204, 113, 0.1);
-  padding: 4px 10px;
-  border-radius: 8px;
-}
-
-.score.amarelo {
-  color: #f1c40f;
-  background: rgba(241, 196, 15, 0.1);
-  padding: 4px 10px;
-  border-radius: 8px;
-}
-
-.score.vermelho-claro {
-  color: #e67e22;
-  background: rgba(230, 126, 34, 0.1);
-  padding: 4px 10px;
-  border-radius: 8px;
-}
-
-.score.vermelho-escuro {
-  color: #e74c3c;
-  background: rgba(231, 76, 60, 0.1);
-  padding: 4px 10px;
-  border-radius: 8px;
 }
 
 .texto-score {
   display: inline-block;
   padding: 6px 12px;
-  /* Ajuste para dar um espaço uniforme */
   border-radius: 8px;
   min-width: 60px;
-  /* Define uma largura mínima para padronizar */
   text-align: center;
 }
-
 
 .score-tooltip-modal {
   position: absolute;
@@ -512,3 +476,4 @@ td {
   min-width: 60px;
   text-align: center;
 }
+

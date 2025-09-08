@@ -3,12 +3,10 @@
     display: grid;
     gap: 16px;
     grid-template-columns: repeat(3, 1fr);
-    /* 3 colunas fixo em notebook */
     margin: 20px;
     justify-items: stretch;
 }
 
-/* Telas maiores: aumenta para 4 ou mais */
 @media (min-width: 1400px) {
     .quadros-container {
         grid-template-columns: repeat(4, 1fr);
@@ -21,7 +19,6 @@
     }
 }
 
-/* Responsivo para celulares/tablets */
 @media (max-width: 900px) {
     .quadros-container {
         grid-template-columns: repeat(2, 1fr);
@@ -33,9 +30,9 @@
         grid-template-columns: 1fr;
     }
 }
+
 .quadro {
     width: 100%;
-    /* max-width: 430px; <-- REMOVA ESSA LINHA */
     background: var(--Shades-Base, #223348);
     border-radius: 8px;
     display: flex;
@@ -66,12 +63,11 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    /* Espaço entre título e porcentagem */
     padding: 22px 16px 14px 16px;
-    /* top right bottom left */
     min-width: 160px;
     justify-content: center;
 }
+
 .projeto-nome {
     font-size: 1.15rem;
     color: #fff;
@@ -87,27 +83,9 @@
 
 .percentual-concluidas {
     color: #fff;
-    font-weight: bold;
     font-weight: 400;
     font-size: 17px;
     margin-bottom: 4px;
-}
-
-.quadro-indicadores {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    height: 60px;
-    padding: 0 20px;
-    color: white;
-    margin-bottom: 8px;
-}
-
-.indicador svg.icone {
-    width: 24px;
-    height: 24px;
-    color: #fff;
 }
 
 /* === TABELA DO CARD === */
@@ -128,17 +106,6 @@
 
 .linha.linha-obs {
     border-bottom: none;
-    /* Remove a linha extra */
-}
-
-.linha.subcategoria {
-    padding-left: 16px;
-}
-
-.linha.subcategoria .coluna-esquerda,
-.linha.subcategoria .coluna-direita {
-    color: #ADBED4;
-    font-size: 13px;
 }
 
 .coluna-esquerda {
@@ -156,13 +123,13 @@
 /* === RODAPÉ DO CARD === */
 .quadro-rodape {
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
+    justify-content: space-between;
+    align-items: center;
     height: 70px;
     padding: 0 16px 12px 16px;
 }
 
-/* === BOTÕES GERAIS === */
+/* === BOTÕES === */
 .btn,
 .btn-detalhes,
 .btn-salvar,
@@ -174,28 +141,7 @@
     transition: background 0.2s, color 0.2s;
 }
 
-.status-badge {
-    display: inline-block;
-    min-width: 56px;
-    padding: 6px 20px;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 16px;
-    text-align: center;
-    margin-right: 8px;
-    box-shadow: 0 1px 4px #0002;
-}
-
-.status-badge.aberta {
-    background: #21c076;
-    color: #fff;
-}
-
-.status-badge.fechada {
-    background: #e34545;
-    color: #fff;
-}
-.btn-detalhes{
+.btn-detalhes {
     width: 117px;
     margin-right: 8px;
     height: 36px;
@@ -204,15 +150,7 @@
     color: #90BDF9;
 }
 
-.coluna-direita {
-    width: 203.33px;
-    text-align: right;
-    font-size: 14px;
-    color: #fff;
-    margin-top: 8px;
-}
-
-.btn-detalhes:hover{
+.btn-detalhes:hover {
     background-color: rgba(173, 200, 235, 0.25);
     transform: scale(1.03);
 }
@@ -239,6 +177,37 @@
 
 .btn-cancelar:hover {
     background: rgba(192, 213, 242, 0.2);
+}
+
+.btn:focus,
+.btn-detalhes:focus,
+.btn-salvar:focus,
+.btn-cancelar:focus {
+    outline: 2px solid #0C6CE9;
+    outline-offset: 2px;
+}
+
+/* === STATUS === */
+.status-badge {
+    display: inline-block;
+    min-width: 56px;
+    padding: 6px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 16px;
+    text-align: center;
+    margin-right: 8px;
+    box-shadow: 0 1px 4px #0002;
+}
+
+.status-badge.aberta {
+    background: #21c076;
+    color: #fff;
+}
+
+.status-badge.fechada {
+    background: #e34545;
+    color: #fff;
 }
 
 /* === MODAL === */
@@ -269,20 +238,22 @@
     display: flex;
     flex-direction: column;
     gap: 18px;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
-.modal-topo {
+.modal-range-row {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 8px;
+    align-items: center;
+    gap: 12px;
 }
 
-.modal-topo h3 {
-    margin: 0;
-    font-size: 2rem;
-    font-weight: 500;
-    padding-right: 32px;
+.modal-range-input {
+    flex: 1;
+}
+
+.modal-range-value {
+    min-width: 40px;
 }
 
 .btn-fechar-modal {
@@ -357,22 +328,20 @@
     }
 }
 
+/* === TOPO E SWITCH === */
 .topo-bloco {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* distribui os itens entre esquerda e direita */
     width: 100%;
 }
 
 .topo-bloco-direita {
     margin-left: auto;
-    /* empurra para extrema direita */
     font-size: 1.2rem;
     font-weight: bold;
     color: #fff;
     padding-right: 24px;
-    /* opcional, ajuste se quiser mais ou menos espaço da borda */
 }
 
 .switch-abertas {
@@ -380,14 +349,10 @@
     align-items: center;
     gap: 12px;
     margin-bottom: 28px;
-    /* Mais espaço do topo */
     margin-left: 14px;
-    /* Desgrudado da borda esquerda */
     margin-right: 14px;
-    /* Opcional: mesma distância da borda direita */
     font-weight: 500;
     color: #fff;
-    /* Letra branca */
     user-select: none;
 }
 
@@ -429,7 +394,6 @@
 .switch-text {
     margin-left: 4px;
     color: #fff;
-    /* Letra branca */
     font-size: 1rem;
     font-weight: 500;
 }
