@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { GitlabService } from 'src/app/services/gitlab.service';
 import { removerAcentos } from 'src/app/shared/utils/functions';
+import { VoltarComponent } from 'src/app/shared/utils/components/voltar/voltar.component';
 
-// Interfaces
 interface DadoCategoria {
   classificacao: string;
   descricao: string;
@@ -24,13 +24,12 @@ interface Categoria {
 @Component({
   selector: 'app-cadastro',
   standalone: true,
-  imports: [CommonModule, CabecalhoComponent, FormsModule],
+  imports: [CommonModule, CabecalhoComponent, FormsModule, VoltarComponent],
   templateUrl: './cadastro.component.html',
   styleUrls: ['./cadastro.component.css'],
 })
 export class CadastroComponent implements OnInit {
 
-  // Dados principais
   categorias: Categoria[] = [];
   novaClassificacao = {
     categoria: '',
@@ -41,7 +40,6 @@ export class CadastroComponent implements OnInit {
   sortColumn = '';
   sortDirection = true;
 
-  // Modais e controles de UI
   modalAberto = false;
   modalNovaCategoriaAberto = false;
   modalNovaClassificacaoAberto = false;
@@ -54,7 +52,6 @@ export class CadastroComponent implements OnInit {
   classificacaoAtual: DadoCategoria | null = null;
   mensagemSucesso: string | null = null;
 
-  // Modal de confirmação
   modalConfirmacaoAberto = false;
   categoriaSelecionada: Categoria | undefined;
   dadoSelecionado: DadoCategoria | undefined;
@@ -63,7 +60,7 @@ export class CadastroComponent implements OnInit {
   constructor(
     private gitlabService: GitlabService,
     private location: Location
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.carregarCategorias();
@@ -75,30 +72,28 @@ export class CadastroComponent implements OnInit {
       next: (dados) => {
         this.categorias = dados.map((categoria: any) => {
           const nomeCorrigido = categoria.nome_categoria.toLowerCase().includes('urgenc') ? 'Urgência' : categoria.nome_categoria;
-  
-          // Função para os blocos normais (impacto, prazo, etc.)
+
           const mapDadosPadrao = (classificacao: string, descricao: string, score: string) =>
             classificacao && descricao && score
               ? classificacao.split('\n').map((_, index) => ({
-                  classificacao: classificacao.split('\n')[index],
-                  descricao: descricao.split('\n')[index],
-                  score: parseFloat(score.split('\n')[index]) || 0,
-                }))
+                classificacao: classificacao.split('\n')[index],
+                descricao: descricao.split('\n')[index],
+                score: parseFloat(score.split('\n')[index]) || 0,
+              }))
               : [];
-  
-          // Função especial para Cliente (vem tudo junto, separado por |)
+
           const mapDadosCliente = (classificacao: string) =>
             classificacao
               ? classificacao.split('\n').map((linha: string) => {
-                  const [classificacao, descricao, score] = linha.split('|');
-                  return {
-                    classificacao,
-                    descricao: descricao && descricao.trim() !== '' ? descricao : 'SEM DESCRIÇÃO',
-                    score: parseFloat(score) || 0,
-                  };
-                })
+                const [classificacao, descricao, score] = linha.split('|');
+                return {
+                  classificacao,
+                  descricao: descricao && descricao.trim() !== '' ? descricao : 'SEM DESCRIÇÃO',
+                  score: parseFloat(score) || 0,
+                };
+              })
               : [];
-  
+
           return {
             id: categoria.nome_categoria.toLowerCase(),
             titulo: nomeCorrigido,
@@ -108,14 +103,14 @@ export class CadastroComponent implements OnInit {
               nomeCorrigido === 'Cliente'
                 ? mapDadosCliente(categoria.classificacao_cliente)
                 : nomeCorrigido === 'Prazo'
-                ? mapDadosPadrao(categoria.classificacao_prazo, categoria.descricao_prazo, categoria.score_prazo)
-                : nomeCorrigido === 'Impacto'
-                ? mapDadosPadrao(categoria.classificacao_impacto, categoria.descricao_impacto, categoria.score_impacto)
-                : nomeCorrigido === 'Urgência'
-                ? mapDadosPadrao(categoria.classificacao_urgencia, categoria.descricao_urgencia, categoria.score_urgencia)
-                : nomeCorrigido === 'Complexidade'
-                ? mapDadosPadrao(categoria.classificacao_complexidade, categoria.descricao_complexidade, categoria.score_complexidade)
-                : [],
+                  ? mapDadosPadrao(categoria.classificacao_prazo, categoria.descricao_prazo, categoria.score_prazo)
+                  : nomeCorrigido === 'Impacto'
+                    ? mapDadosPadrao(categoria.classificacao_impacto, categoria.descricao_impacto, categoria.score_impacto)
+                    : nomeCorrigido === 'Urgência'
+                      ? mapDadosPadrao(categoria.classificacao_urgencia, categoria.descricao_urgencia, categoria.score_urgencia)
+                      : nomeCorrigido === 'Complexidade'
+                        ? mapDadosPadrao(categoria.classificacao_complexidade, categoria.descricao_complexidade, categoria.score_complexidade)
+                        : [],
           };
         });
       },
@@ -144,10 +139,10 @@ export class CadastroComponent implements OnInit {
   gravarCategorias() {
     let erro = false;
     let categoriasAtualizadas = 0;
-  
+
     this.categorias.forEach((cat) => {
       const nomeCategoriaSemAcento = removerAcentos(cat.titulo);
-  
+
       this.gitlabService.atualizarCategoria(nomeCategoriaSemAcento, cat.titulo, cat.porcentagem)
         .subscribe({
           next: () => {
@@ -193,23 +188,18 @@ export class CadastroComponent implements OnInit {
   }
 
   gravarNovaCategoria(nome: string, peso: number) {
-    // Chama o service para criar a categoria no backend
     this.gitlabService.criarCategoria(nome, peso).subscribe({
       next: (resposta) => {
-        // Atualiza a lista de categorias local (o ideal é recarregar do backend para garantir sincronismo)
         this.carregarCategorias();
         this.fecharModalNovaCategoria();
         this.mostrarMensagemSucesso('Categoria criada com sucesso!');
       },
       error: (error) => {
         console.error('Erro ao criar categoria:', error);
-        // Você pode mostrar mensagem de erro se quiser
         this.mostrarMensagemSucesso('Erro ao criar categoria!');
       }
     });
   }
-
-  // --- Classificação ---
 
   abrirModalNovaClassificacao() {
     this.novaClassificacao = {
@@ -260,16 +250,16 @@ export class CadastroComponent implements OnInit {
           console.error('Erro ao atualizar classificação:', error);
         }
       });
-  
+
     } else {
       if (this.novaClassificacao.categoria) {
         const categoria = this.novaClassificacao.categoria.trim();
         const classificacao = this.novaClassificacao.classificacao.trim();
         const descricao = this.novaClassificacao.descricao;
         const score = this.novaClassificacao.score;
-  
+
         console.log('Chamando criarClassificacao:', categoria, classificacao, descricao, score);
-  
+
         this.gitlabService.criarClassificacao(categoria, classificacao, descricao, score)
           .subscribe({
             next: (resposta) => {
@@ -291,7 +281,7 @@ export class CadastroComponent implements OnInit {
       }
     }
   }
-  
+
   excluirClassificacao(categoria: Categoria, dado: DadoCategoria) {
     this.gitlabService.excluirClassificacao(categoria.titulo, dado.classificacao).subscribe({
       next: () => {
@@ -303,7 +293,6 @@ export class CadastroComponent implements OnInit {
       }
     });
   }
-  
 
   incrementarScore() {
     this.novaClassificacao.score = Math.min(
@@ -323,11 +312,8 @@ export class CadastroComponent implements OnInit {
     let val = this.novaClassificacao.score;
     if (isNaN(val)) val = 0;
     val = Math.max(0, Math.min(10, val));
-    // Garante uma casa decimal
     this.novaClassificacao.score = Math.round(val * 10) / 10;
   }
-  
-  // --- Ordenação ---
 
   sortTable(column: string, categoriaId: string) {
     const categoria = this.categorias.find(cat => cat.id === categoriaId);
@@ -356,8 +342,6 @@ export class CadastroComponent implements OnInit {
     });
   }
 
-  // --- Modais e helpers visuais ---
-
   abrirModal() {
     this.modalAberto = true;
   }
@@ -374,13 +358,13 @@ export class CadastroComponent implements OnInit {
     this.mensagemSucesso = texto;
     setTimeout(() => {
       this.mensagemSucesso = null;
-    }, 3000); // esconde após 3 segundos
+    }, 3000);
   }
 
   selecionarCategoria(categoria: Categoria, event: Event) {
     event.stopPropagation();
     this.selectedCategoria = categoria;
-    this.novaClassificacao.categoria = categoria.titulo; // <--- garanta isso!
+    this.novaClassificacao.categoria = categoria.titulo;
     this.dropdownAberto = false;
   }
 
@@ -421,7 +405,7 @@ export class CadastroComponent implements OnInit {
           this.fecharModalConfirmacao();
         }
       });
-  
+
     } else if (this.categoriaSelecionada) {
       this.gitlabService.excluirCategoria(this.categoriaSelecionada.id).subscribe({
         next: () => {
@@ -434,7 +418,7 @@ export class CadastroComponent implements OnInit {
           this.fecharModalConfirmacao();
         }
       });
-  
+
     } else {
       this.fecharModalConfirmacao();
     }
@@ -443,5 +427,5 @@ export class CadastroComponent implements OnInit {
   voltar(): void {
     this.location.back()
   }
-  
+
 }

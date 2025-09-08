@@ -4,13 +4,14 @@ import { CommonModule, NgIf, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GitlabService } from '../../services/gitlab.service';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
+import { VoltarComponent } from 'src/app/shared/utils/components/voltar/voltar.component';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
   templateUrl: './usuarios.component.html',
   styleUrls: ['./usuarios.component.css'],
-  imports: [FormsModule, NgIf, RouterModule, CabecalhoComponent, CommonModule],
+  imports: [FormsModule, NgIf, RouterModule, CabecalhoComponent, CommonModule, VoltarComponent],
 })
 export class UsuariosComponent implements OnInit {
   nome = '';

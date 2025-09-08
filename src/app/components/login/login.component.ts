@@ -31,7 +31,6 @@ export class LoginComponent {
       next: (res) => {
         this.loading = false;
 
-        // Verifica se é primeiro acesso ou precisa alterar senha
         if (res.trocaSenha) {
           this.primeiroAcesso = true;
           localStorage.setItem('token', res.token);

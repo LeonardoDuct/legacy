@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GitlabService } from '../../services/gitlab.service';
-import { obterStatusGeral } from 'src/app/shared/utils/functions';
-import { removerAcentos } from 'src/app/shared/utils/functions';
+import { obterStatusGeral, removerAcentos, formatDate } from 'src/app/shared/utils/functions';
 import flatpickr from 'flatpickr';
 import { Portuguese } from 'flatpickr/dist/l10n/pt';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
@@ -33,8 +32,6 @@ export interface Projeto {
   imports: [CommonModule, CabecalhoComponent, RouterModule, FormsModule, NgApexchartsModule],
 })
 export class DashboardComponent implements OnInit {
-  isMenuOpen = false;
-  subMenuStates: { [key: string]: boolean } = { cadastro: true, configuracoes: true };
   analyticsProjeto: Projeto | null = null;
   chartOptions: ChartOptions | null = null;
   projetos: Projeto[] = [];
@@ -123,37 +120,37 @@ export class DashboardComponent implements OnInit {
 
     switch (this.periodoSelecionado) {
       case 'hoje':
-        this.dataInicio = hoje.toISOString().split('T')[0];
-        this.dataFim = hoje.toISOString().split('T')[0];
+        this.dataInicio = formatDate(hoje);
+        this.dataFim = formatDate(hoje);
         break;
       case 'ontem':
         dataInicial = new Date(hoje);
         dataInicial.setDate(hoje.getDate() - 1);
-        this.dataInicio = dataInicial.toISOString().split('T')[0];
-        this.dataFim = dataInicial.toISOString().split('T')[0];
+        this.dataInicio = formatDate(dataInicial);
+        this.dataFim = formatDate(dataInicial);
         break;
       case '7d':
         dataInicial = new Date(hoje);
         dataInicial.setDate(hoje.getDate() - 6);
-        this.dataInicio = dataInicial.toISOString().split('T')[0];
-        this.dataFim = hoje.toISOString().split('T')[0];
+        this.dataInicio = formatDate(dataInicial);
+        this.dataFim = formatDate(hoje);
         break;
       case '30d':
         dataInicial = new Date(hoje);
         dataInicial.setDate(hoje.getDate() - 29);
-        this.dataInicio = dataInicial.toISOString().split('T')[0];
-        this.dataFim = hoje.toISOString().split('T')[0];
+        this.dataInicio = formatDate(dataInicial);
+        this.dataFim = formatDate(hoje);
         break;
       case 'este-mes':
         dataInicial = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-        this.dataInicio = dataInicial.toISOString().split('T')[0];
-        this.dataFim = hoje.toISOString().split('T')[0];
+        this.dataInicio = formatDate(dataInicial);
+        this.dataFim = formatDate(hoje);
         break;
       case 'ultimo-mes':
         dataInicial = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
         dataFinal = new Date(hoje.getFullYear(), hoje.getMonth(), 0);
-        this.dataInicio = dataInicial.toISOString().split('T')[0];
-        this.dataFim = dataFinal.toISOString().split('T')[0];
+        this.dataInicio = formatDate(dataInicial);
+        this.dataFim = formatDate(dataFinal);
         break;
       case 'personalizado':
         if (!this.dataInicio || !this.dataFim) {
@@ -169,21 +166,13 @@ export class DashboardComponent implements OnInit {
     this.carregarTarefasPorData(this.dataInicio, this.dataFim);
   }
 
-  toggleMenu(): void {
-    this.isMenuOpen = !this.isMenuOpen;
-  }
-
-  toggleSubMenu(menu: string): void {
-    this.subMenuStates[menu] = !this.subMenuStates[menu];
-  }
-
   toggleTodosGraficos() {
     this.mostrarTodosGraficos = !this.mostrarTodosGraficos;
   }
 
   private safeLogValue(val: any): number {
     const n = Number(val);
-    return (!isNaN(n) && isFinite(n) && n > 0) ? n : 0.1;
+    return (!isNaN(n) && isFinite(n) && n > 0) ? n : 0.0;
   }
 
   gerarGroupedBarSeries(projeto: any) {
@@ -204,7 +193,6 @@ export class DashboardComponent implements OnInit {
       }
     ];
   }
-
 
   obterStatus(abertasDentroPrazo: number, abertasForaPrazo: number): string {
     const totalAbertas = abertasDentroPrazo + abertasForaPrazo;

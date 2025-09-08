@@ -15,6 +15,7 @@ import {
   ApexFill,
   ApexGrid
 } from 'ng-apexcharts';
+import { VoltarComponent } from 'src/app/shared/utils/components/voltar/voltar.component';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -32,9 +33,9 @@ export type ChartOptions = {
 
 @Component({
   selector: 'app-relatorios',
-  imports: [CommonModule, CabecalhoComponent, NgApexchartsModule],
+  imports: [CommonModule, CabecalhoComponent, NgApexchartsModule, VoltarComponent],
   templateUrl: './relatorios.component.html',
-  styleUrl: './relatorios.component.css',
+  styleUrls: ['./relatorios.component.css'],
   standalone: true
 })
 export class RelatoriosComponent implements OnInit {

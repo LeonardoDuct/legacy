@@ -6,9 +6,10 @@ import { combineLatest } from 'rxjs';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { GitlabService } from '../../services/gitlab.service';
 import { getScoreClass, obterStatusGeral, prazoAtrasado, removerAcentos } from 'src/app/shared/utils/functions';
+import { VoltarComponent } from 'src/app/shared/utils/components/voltar/voltar.component';
 
 interface Issue {
-  codigo_issue: number;
+  codigo_is: number;
   repositorio: string;
   cliente: string;
   status: string;
@@ -26,9 +27,9 @@ interface Issue {
 @Component({
   selector: 'app-tarefas',
   standalone: true,
-  imports: [CommonModule, CabecalhoComponent, FormsModule, RouterModule],
+  imports: [CommonModule, CabecalhoComponent, FormsModule, RouterModule, VoltarComponent],
   templateUrl: './tarefas.component.html',
-  styleUrl: './tarefas.component.css',
+  styleUrls: ['./tarefas.component.css'],
 })
 export class TarefasComponent implements OnInit {
   nomeProjeto: string = '';
@@ -104,7 +105,6 @@ export class TarefasComponent implements OnInit {
     this.gitlabService.obterIssuesPorProjetoNome(nomeProjeto, dataInicio, dataFim).subscribe({
       next: (dados: Issue[]) => {
         this.tarefas = dados.map(tarefa => {
-          // Passa o id (único) para buscar sucessoras, e não o codigo_issue
           this.carregarQuantidadeSucessoras(tarefa.id_issue);  
           return { ...tarefa, motivoAtraso: this.getMotivoAtraso(tarefa) };
         });
@@ -139,14 +139,12 @@ getQuantidadeSucessoras(idIssue: number): number {
   getMotivoAtraso(tarefa: Issue): string | null {
     if (!prazoAtrasado(tarefa.prazo) || !tarefa.labels) return null;
 
-    // Busca label "Aguardando X" que não seja interna
     const labelAguardandoOutro = tarefa.labels.find(label =>
       label.startsWith('Aguardando') &&
       !this.AGUARDANDO_INTERNAS.includes(label)
     );
 
     if (labelAguardandoOutro) {
-      // Extrai o setor, ex: "Aguardando QA"
       const setor = labelAguardandoOutro.replace('Aguardando ', '');
       return `Essa issue está aguardando o setor de ${setor} para ser finalizada.`;
     }
@@ -259,7 +257,6 @@ getQuantidadeSucessoras(idIssue: number): number {
     });
   }
 
-  // Critérios de ordenação especiais:
   ordenarAguardandoSetorPrimeiro = (a: Issue, b: Issue) => {
     const aAguardando = !!a.motivoAtraso;
     const bAguardando = !!b.motivoAtraso;

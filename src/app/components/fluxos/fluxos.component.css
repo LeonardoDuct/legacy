@@ -1,0 +1,204 @@
+.bloco-indicadores {
+    position: relative;
+    display: flex;
+    min-width: 320px;
+    height: 148px;
+    color: #f5f9ff;
+    gap: 86px;
+    border-right: 1px solid rgba(173, 200, 235, 0.14);
+    border-bottom: 1px solid rgba(173, 200, 235, 0.14);
+}
+
+.bloco-indicadores::after {
+    background: linear-gradient(to right,
+            #0C6CE9 0%,
+            #0C6CE9 33.33%,
+            #E0241A 33.33%,
+            #E0241A 66.66%,
+            #FFD600 66.66%,
+            #FFD600 100%);
+}
+
+.bloco-indicadores .divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(173, 200, 235, 0.2);
+    z-index: 2;
+}
+
+.bloco-indicadores .divider.div1 {
+    left: calc(33.33%);
+}
+
+.bloco-indicadores .divider.div2 {
+    left: calc(66.66%);
+}
+
+/* ====================== */
+/* BLOCO FILTRO */
+/* ====================== */
+
+.input-wrapper {
+    width: 100%;
+    height: var(--height-small);
+    min-width: 320px;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    position: relative;
+}
+
+.input-text {
+    min-width: 320px;
+    width: 100%;
+    height: var(--height-small);
+    padding: var(--spacing-xs);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    background: var(--secondary-bg);
+    color: var(--text-primary);
+    font-size: var(--font-medium);
+}
+
+.input-text::placeholder {
+    color: var(--placeholder-text);
+}
+
+.tabela-container {
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.tabela-fluxo {
+    width: 100%;
+    border-collapse: separate;
+    background-color: #223348;
+    border-spacing: 0;
+    border-radius: 7px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tabela-fluxo th,
+.tabela-fluxo td {
+    padding: 10px;
+    text-align: inherit;
+}
+
+.tabela-fluxo th {
+    color: #EBF4FFE5;
+    font-weight: var(--font-weight-bold) !important;
+    font-size: var(--font-small);
+}
+
+.tabela-fluxo tr {
+    position: relative;
+}
+
+.tabela-fluxo tr:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.tabela-fluxo td {
+    color: #EBF4FFE5;
+    font-size: var(--font-normal) !important;
+    font-weight: var(--font-weight-light) !important;
+    border-bottom: none;
+}
+
+@media (min-width: 1440px) {
+    .cabecalho-inferior {
+        gap: 32px;
+    }
+
+    .bloco-tecnologia,
+    .bloco-indicadores,
+    .bloco-filtro {
+        padding: 32px;
+    }
+
+    .titulo {
+        font-size: 26px;
+    }
+
+}
+
+.link-is {
+    color: #f5f9ff !important;
+    text-decoration: none;
+}
+
+.link-is:hover {
+    text-decoration: underline;
+}
+
+.btn-detalhes {
+    width: 100px;
+    margin-right: 8px;
+    height: 36px;
+    border-radius: var(--Border-Radius-M, 8px);
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px 16px;
+    background-color: rgba(173, 200, 235, 0.14);
+    color: #90BDF9;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.tabela-container,
+.tabela-scroll,
+table {
+    overflow: visible !important;
+}
+
+.cell-tooltip {
+    position: relative;
+    overflow: visible;
+}
+
+.cell-tooltip .tooltip-content {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #223348;
+    color: #EBF4FFE5;
+    padding: 16px 24px;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.20);
+    min-width: 260px;
+    max-width: 340px;
+    white-space: pre-line;
+    z-index: 99999;
+    pointer-events: none;
+}
+
+.cell-tooltip:hover .tooltip-content {
+    display: block;
+}
+
+.cell-tooltip .tooltip-content::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent #223348 transparent;
+}
+
+.btn-detalhes:hover {
+    background-color: rgba(173, 200, 235, 0.25);
+    transform: scale(1.03);
+}

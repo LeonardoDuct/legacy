@@ -28,4 +28,6 @@ export function prazoAtrasado(data: string | Date): boolean {
     return prazo < new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
 }
 
-
+export function formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+}

@@ -3,6 +3,7 @@ import { CommonModule, Location } from '@angular/common';
 import { GitlabService } from 'src/app/services/gitlab.service';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { FormsModule } from '@angular/forms';
+import { VoltarComponent } from 'src/app/shared/utils/components/voltar/voltar.component';
 
 interface Issue {
   id: number;
@@ -30,9 +31,9 @@ interface ProjetoInterno {
 
 @Component({
   selector: 'app-projetos-internos',
-  imports: [CabecalhoComponent, CommonModule, FormsModule],
+  imports: [CabecalhoComponent, CommonModule, FormsModule, VoltarComponent],
   templateUrl: './projetos-internos.component.html',
-  styleUrl: './projetos-internos.component.css'
+  styleUrls: ['./projetos-internos.component.css']
 })
 export class ProjetosInternosComponent implements OnInit {
   projetos: ProjetoInterno[] = [];
@@ -60,7 +61,6 @@ export class ProjetosInternosComponent implements OnInit {
       }
     });
 
-    // Verifica se o usuário é Head (para liberar botão de edição)
     const token = localStorage.getItem('token');
     if (token) {
       try {
@@ -126,7 +126,7 @@ export class ProjetosInternosComponent implements OnInit {
     }
     return todas.slice().sort((a, b) => this.getPercentualIssue(b) - this.getPercentualIssue(a));
   }
-  
+
   getTodasIssues(projeto: ProjetoInterno): Array<Issue & { status: 'opened' | 'closed' }> {
     const abertas = (projeto.issues_abertas ?? []).map(issue => ({ ...issue, status: 'opened' as const }));
     const fechadas = (projeto.issues_fechadas ?? []).map(issue => ({ ...issue, status: 'closed' as const }));
