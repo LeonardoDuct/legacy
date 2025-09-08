@@ -3,6 +3,7 @@ import { CommonModule, Location } from '@angular/common';
 import { GitlabService } from 'src/app/services/gitlab.service';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { FormsModule } from '@angular/forms';
+import { VoltarComponent } from 'src/app/shared/utils/components/voltar/voltar.component';
 
 interface Issue {
   id: number;
@@ -30,7 +31,7 @@ interface ProjetoInterno {
 
 @Component({
   selector: 'app-projetos-internos',
-  imports: [CabecalhoComponent, CommonModule, FormsModule],
+  imports: [CabecalhoComponent, CommonModule, FormsModule, VoltarComponent],
   templateUrl: './projetos-internos.component.html',
   styleUrls: ['./projetos-internos.component.css']
 })

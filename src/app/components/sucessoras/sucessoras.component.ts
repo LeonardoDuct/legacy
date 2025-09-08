@@ -7,11 +7,12 @@ import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { Issue } from '../../shared/interfaces/models';
 import { getScoreClass } from '../../shared/utils/functions';
 import { prazoAtrasado } from '../../shared/utils/functions';
+import { VoltarComponent } from 'src/app/shared/utils/components/voltar/voltar.component';
 
 @Component({
   selector: 'app-sucessoras',
   standalone: true,
-  imports: [CommonModule, RouterModule, CabecalhoComponent],
+  imports: [CommonModule, RouterModule, CabecalhoComponent, VoltarComponent],
   templateUrl: './sucessoras.component.html',
   styleUrls: ['./sucessoras.component.css']
 })

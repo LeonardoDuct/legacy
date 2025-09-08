@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { CommonModule } from '@angular/common';
+import { VoltarComponent } from 'src/app/shared/utils/components/voltar/voltar.component';
 
 // Modelo de dados com datas de entrada/saída por setor
 interface FluxoSetor {
@@ -29,7 +30,7 @@ interface FluxoIS {
 @Component({
   selector: 'app-fluxos',
   standalone: true,
-  imports: [CabecalhoComponent, FormsModule, RouterModule, CommonModule],
+  imports: [CabecalhoComponent, FormsModule, RouterModule, CommonModule, VoltarComponent],
   templateUrl: './fluxos.component.html',
   styleUrls: ['./fluxos.component.css']
 })

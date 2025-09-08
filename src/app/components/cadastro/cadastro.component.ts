@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { GitlabService } from 'src/app/services/gitlab.service';
 import { removerAcentos } from 'src/app/shared/utils/functions';
+import { VoltarComponent } from 'src/app/shared/utils/components/voltar/voltar.component';
 
-// Interfaces
 interface DadoCategoria {
   classificacao: string;
   descricao: string;
@@ -24,13 +24,12 @@ interface Categoria {
 @Component({
   selector: 'app-cadastro',
   standalone: true,
-  imports: [CommonModule, CabecalhoComponent, FormsModule],
+  imports: [CommonModule, CabecalhoComponent, FormsModule, VoltarComponent],
   templateUrl: './cadastro.component.html',
   styleUrls: ['./cadastro.component.css'],
 })
 export class CadastroComponent implements OnInit {
 
-  // Dados principais
   categorias: Categoria[] = [];
   novaClassificacao = {
     categoria: '',
@@ -53,7 +52,6 @@ export class CadastroComponent implements OnInit {
   classificacaoAtual: DadoCategoria | null = null;
   mensagemSucesso: string | null = null;
 
-  // Modal de confirmação
   modalConfirmacaoAberto = false;
   categoriaSelecionada: Categoria | undefined;
   dadoSelecionado: DadoCategoria | undefined;
@@ -75,7 +73,6 @@ export class CadastroComponent implements OnInit {
         this.categorias = dados.map((categoria: any) => {
           const nomeCorrigido = categoria.nome_categoria.toLowerCase().includes('urgenc') ? 'Urgência' : categoria.nome_categoria;
 
-          // Função para os blocos normais (impacto, prazo, etc.)
           const mapDadosPadrao = (classificacao: string, descricao: string, score: string) =>
             classificacao && descricao && score
               ? classificacao.split('\n').map((_, index) => ({
@@ -85,7 +82,6 @@ export class CadastroComponent implements OnInit {
               }))
               : [];
 
-          // Função especial para Cliente (vem tudo junto, separado por |)
           const mapDadosCliente = (classificacao: string) =>
             classificacao
               ? classificacao.split('\n').map((linha: string) => {
@@ -316,11 +312,8 @@ export class CadastroComponent implements OnInit {
     let val = this.novaClassificacao.score;
     if (isNaN(val)) val = 0;
     val = Math.max(0, Math.min(10, val));
-    // Garante uma casa decimal
     this.novaClassificacao.score = Math.round(val * 10) / 10;
   }
-
-  // --- Ordenação ---
 
   sortTable(column: string, categoriaId: string) {
     const categoria = this.categorias.find(cat => cat.id === categoriaId);
@@ -349,8 +342,6 @@ export class CadastroComponent implements OnInit {
     });
   }
 
-  // --- Modais e helpers visuais ---
-
   abrirModal() {
     this.modalAberto = true;
   }
@@ -367,13 +358,13 @@ export class CadastroComponent implements OnInit {
     this.mensagemSucesso = texto;
     setTimeout(() => {
       this.mensagemSucesso = null;
-    }, 3000); // esconde após 3 segundos
+    }, 3000);
   }
 
   selecionarCategoria(categoria: Categoria, event: Event) {
     event.stopPropagation();
     this.selectedCategoria = categoria;
-    this.novaClassificacao.categoria = categoria.titulo; // <--- garanta isso!
+    this.novaClassificacao.categoria = categoria.titulo;
     this.dropdownAberto = false;
   }
 

@@ -5,13 +5,7 @@
         <article class="bloco-tecnologia">
             <div class="conteudo">
                 <div class="topo-bloco">
-                    <button class="btn-voltar" (click)="voltar()">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="icone-voltar">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                        </svg>
-                    </button>
+                    <app-voltar (voltar)="voltar()"></app-voltar>
                     <div class="info-projeto">
                         <span class="breadcrumb">Dashboard / Kickoff</span>
                         <div class="linha-titulo">
@@ -93,8 +87,8 @@
                     <input type="text" id="filtro-descricao" class="input-text" placeholder="Digite o filtro"
                         [(ngModel)]="filtroValor" />
                     <button class="btn btn-search" type="button">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                            class="icon-search">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="icon-search">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
                         </svg>

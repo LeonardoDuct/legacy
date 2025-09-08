@@ -216,15 +216,18 @@
   height: 12px;
   margin-left: 5px;
   fill: #B4CDEE3B;
-  transition: transform 0.2s ease;
+  /* cor neutra */
+  transition: transform 0.2s ease, fill 0.2s ease;
 }
 
-.ascending {
+.icone-seta.ascending {
   transform: rotate(180deg);
+  fill: #3498db;
 }
 
-.descending {
+.icone-seta.descending {
   transform: rotate(0deg);
+  fill: #e74c3c;
 }
 
 .texto-cliente {
