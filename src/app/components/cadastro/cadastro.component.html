@@ -6,7 +6,7 @@
   <!-- Bloco de Tecnologia -->
   <article class="bloco-tecnologia">
     <div class="topo-bloco">
-      <app-voltar (voltar)="voltar()"></app-voltar>
+            <app-voltar (voltar)="voltar()"></app-voltar>
       <div class="conteudo">
         <h2 class="titulo">Cadastro</h2>
         <span class="status">Score</span>
@@ -32,10 +32,8 @@
       <div class="input-wrapper">
         <input type="text" id="filtro-descricao" class="input-text" placeholder="Digitar filtro de descrição" />
         <button class="btn btn-search">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="icon-search">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M21 21l-4.35-4.35m1.6-6.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0z" />
+          <svg class="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <use href="#icone-lupa"></use>
           </svg>
         </button>
       </div>
@@ -59,9 +57,8 @@
         <div class="modal-header">
           <h2 class="modal-title">Categorias</h2>
           <button class="btn btn-fechar" (click)="fecharModal()" aria-label="Fechar">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="icon-close">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <use href="#icone-close"></use>
             </svg>
           </button>
         </div>
@@ -137,9 +134,8 @@
         <div class="modal-header">
           <h2 class="modal-title">Nova Categoria</h2>
           <button class="btn btn-fechar" (click)="fecharModalNovaCategoria()" aria-label="Fechar">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="icon-close">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <use href="#icone-close"></use>
             </svg>
           </button>
         </div>
@@ -190,9 +186,8 @@
             {{ modoEdicao ? 'Editar classificação' : 'Nova classificação' }}
           </h2>
           <button class="btn btn-fechar" (click)="fecharModalNovaClassificacao()">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="icon-close">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <use href="#icone-close"></use>
             </svg>
           </button>
         </div>
@@ -267,9 +262,8 @@
         <div class="modal-header">
           <h2 class="modal-title">Confirmação</h2>
           <button class="btn btn-fechar" (click)="fecharModalConfirmacao()">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="icon-close">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <use href="#icone-close"></use>
             </svg>
           </button>
         </div>
@@ -298,9 +292,9 @@
   <div *ngFor="let categoria of categorias" class="categoria" [class.expandida]="categoria.expandida">
     <div class="categoria-minimizada" (click)="toggleCategoria(categoria.id)">
       <span class="categoria-titulo">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-          class="icon seta-icone" [class.expanded]="categoria.expandida">
-          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        <svg class="icon seta-icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+          [class.expanded]="categoria.expandida">
+          <use href="#icone-seta-categoria"></use>
         </svg>
         {{ categoria.titulo }}
       </span>

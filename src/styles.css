@@ -163,7 +163,6 @@
   height: 20px;
   color: #f5f9ff;
   margin-bottom: 8px;
-  /* 🔹 Dá um pequeno espaço entre o ícone e o texto */
 }
 
 .bloco-indicadores::after {
@@ -186,7 +185,6 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  /* 🔹 Alinha os textos à esquerda */
   justify-content: center;
   width: 104px;
   height: 54px;
@@ -243,32 +241,31 @@
 /* ====================== */
 /* SCORES */
 /* ====================== */
+.score {
+  padding: 4px 10px;
+  border-radius: 8px;
+  display: inline-block;
+  font-weight: 500;
+}
+
 .score.verde {
   color: #2ecc71;
   background: rgba(46, 204, 113, 0.1);
-  padding: 4px 10px;
-  border-radius: 8px;
 }
 
 .score.amarelo {
   color: #f1c40f;
   background: rgba(241, 196, 15, 0.1);
-  padding: 4px 10px;
-  border-radius: 8px;
 }
 
 .score.vermelho-claro {
   color: #e67e22;
   background: rgba(230, 126, 34, 0.1);
-  padding: 4px 10px;
-  border-radius: 8px;
 }
 
 .score.vermelho-escuro {
   color: #e74c3c;
   background: rgba(231, 76, 60, 0.1);
-  padding: 4px 10px;
-  border-radius: 8px;
 }
 
 .btn-voltar {
