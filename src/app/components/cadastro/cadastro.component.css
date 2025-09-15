@@ -3,42 +3,6 @@
   min-width: 720px;
 }
 
-/* ====================== */
-/* BLOCO FILTRO */
-/* ====================== */
-
-/* Input de pesquisa */
-.input-wrapper {
-  width: 100%;
-  height: var(--height-small);
-  min-width: 320px;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  position: relative;
-}
-
-/* Campo de texto */
-.input-text {
-  width: 100%;
-  min-width: 596px;
-  height: var(--height-small);
-  padding: var(--spacing-xs);
-  border: none;
-  border-radius: var(--border-radius-sm);
-  background: var(--secondary-bg);
-  color: var(--text-primary);
-  font-size: var(--font-medium);
-}
-
-.input-text::placeholder {
-  color: var(--placeholder-text);
-}
-
-/* ======================
-   BLOCO CATEGORIA
-====================== */
-
 /* Categoria */
 .categorias {
   margin: var(--spacing-md);
@@ -711,36 +675,6 @@ input#classificacao {
 .texto-simples {
   color: #ffffff; 
   text-align: center; 
-}
-
-/* ====================== */
-/* BOTÃO BASE */
-/* ====================== */
-
-.btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-xs);
-  font-size: var(--font-normal);
-  padding: var(--spacing-xs);
-  border: none;
-  cursor: pointer;
-  transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
-}
-
-.btn:active {
-  color: var(--text-primary);
-}
-
-/* Estados genéricos */
-.btn:hover {
-  transform: scale(1.05);
-}
-
-.btn:disabled {
-  background: rgba(12, 108, 233, 0.5); 
-  cursor: not-allowed;
 }
 
 /* ====================== */

@@ -2,48 +2,8 @@
     background-color: var(--general-bg);
 }
 
-.arrow {
-    font-size: var(--font-medium);
-    transition: transform var(--transition-normal);
-}
-
-.arrow.rotated {
-    transform: rotate(90deg);
-}
-
-.submenu {
-    list-style: none;
-    margin: 0;
-    padding: 0 var(--spacing-sm);
-}
-
-.submenu-item {
-    padding: var(--spacing-xs) 0;
-    font-size: var(--font-medium);
-    color: var(--text-muted);
-}
-
-.submenu-item:hover {
-    color: var(--text-primary);
-}
-
-/* Bloco de Indicadores */
-.bloco-indicadores {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    width: 360px;
-    min-width: 320px;
-    height: 148px;
-    padding: var(--spacing-sm);
-    color: var(--text-primary);
-    gap: var(--spacing-md);
-    text-align: center;
-    border-right: 1px solid var(--border-contrast);
-    border-bottom: 1px solid var(--border-contrast);
-}
-
 .bloco-indicadores::after {
+    content: "";
     background: linear-gradient(to right, #0C6CE9 50%, #E0241A 50%);
 }
 
@@ -57,12 +17,6 @@
     left: 50%;
     transform: translateX(-50%);
     background-color: rgba(173, 200, 235, 0.14);
-}
-
-.bloco-filtro {
-    gap: 8px;
-    color: #f5f9ff;
-    border-bottom: 1px solid rgba(173, 200, 235, 0.14);
 }
 
 .date-wrapper {
@@ -181,8 +135,8 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 16px;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
     min-width: 160px;
     border-right: 1px solid rgba(173, 200, 235, 0.14);
     justify-content: center;
@@ -192,36 +146,6 @@
     font-size: 16px;
     color: #fff;
     font-weight: bold;
-}
-
-.projeto-status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 8px;
-    width: 86px;
-    height: 29px;
-    border-radius: 8px;
-    font-weight: 500;
-    font-size: 14px;
-}
-
-/* Estável */
-.projeto-status.estavel {
-    background: var(--semantic-colors-success-10, #0FF56F1A);
-    color: #0FF56F;
-}
-
-/* Crítico */
-.projeto-status.critico {
-    background: var(--semantic-colors-error-10, #E75D5524);
-    color: #E75D55;
-}
-
-/* Instável */
-.projeto-status.instavel {
-    background: var(--semantic-colors-warning-10, #FFAA0033);
-    color: #FFAA00;
 }
 
 .quadro-indicadores {
@@ -278,13 +202,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}
-
-.linha {
-    display: flex;
-    justify-content: space-between;
-    height: 35px;
-    border-bottom: 1px solid rgba(173, 200, 235, 0.14);
 }
 
 .linha.categoria .coluna-esquerda {

@@ -97,13 +97,6 @@
     justify-content: flex-start;
 }
 
-.linha {
-    display: flex;
-    justify-content: space-between;
-    height: 35px;
-    border-bottom: 1px solid rgba(173, 200, 235, 0.14);
-}
-
 .linha.linha-obs {
     border-bottom: none;
 }

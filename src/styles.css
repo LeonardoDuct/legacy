@@ -99,7 +99,7 @@
   justify-content: center;
   min-width: 320px;
   height: 148px;
-  padding: 32px !important;
+  padding: var(--spacing-lg);
   color: #f5f9ff;
   border-right: 1px solid rgba(173, 200, 235, 0.14);
   border-bottom: 1px solid rgba(173, 200, 235, 0.14);
@@ -141,6 +141,25 @@
   width: 296px;
 }
 
+.bloco-indicadores {
+  position: relative;
+  display: flex;
+  width: 360px;
+  height: 148px;
+  padding: var(--spacing-sm) !important;
+  color: var(--text-primary);
+  gap: var(--spacing-md);
+  border-right: 1px solid var(--border-contrast);
+  border-bottom: 1px solid var(--border-contrast);
+  text-align: center;
+}
+
+.bloco-indicadores--paa {
+    min-width: 550.5px;
+    height: 148px;
+    gap: 86px !important;
+  }
+
 /* Bloco de Indicadores */
 .bloco-indicadores .pendente,
 .bloco-indicadores .atrasadas,
@@ -173,6 +192,30 @@
   position: absolute;
   bottom: 0;
   left: 0;
+  background: linear-gradient(to right,
+      #0C6CE9 0%,
+      #0C6CE9 33.33%,
+      #E0241A 33.33%,
+      #E0241A 66.66%,
+      #FFD600 66.66%,
+      #FFD600 100%);
+}
+
+.bloco-indicadores .divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(173, 200, 235, 0.2);
+  z-index: 2;
+}
+
+.bloco-indicadores .divider.div1 {
+  left: calc(33.33%);
+}
+
+.bloco-indicadores .divider.div2 {
+  left: calc(66.66%);
 }
 
 .icon-search {
@@ -268,6 +311,37 @@
   background: rgba(231, 76, 60, 0.1);
 }
 
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-normal);
+  padding: var(--spacing-xs);
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  background: var(--hover-blue);
+  color: var(--text-primary);
+}
+
+.btn:active,
+.btn:focus {
+  outline: none;
+  color: var(--text-primary) !important;
+}
+
+.btn:disabled {
+  background: rgba(12, 108, 233, 0.5);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
 .btn-voltar {
   width: 34px;
   height: 34px;
@@ -314,12 +388,10 @@
     .bloco-filtro {
       width: 100%;
       min-width: 300px;
-      /* Permite responsividade, não quebra em telas menores */
       max-width: 100%;
-      /* Garante que não passa do container */
       height: 149px;
       padding: var(--spacing-lg);
-      gap: var(--spacing-sm);
+      gap: var(--spacing-xs);
       background: var(--primary-bg);
       border-radius: var(--border-radius-md);
       display: flex;
@@ -349,6 +421,126 @@
 }
 .apexcharts-legend-text {
   font-size: 18px !important;
+}
+
+.input-wrapper {
+  /* width: 656px; */
+  width: 100%;
+  height: var(--height-small);
+  min-width: 320px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  position: relative;
+}
+
+/* Campo de texto */
+.input-text {
+  min-width: 320px;
+  width: 100%;
+  height: var(--height-small);
+  padding: var(--spacing-xs);
+  border: none;
+  border-radius: var(--border-radius-sm);
+  background: var(--secondary-bg);
+  color: var(--text-primary);
+  font-size: var(--font-medium);
+}
+
+.input-text::placeholder {
+  color: var(--placeholder-text);
+}
+
+.projeto-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  width: 86px;
+  height: 29px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.projeto-status.estavel {
+  background: var(--semantic-colors-success-10, #0FF56F1A);
+  color: #0FF56F;
+}
+
+.projeto-status.critico {
+  background: var(--semantic-colors-error-10, #E75D5524);
+  color: #E75D55;
+}
+
+.projeto-status.instavel {
+  background: var(--semantic-colors-warning-10, #FFAA0033);
+  color: #FFAA00;
+}
+
+.linha {
+  display: flex;
+  justify-content: space-between;
+  height: 35px;
+  border-bottom: 1px solid rgba(173, 200, 235, 0.14);
+}
+
+/* Global */
+.tabela-container {
+  padding: 1rem;
+  width: 100%;
+  max-width: 1920px;
+}
+
+.tabela-container--centralizada {
+  margin: 0 auto;
+}
+
+.tabela-tarefas {
+  width: 100%;
+  border-collapse: separate;
+  background-color: #223348;
+  border-spacing: 0;
+  border-radius: 7px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tabela-tarefas--largura-minima {
+  min-width: 600px;
+}
+
+.tabela-tarefas th,
+.tabela-tarefas td {
+  padding: 10px;
+  text-align: inherit;
+}
+
+.tabela-tarefas th {
+  color: #EBF4FFE5;
+  font-weight: var(--font-weight-bold) !important;
+  font-size: var(--font-small);
+}
+
+.tabela-tarefas tr {
+  position: relative;
+}
+
+.tabela-tarefas tr:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.tabela-tarefas td {
+  color: #EBF4FFE5;
+  font-size: var(--font-normal);
+  font-weight: var(--font-weight-light);
+  border-bottom: none;
 }
 
 /* Reset básico */
