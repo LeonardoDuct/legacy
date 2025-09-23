@@ -1,48 +1,11 @@
 /* Bloco de Tecnologia */
 .bloco-tecnologia {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  width: auto;
   min-width: 720px;
-  height: 148px;
-  padding: var(--spacing-lg);
-  color: var(--text-primary);
-  border-right: 1px solid var(--border-contrast);
-  border-bottom: 1px solid var(--border-contrast);
 }
 
 /* ====================== */
 /* BLOCO FILTRO */
 /* ====================== */
-
-.input-wrapper {
-  width: 100%;
-  height: var(--height-small);
-  min-width: 320px;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  position: relative;
-}
-
-/* Campo de texto */
-.input-text {
-  width: 100%;
-  min-width: 596px;
-  height: var(--height-small);
-  padding: var(--spacing-xs);
-  border: none;
-  border-radius: var(--border-radius-sm);
-  background: var(--secondary-bg);
-  color: var(--text-primary);
-  font-size: var(--font-medium);
-}
-
-.input-text::placeholder {
-  color: var(--placeholder-text);
-}
 
 .cadastro-page {
   display: flex;
@@ -211,108 +174,14 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  /* Garantindo que esteja acima dos outros elementos */
 }
 
-.tabela-container {
-  padding: 1rem;
-  width: 100%;
-  max-width: 1920px;
-  /* Ajuste para um tamanho maior */
-}
-
-.tabela-tarefas {
-  width: 100%;
-  min-width: 600px;
-  /* Define um tamanho mínimo */
-  border-collapse: separate;
-  /* Use separate para suportar bordas arredondadas */
-  background-color: #223348;
-  border-spacing: 0;
-  /* Garante que não haja espaçamento entre células */
-  border-radius: 7px;
-  /* Adiciona bordas arredondadas */
-  overflow: hidden;
-  /* Garante que o arredondamento seja aplicado */
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  /* Contorno externo da tabela */
-}
-
-.tabela-tarefas th,
-.tabela-tarefas td {
-  padding: 10px;
-  text-align: inherit;
-}
-
-/* Cabeçalho da tabela */
-.tabela-tarefas th {
-  color: #EBF4FFE5;
-  font-weight: var(--font-weight-bold) !important;
-  /* Font weight 600 para o título */
-  font-size: var(--font-small);
-}
-
-/* Linhas da tabela */
-.tabela-tarefas tr {
-  position: relative;
-  /* Necessário para posicionar o pseudo-elemento */
-}
-
-.tabela-tarefas tr:after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  /* Alinha no final da linha */
-  left: 10px;
-  /* Define o início da linha */
-  right: 10px;
-  /* Define o final da linha antes da borda */
-  height: 1px;
-  background-color: rgba(255, 255, 255, 0.2);
-  /* Cor da linha */
-}
-
-.tabela-tarefas td {
-  color: #EBF4FFE5;
-  font-size: var(--font-normal) !important;
-  font-weight: var(--font-weight-light) !important;
-  border-bottom: none;
-  /* Remove a borda padrão entre as células */
-}
-
-/* Estilo base para todos os botões */
-.btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-xs);
-  font-size: var(--font-normal);
-  padding: var(--spacing-xs);
-  border: none;
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  transition: transform var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
-}
-
-.btn:hover {
-  transform: scale(1.03);
-}
-
-.btn:active {
-  color: var(--text-primary);
-}
-
-.btn:disabled {
-  background: rgba(12, 108, 233, 0.5);
-  cursor: not-allowed;
-}
 
 /* Estilo específico para o botão de cadastro */
 .btn-cadastro {
   width: 169px;
   height: var(--field-height, 40px);
   margin-left: auto;
-  /* Alinha o botão à direita */
   padding: 8px var(--button-horizontal-padding, 16px);
   background: var(--Semantic-colors-Primary, #0C6CE9);
   color: white;

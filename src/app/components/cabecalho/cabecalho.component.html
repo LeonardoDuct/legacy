@@ -1,16 +1,17 @@
 <nav class="Navigation_sidebar" [class.open]="isMenuOpen">
-    <h3 class="app-title">Menu</h3>
+    <div class="sidebar-header">
+        <span class="app-title">Menu</span>
+        <button class="close-btn" (click)="toggleMenu()" aria-label="Fechar menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18" stroke-linecap="round" />
+                <line x1="6" y1="6" x2="18" y2="18" stroke-linecap="round" />
+            </svg>
+        </button>
+    </div>
     <ul class="menu">
         <!-- Dashboard -->
         <li class="menu-item">
             <div class="menu-header" (click)="toggleSubMenu('dashboard')">
-                <span class="icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
-                    </svg>
-                </span>
                 <span>Dashboard</span>
                 <span class="arrow" [class.rotated]="subMenuStates['dashboard']">
                     <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -18,23 +19,44 @@
                     </svg>
                 </span>
             </div>
-            <ul class="submenu" *ngIf="subMenuStates['dashboard']">
-                <li><a [routerLink]="['/dashboard']">Tarefas</a></li>
-                <li><a [routerLink]="['/relatorios']">Relatórios</a></li>
-                <li><a [routerLink]="['/projetosInternos']">Projetos Internos</a></li>
-            </ul>
+            <div class="submenu" *ngIf="subMenuStates['dashboard']">
+                <a [routerLink]="['/dashboard']">
+                    <span class="icon">
+                        <!-- SVG para Tarefas -->
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                    Tarefas
+                </a>
+                <a [routerLink]="['/relatorios']">
+                    <span class="icon">
+                        <!-- SVG para Relatórios -->
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M3 17v-7M9 17V6M15 17v-4M21 17V3" stroke-linecap="round" />
+                        </svg>
+                    </span>
+                    Relatórios
+                </a>
+                <a [routerLink]="['/projetosInternos']">
+                    <span class="icon">
+                        <!-- SVG para Projetos Internos -->
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="6" height="6" rx="1" />
+                            <rect x="3" y="11" width="6" height="6" rx="1" />
+                            <rect x="11" y="3" width="6" height="6" rx="1" />
+                            <rect x="11" y="11" width="6" height="6" rx="1" />
+                        </svg>
+                    </span>
+                    Projetos Internos
+                </a>
+            </div>
         </li>
 
         <!-- Cadastro -->
         <li class="menu-item">
             <div class="menu-header" (click)="toggleSubMenu('cadastro')">
-                <span class="icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                    </svg>
-                </span>
                 <span>Cadastro</span>
                 <span class="arrow" [class.rotated]="subMenuStates['cadastro']">
                     <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -42,22 +64,26 @@
                     </svg>
                 </span>
             </div>
-            <ul class="submenu" *ngIf="subMenuStates['cadastro']">
-                <li><a [routerLink]="['/cadastro']">Score</a></li>
-            </ul>
+            <div class="submenu" *ngIf="subMenuStates['cadastro']">
+                <a [routerLink]="['/cadastro']">
+                    <span class="icon">
+                        <!-- Ícone de gráfico/score para Score -->
+                        <span class="icon">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                                <rect x="3" y="12" width="3" height="7" rx="1" />
+                                <rect x="9" y="7" width="3" height="12" rx="1" />
+                                <rect x="15" y="4" width="3" height="15" rx="1" />
+                            </svg>
+                        </span>
+                    </span>
+                    Score
+                </a>
+            </div>
         </li>
 
         <!-- Configurações -->
         <li class="menu-item">
             <div class="menu-header" (click)="toggleSubMenu('configuracoes')">
-                <span class="icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                    </svg>
-                </span>
                 <span>Configurações</span>
                 <span class="arrow" [class.rotated]="subMenuStates['configuracoes']">
                     <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -65,11 +91,18 @@
                     </svg>
                 </span>
             </div>
-            <ul class="submenu" *ngIf="subMenuStates['configuracoes']">
-                <li class="submenu-item">
-                    <a [routerLink]="['/usuarios']">Usuários</a>
-                </li>
-            </ul>
+            <div class="submenu" *ngIf="subMenuStates['configuracoes']">
+                <a [routerLink]="['/usuarios']">
+                    <span class="icon">
+                        <!-- SVG de usuário -->
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <circle cx="12" cy="8" r="4" />
+                            <path d="M4 20c0-2.9 4-4.5 8-4.5s8 1.6 8 4.5" />
+                        </svg>
+                    </span>
+                    Usuários
+                </a>
+            </div>
         </li>
     </ul>
 </nav>

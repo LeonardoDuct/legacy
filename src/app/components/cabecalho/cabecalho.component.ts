@@ -13,6 +13,7 @@ import { GitlabService } from '../../services/gitlab.service';
 export class CabecalhoComponent implements OnInit {
   isMenuOpen = false;
   subMenuStates: { [key: string]: boolean } = {
+    dashboard: true,
     cadastro: true,
     configuracoes: true,
   };

@@ -151,17 +151,30 @@ td {
 
 .header {
     display: flex;
-    flex-wrap: wrap;
-
     background: #223348;
 }
 
+@media (max-width: 1024px) {
+    .header {
+        flex-direction: column;
+    }
+}
+
 .header--sub {
-    flex: 1 40rem;
+    flex: 1;
     display: flex;
 }
 
+body {
+    overflow-x: hidden;
+}
+
 /* LAYOUT page components: .kanban */
+
+.kanban {
+    width: 100%;
+    overflow-x: auto;
+}
 
 .kanban--body {
     display: flex;
@@ -174,7 +187,6 @@ td {
     height: fit-content;
     display: flex;
     flex-direction: column;
-
     background: #223348;
     border: 1px solid #b4cdee3d;
     border-radius: 0.5rem;
@@ -185,6 +197,8 @@ td {
     flex-direction: column;
     padding: 1rem;
     gap: 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: #d4d4d4e0 #223348;
 }
 
 .kanban--card {
@@ -192,7 +206,6 @@ td {
     flex-direction: column;
     padding: 1rem;
     gap: 1rem;
-
     background: #2b3d52;
     border-radius: 0.5rem;
 }
@@ -494,17 +507,16 @@ td {
 
 .group--title {
     flex: 1;
-    min-height: 7.5rem;
     display: flex;
     align-items: center;
     padding: 2rem;
     gap: 2rem;
+    border-bottom: 1px solid #adc8eB24;
+}
 
-    &.size-s {
-        min-height: 0;
-        padding: 1rem;
-        gap: 0.5rem;
-    }
+.group--title.size-s {
+    padding: 1rem;
+    gap: 0.5rem;
 }
 
 /* LAYOUT div borders */

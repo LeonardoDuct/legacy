@@ -1,198 +1,194 @@
-<section class="kickoff-fluxo">
-    <app-cabecalho></app-cabecalho>
+<app-cabecalho></app-cabecalho>
 
-    <section class="header-bottom">
-        <article class="bloco-tecnologia">
-            <div class="conteudo">
-                <div class="topo-bloco">
-                    <app-voltar (voltar)="voltar()"></app-voltar>
-                    <div class="info-projeto">
-                        <span class="breadcrumb">Dashboard / Kickoff</span>
-                        <div class="linha-titulo">
-                            <h2 class="titulo">Fluxo de IS</h2>
+<div class="header">
+  <div class="header--sub">
+    <div class="group--title">
+      <div class="title">
+        <div class="title--sub">
+          <p class="tertiary">Dashboard / Tarefas / Projetos / #4</p>
+          <h3>JAL - Sistema de priorização de tarefas</h3>
+        </div>
+        <div class="group">
+          <div class="badge"><p>Em andamento</p></div>
+          <div class="badge success"><p>15.5</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="header--sub" id="highlight_change">
+    <div class="group--highlight" id="highlight_geral" [class.hide]="abaSelecionada !== 'geral'">
+      <div class="highlight border-left--add" *ngFor="let h of highlightsGeral">
+        <div class="highlight--data">
+          <div class="highlight--data--sub">
+            <svg *ngIf="h.label === 'Ligadas'" class="icon icone-link w-4 h-4 text-[#D1E3FA94]">
+              <use href="#icone-link"></use>
+            </svg>
+            <svg *ngIf="h.label === 'Concluídas'" class="icon">
+              <use xlink:href="#icon-check-circle"></use>
+            </svg>
+            <h6>{{h.label}}</h6>
+          </div>
+          <h1>{{h.value}}</h1>
+        </div>
+        <div class="highlight--label" [ngClass]="h.type"></div>
+      </div>
+    </div>
+    <div class="group--highlight" id="highlight_eventos" [class.hide]="abaSelecionada !== 'eventos'">
+      <div class="highlight border-left--add" *ngFor="let h of highlightsEventos">
+        <div class="highlight--data">
+          <div class="highlight--data--sub">
+            <svg *ngIf="h.label === 'Em andamento'" class="icon">
+              <use xlink:href="#icon-clock"></use>
+            </svg>
+            <svg *ngIf="h.label === 'Aguardando'" class="icon">
+              <use xlink:href="#icon-pause-circle"></use>
+            </svg>
+            <h6>{{h.label}}</h6>
+          </div>
+        <h1 [title]="convertHorasToDiasHoras(h.value)">
+            {{h.value}}
+        </h1>
+        </div>
+        <div class="highlight--label" [ngClass]="h.type"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tabsheet" id="tabsheet_bar">
+  <button
+    *ngFor="let tab of tabs"
+    class="tabsheet--button"
+    [class.active]="abaSelecionada === tab.value"
+    (click)="abaSelecionada = tab.value">
+    <div class="tabsheet--title">
+      <p>{{tab.label}}</p>
+    </div>
+    <div class="tabsheet--label"></div>
+  </button>
+</div>
+
+<!-- Kanban Geral -->
+<div class="kanban--content tabsheet--body kanban--content--geral" *ngIf="abaSelecionada === 'geral'">
+  <div class="kanban--column" *ngFor="let col of kanbanGeral">
+    <div class="group--title size-s">
+      <div class="title">
+        <h4>{{col.nome}}</h4>
+        <div class="badge" [ngClass]="col.status.type"><p>{{col.status.label}}</p></div>
+      </div>
+    </div>
+    <div class="kanban--column--body">
+      <div class="kanban--card" *ngFor="let card of col.cards">
+        <p class="tertiary">{{card.id}}</p>
+        <h4>{{card.titulo}}</h4>
+        <div class="group" *ngIf="card.owner">
+          <img class="avatar" [src]="card.avatar" alt="Ícone de avatar" />
+          <p>{{card.owner}}</p>
+        </div>
+        <p class="tertiary" *ngIf="card.descricao">{{card.descricao}}</p>
+        <p class="tertiary" *ngIf="card.expectativa">{{card.expectativa}}</p>
+        <div class="group">
+          <ng-container *ngIf="card.badges && card.badges.length; else badgeDefault">
+            <div class="badge" *ngFor="let b of card.badges" [ngClass]="b.type"><p>{{b.label}}</p></div>
+          </ng-container>
+          <ng-template #badgeDefault>
+            <div class="badge" [ngClass]="card.status.type"><p>{{card.status.label}}</p></div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Kanban Eventos -->
+<div class="kanban--content tabsheet--body kanban--content--eventos" *ngIf="abaSelecionada === 'eventos'">
+    <div class="kanban--column" *ngFor="let col of kanbanEventos">
+        <div class="group--title size-s">
+            <div class="title">
+                <h4>{{col.nome}}</h4>
+                <div class="badge" [ngClass]="col.status.type">
+                    <p>{{col.status.label}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="group--highlight" *ngIf="col.highlights">
+            <div class="highlight size-s" *ngFor="let h of col.highlights">
+                <div class="highlight--data">
+                    <svg *ngIf="h.label === 'Em andamento'" class="icon">
+                        <use xlink:href="#icon-clock"></use>
+                    </svg>
+                    <svg *ngIf="h.label === 'Aguardando'" class="icon">
+                        <use xlink:href="#icon-pause-circle"></use>
+                    </svg>
+                    <h4 [title]="convertHorasToDiasHoras(h.value)">
+                        {{h.value}}
+                    </h4>
+                </div>
+                <div class="highlight--label" [ngClass]="h.type"></div>
+            </div>
+        </div>
+        <div class="kanban--column--body">
+            <ng-container *ngFor="let card of col.cards">
+                <!-- Headerzinho centralizado, ícone colado ao lado da hora -->
+                <div class="kanban--card-header" *ngIf="card.score && card.id">
+                    <span class="card-header-id">{{card.id}}</span>
+                    <span style="display: flex; align-items: center; margin-left: 10px; gap: 4px;">
+                        <svg width="16" height="16" class="card-header-icon">
+                            <use xlink:href="#icon-circle-minus"></use>
+                        </svg>
+                        <span class="card-header-score">{{card.score}}</span>
+                    </span>
+                </div>
+                <!-- Cards normais -->
+                <div class="kanban--card" *ngIf="!card.score || !card.id">
+                    <div class="card-info-custom">
+                        <div class="badge" [ngClass]="card.status.type" *ngIf="card.status.label">
+                            <p>{{card.status.label}}</p>
                         </div>
+                        <div class="group" *ngIf="card.badges && card.badges.length">
+                            <svg class="icon" height="40" *ngIf="card.status.label === 'Em andamento'">
+                                <use xlink:href="#icon-clock"></use>
+                            </svg>
+                            <svg class="icon" height="40"
+                                *ngIf="card.status.label === 'Aguardando Cliente' || card.status.label === 'Aguardando Projetos' || card.status.label === 'Aguardando Produtos'">
+                                <use xlink:href="#icon-pause-circle"></use>
+                            </svg>
+                            <p *ngIf="card.badges[0]?.label">{{card.badges[0].label}}</p>
+                        </div>
+                        <p class="tertiary">{{card.descricao}}</p>
                     </div>
                 </div>
-            </div>
-        </article>
-
-        <article class="bloco-indicadores">
-            <div class="pendente">
-                <div class="icon">
-                    <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <use href="#icone-pendente"></use>
-                    </svg>
-                </div>
-                <div class="texto-numero">
-                    <div class="texto">Pendentes</div>
-                </div>
-            </div>
-
-            <div class="atrasadas">
-                <div class="icon">
-                    <svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <use href="#icone-atrasadas"></use>
-                    </svg>
-                </div>
-                <div class="texto-numero">
-                    <div class="texto">Atrasadas</div>
-
-                </div>
-            </div>
-
-            <div class="aguardando-setor">
-                <div class="icon">
-                    <svg class="size-6" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="16"
-                        style="width: 22px; height: 22px;">
-                        <use href="#icone-aguardando"></use>
-                    </svg>
-                </div>
-                <div class="texto-numero">
-                    <div class="texto">Aguardando</div>
-
-                </div>
-
-            </div>
-            <div class="divider div1"></div>
-            <div class="divider div2"></div>
-
-        </article>
-
-        <aside class="bloco-filtro">
-            <div class="filtro-container">
-                <div class="dropdown-wrapper">
-                    <select id="tipo-filtro" class="dropdown" [(ngModel)]="filtroColuna"
-                        (change)="onFiltroColunaChange($event)">
-                        <option value="" disabled selected>Selecione uma coluna</option>
-                        <option value="kickoff">Kickoff</option>
-                        <option value="abert_kickoff">Abert x Kickoff</option>
-                        <option value="abert_analise">Abert Análise</option>
-                        <option value="kickoff_analise">Kickoff x Análise</option>
-                        <option value="abert_dev">Abert DEV</option>
-                        <option value="analise_dev">Análise x DEV</option>
-                        <option value="abert_qa">Abert QA</option>
-                        <option value="dev_qa">DEV x QA</option>
-                        <option value="em_prod">Em Prod</option>
-                        <option value="qa_prod">QA x Prod</option>
-                        <option value="total_dias">Total Dias</option>
-                    </select>
-                </div>
-                <div class="input-wrapper">
-                    <input type="text" id="filtro-descricao" class="input-text" placeholder="Digite o filtro"
-                        [(ngModel)]="filtroValor" />
-                    <button class="btn btn-search" type="button">
-                        <svg class="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <use href="#icone-lupa"></use>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </aside>
-    </section>
-
-    <section class="tabela-container">
-        <div class="tabela-scroll">
-            <table class="tabela-fluxo">
-                <thead>
-                    <tr>
-                        <th class="col-is">IS</th>
-                        <th class="col-kickoff">Kickoff</th>
-                        <th class="col-abert-analise">Abert Análise</th>
-                        <th class="col-abert-dev">Abert DEV</th>
-                        <th class="col-abert-qa">Abert QA</th>
-                        <th class="col-prod">Prod</th>
-                        <th class="col-total-dias">Total dias</th>
-                        <th class="col-acoes">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let is of isListFiltrada">
-                        <td class="col-is">{{ is.nome }}</td>
-                        <!-- Kickoff -->
-                        <td class="col-kickoff cell-tooltip">
-                            {{ is.kickOffDate | date: 'dd/MM/yyyy HH:mm' }}
-                            <div class="tooltip-content">
-                                <div>
-                                    <strong>Abertura Sustentação x Kickoff:</strong>
-                                    {{ calcularDias(is.kickOffDate, is.setores.analise.entrada) }} dias
-                                </div>
-                                <div>
-                                    <strong>Interações (comentários/reunião Kickoff):</strong>
-                                    {{ getInteracoes(is, 'analise') }}
-                                </div>
-                            </div>
-                        </td>
-                        <!-- Abert Análise -->
-                        <td class="col-abert-analise cell-tooltip">
-                            {{ is.setores.analise.entrada | date:'dd/MM/yyyy HH:mm' }}
-                            <div class="tooltip-content">
-                                <div>
-                                    <strong>Desde Kickoff até abert Análise:</strong>
-                                    {{ calcularDias(is.kickOffDate, is.setores.analise.entrada) }} dias
-                                </div>
-                                <div>
-                                    <strong>Interações (da Sustentação p/ Análise):</strong>
-                                    {{ getInteracoes(is, 'analise') }}
-                                </div>
-                            </div>
-                        </td>
-                        <!-- Abert DEV -->
-                        <td class="col-abert-dev cell-tooltip">
-                            {{ is.setores.dev.entrada | date:'dd/MM/yyyy HH:mm' }}
-                            <div class="tooltip-content">
-                                <div>
-                                    <strong>Desde Abert Análise até abert DEV:</strong>
-                                    {{ calcularDias(is.setores.analise.saida, is.setores.dev.entrada) }} dias
-                                </div>
-                                <div>
-                                    <strong>Interações (da Análise para DEV):</strong>
-                                    {{ getInteracoes(is, 'dev') }}
-                                </div>
-                            </div>
-                        </td>
-                        <!-- Abert QA -->
-                        <td class="col-abert-qa cell-tooltip">
-                            {{ is.setores.qa.entrada | date:'dd/MM/yyyy HH:mm' }}
-                            <div class="tooltip-content">
-                                <div>
-                                    <strong>Desde abert DEV até disponível para QA Homolog:</strong>
-                                    {{ calcularDias(is.setores.dev.saida, is.setores.qa.entrada) }} dias
-                                </div>
-                                <div>
-                                    <strong>Interações (de volta para DEV após QA):</strong>
-                                    {{ getInteracoes(is, 'qa') }}
-                                </div>
-                            </div>
-                        </td>
-                        <!-- Prod -->
-                        <td class="col-prod cell-tooltip">
-                            {{ is.setores.prod.entrada | date:'dd/MM/yyyy HH:mm' }}
-                            <div class="tooltip-content">
-                                <div>
-                                    <strong>Desde que aberto em QA até subida em Prod:</strong>
-                                    {{ calcularDias(is.setores.qa.saida, is.setores.prod.entrada) }} dias
-                                </div>
-                                <div>
-                                    <strong>Interações (de volta para QA para Infra/Prod):</strong>
-                                    {{ getInteracoes(is, 'prod') }}
-                                </div>
-                            </div>
-                        </td>
-                        <!-- Total dias -->
-                        <td class="col-total-dias cell-tooltip">
-                            {{ calcularTotalDias(is) }} dias
-                            <div class="tooltip-content">
-                                <strong>Total de interações (soma de todas interações):</strong>
-                                {{ getTotalInteracoes(is) }}
-                            </div>
-                        </td>
-                        <!-- AÇÕES -->
-                        <td class="col-acoes">
-                            <button class="btn btn-detalhes" type="button" (click)="abrirDetalhe(is)">Detalhes</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            </ng-container>
         </div>
-    </section>
-</section>
+    </div>
+</div>
+
+<!-- Popover com Score -->
+<div class="popover">
+  <table>
+    <tr>
+      <th>Categoria</th>
+      <th class="right">Peso</th>
+      <th class="column--div">Classificação</th>
+      <th class="right">Score</th>
+      <th class="right column--div">Score sub-total</th>
+    </tr>
+    <tr *ngFor="let linha of popoverScore">
+      <td>{{linha.categoria}}</td>
+      <td class="right">{{linha.peso}}</td>
+      <td class="column--div">
+        <div class="badge"><p>{{linha.classificacao}}</p></div>
+      </td>
+      <td>
+        <div class="group right">
+          <div class="badge" [ngClass]="linha.type"><p>{{linha.score}}</p></div>
+        </div>
+      </td>
+      <td class="column--div">
+        <div class="group right">
+          <div class="badge" [ngClass]="linha.type"><p>{{linha.subTotal}}</p></div>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
