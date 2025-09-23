@@ -3,17 +3,46 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { CommonModule } from '@angular/common';
-import { VoltarComponent } from 'src/app/shared/utils/components/voltar/voltar.component';
 
-// Modelo de dados com datas de entrada/saída por setor
-interface FluxoSetor {
-  entrada: string | null; // Data de entrada (ISO)
-  saida: string | null;   // Data de saída (ISO)
+// Modelos extras para a estrutura do Kanban
+export interface Badge {
+  label: string;
+  type?: 'success' | 'warning' | 'error' | '';
 }
 
+export interface KanbanCard {
+  id: string;
+  titulo: string;
+  owner: string;
+  avatar: string;
+  status: Badge;
+  descricao?: string;
+  badges?: Badge[];
+  score?: number | string;
+  expectativa?: string;
+}
+
+export interface KanbanColumn {
+  nome: string;
+  status: Badge;
+  cards: KanbanCard[];
+  highlights?: Highlight[];
+}
+
+export interface Highlight {
+  label: string;
+  value: string | number;
+  type?: 'success' | 'warning' | 'error' | '';
+}
+
+// Modelo de dados com datas de entrada/saída por setor (mantido para suas IS)
+interface FluxoSetor {
+  entrada: string | null;
+  saida: string | null;
+}
 interface FluxoIS {
   nome: string;
-  kickOffDate: string; // Data da reunião de Kickoff (ISO)
+  kickOffDate: string;
   setores: {
     analise: FluxoSetor;
     dev: FluxoSetor;
@@ -30,11 +59,246 @@ interface FluxoIS {
 @Component({
   selector: 'app-fluxos',
   standalone: true,
-  imports: [CabecalhoComponent, FormsModule, RouterModule, CommonModule, VoltarComponent],
+  imports: [CabecalhoComponent, FormsModule, RouterModule, CommonModule],
   templateUrl: './fluxos.component.html',
   styleUrls: ['./fluxos.component.css']
 })
 export class FluxosComponent {
+  // Tabs
+  tabs: Array<{ value: 'geral' | 'eventos'; label: string }> = [
+    { value: 'geral', label: 'Geral' },
+    { value: 'eventos', label: 'Eventos' }
+  ];
+  abaSelecionada: 'geral' | 'eventos' = 'geral';
+
+  // Highlights das abas
+  highlightsGeral: Highlight[] = [
+    { label: 'Ligadas', value: 7 },
+    { label: 'Concluídas', value: 3, type: 'success' }
+  ];
+  highlightsEventos: Highlight[] = [
+    { label: 'Em andamento', value: '112h' },
+    { label: 'Aguardando', value: '104h', type: 'error' }
+  ];
+
+  // Kanban Geral
+  kanbanGeral: KanbanColumn[] = [
+    {
+      nome: 'Projetos',
+      status: { label: 'Liberado', type: 'success' },
+      cards: [
+        {
+          id: '#4',
+          titulo: 'JAL - Sistema de priorização de tarefas',
+          owner: 'Matheus Petruka',
+          avatar: 'assets/images/icon_primary_text/default.svg',
+          status: { label: 'Liberado', type: 'success' },
+          descricao: 'Sem expectativa de conclusão'
+        }
+      ]
+    },
+    {
+      nome: 'Análise',
+      status: { label: 'Concluído', type: 'success' },
+      cards: [
+        {
+          id: '#1442',
+          titulo: 'JAL - Sistema de priorização de tarefas: API para coleta de dados via Git',
+          owner: 'Wrayan Bontorin',
+          avatar: 'assets/images/icon_primary_text/default.svg',
+          status: { label: 'Concluído', type: 'success' },
+          descricao: 'Concluído em 02/05/2025'
+        },
+        {
+          id: '#1444',
+          titulo: 'JAL - Sistema de priorização de tarefas: estruturação de banco de dados',
+          owner: 'Wrayan Bontorin',
+          avatar: 'assets/images/icon_primary_text/default.svg',
+          status: { label: 'Concluído', type: 'success' },
+          descricao: 'Concluído em 10/05/2025'
+        }
+      ]
+    },
+    {
+      nome: 'Produtos',
+      status: { label: 'Em andamento', type: '' },
+      cards: [
+        {
+          id: '#3',
+          titulo: 'JAL - Sistema de priorização de tarefas: tela de dashboard',
+          owner: 'Lucas Bueno',
+          avatar: 'assets/images/icon_primary_text/default.svg',
+          status: { label: 'Concluído', type: 'success' },
+          descricao: 'Concluído em 20/04/2025'
+        },
+        {
+          id: '#4',
+          titulo: 'JAL - Sistema de priorização de tarefas: telas de priorização e cadastro',
+          owner: 'Lucas Bueno',
+          avatar: 'assets/images/icon_primary_text/default.svg',
+          status: { label: 'Em andamento', type: '' },
+          expectativa: 'Expectativa de conclusão em 06/05/2025',
+          badges: [
+            { label: 'Em andamento', type: '' },
+            { label: '79.0', type: 'error' }
+          ]
+        },
+        {
+          id: '#5',
+          titulo: 'JAL - Sistema de priorização de tarefas: tela de tarefas relacionadas',
+          owner: 'Lucas Bueno',
+          avatar: 'assets/images/icon_primary_text/default.svg',
+          status: { label: 'Em andamento', type: '' },
+          expectativa: 'Expectativa de conclusão em 10/05/2025',
+          badges: [
+            { label: 'Em andamento', type: '' },
+            { label: '9.0', type: 'success' }
+          ]
+        }
+      ]
+    },
+    {
+      nome: 'Desenvolvimento',
+      status: { label: 'Em andamento', type: '' },
+      cards: [
+        {
+          id: '#4903',
+          titulo: 'JAL - Sistema de priorização de tarefas: desenvolvimento e integração com banco de dados',
+          owner: 'Leonardo Campos',
+          avatar: 'assets/images/icon_primary_text/default.svg',
+          status: { label: 'Em andamento', type: '' },
+          expectativa: 'Expectativa de conclusão em 30/05/2025',
+          badges: [
+            { label: 'Em andamento', type: '' },
+            { label: '57.5', type: 'warning' }
+          ]
+        }
+      ]
+    },
+    {
+      nome: 'QA',
+      status: { label: '-', type: '' },
+      cards: [
+        {
+          id: '#860',
+          titulo: 'JAL - Sistema de priorização de tarefas',
+          owner: 'Jeniffer Marcondes',
+          avatar: 'assets/images/icon_primary_text/default.svg',
+          status: { label: '-', type: '' },
+          descricao: 'Sem expectativa de conclusão'
+        }
+      ]
+    }
+  ];
+
+  // Kanban Eventos (resumido, preencha mais se precisar)
+  kanbanEventos: KanbanColumn[] = [
+    {
+      nome: 'Projetos',
+      status: { label: 'Liberado', type: 'success' },
+      highlights: [
+        { label: 'Em andamento', value: '25h' },
+        { label: 'Aguardando', value: '81h', type: 'error' }
+      ],
+      cards: [
+        { id: '#4', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, score: '15h', descricao: '' },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, score: '4h', descricao: '10/09/2025 - 10/09/2025' },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Liberado', type: 'success' }, descricao: '10/09/2025' },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, descricao: '10/09/2025 - 10/09/2025', badges: [{ label: '19min' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Aguardando Cliente', type: 'error' }, descricao: '10/09/2025 - 12/09/2025', badges: [{ label: '18h' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, descricao: '12/09/2025 - 14/09/2025', badges: [{ label: '20h' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Liberado', type: 'success' }, descricao: '14/09/2025' },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, descricao: '14/09/2025 - 14/09/2025', badges: [{ label: '1h' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Liberado', type: 'success' }, descricao: '14/09/2025' }
+      ]
+    },
+    {
+      nome: 'Análise',
+      status: { label: 'Concluído', type: 'success' },
+      highlights: [
+        { label: 'Em andamento', value: '38h' },
+        { label: 'Aguardando', value: '-', type: '' }
+      ],
+      cards: [
+        { id: '#1442', titulo: '', owner: '', avatar: '', status: { label: '', type: '' }, score: '2h', descricao: '' },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, descricao: '10/09/2025 - 12/09/2025', badges: [{ label: '15h' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Concluído', type: 'success' }, descricao: '12/09/2025' },
+        { id: '#1444', titulo: '', owner: '', avatar: '', status: { label: '', type: '' }, score: '7h', descricao: '' },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, descricao: '10/09/2025 - 10/09/2025', badges: [{ label: '36min' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Aguardando Projetos', type: 'error' }, descricao: '10/09/2025 - 14/09/2025', badges: [{ label: '39h' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, descricao: '14/09/2025 - 14/09/2025', badges: [{ label: '5h' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Aguardando Projetos', type: 'error' }, descricao: '14/09/2025 - 14/09/2025', badges: [{ label: '1h' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, descricao: '14/09/2025', badges: [{ label: '18h' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Concluído', type: 'success' }, descricao: '14/09/2025' }
+      ]
+    },
+    {
+      nome: 'Produtos',
+      status: { label: 'Em andamento', type: '' },
+      highlights: [
+        { label: 'Em andamento', value: '11h' },
+        { label: 'Aguardando', value: '5h', type: 'error' }
+      ],
+      cards: [
+        { id: '#3', titulo: '', owner: '', avatar: '', status: { label: '', type: '' }, score: '16h', descricao: '' },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, descricao: '10/09/2025 - 12/09/2025', badges: [{ label: '7h' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Concluído', type: 'success' }, descricao: '12/09/2025' },
+        { id: '#4', titulo: '', owner: '', avatar: '', status: { label: '', type: '' }, score: '20min', descricao: '' },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, descricao: '11/09/2025', badges: [{ label: '3h' }] },
+        { id: '#5', titulo: '', owner: '', avatar: '', status: { label: '', type: '' }, score: '4h', descricao: '' },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, descricao: '10/09/2025', badges: [{ label: '1h' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Aguardando Projetos', type: 'error' }, descricao: '10/09/2025', badges: [{ label: '41h' }] }
+      ]
+    },
+    {
+      nome: 'Desenvolvimento',
+      status: { label: 'Em andamento', type: '' },
+      highlights: [
+        { label: 'Em andamento', value: '20h' },
+        { label: 'Aguardando', value: '-', type: '' }
+      ],
+      cards: [
+        { id: '#4903', titulo: '', owner: '', avatar: '', status: { label: '', type: '' }, score: '26h', descricao: '' },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, descricao: '10/09/2025 - 13/09/2025', badges: [{ label: '20h' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Aguardando Produtos', type: 'error' }, descricao: '13/09/2025', badges: [{ label: '5h' }] }
+      ]
+    },
+    {
+      nome: 'QA',
+      status: { label: '-', type: '' },
+      highlights: [
+        { label: 'Em andamento', value: '-', type: '' },
+        { label: 'Aguardando', value: '-', type: '' }
+      ],
+      cards: [
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: '', type: '' }, descricao: 'Sem eventos registrados.' }
+      ]
+    },
+    {
+      nome: 'Cliente',
+      status: { label: 'Concluído', type: 'success' },
+      highlights: [
+        { label: 'Em andamento', value: '18h' },
+        { label: 'Aguardando', value: '18h', type: 'error' }
+      ],
+      cards: [
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: '', type: '' }, descricao: 'N/A' },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Em andamento', type: '' }, descricao: '10/09/2025 - 12/09/2025', badges: [{ label: '18h' }] },
+        { id: '', titulo: '', owner: '', avatar: '', status: { label: 'Concluído', type: 'success' }, descricao: '12/09/2025' }
+      ]
+    }
+  ];
+
+  // Dados para o popover (score)
+  popoverScore = [
+    { categoria: 'Cliente', peso: '30%', classificacao: 'JAL', score: 5.0, subTotal: 15.0, type: 'warning' },
+    { categoria: 'Prazo', peso: '30%', classificacao: '06/05/2025', score: 8.0, subTotal: 24.0, type: 'error' },
+    { categoria: 'Urgência', peso: '20%', classificacao: 'Médio', score: 5.0, subTotal: 10.0, type: 'warning' },
+    { categoria: 'Complexidade', peso: '15%', classificacao: 'Baixo', score: 2.5, subTotal: 3.8, type: 'success' },
+    { categoria: 'Impacto', peso: '5%', classificacao: 'Alto', score: 10.0, subTotal: 5.0, type: 'error' }
+  ];
+
+  // ------ SEUS DADOS ORIGINAIS DAS IS ------
   totalKickoff = 0;
   totalEmAndamento = 0;
   totalConcluidas = 0;
@@ -91,26 +355,20 @@ export class FluxosComponent {
     }
   ];
 
-  // Lista filtrada (exibição na tabela)
+  // Métodos utilitários:
   get isListFiltrada(): FluxoIS[] {
     if (!this.filtroColuna || !this.filtroValor) return this.isList;
-    // Permite filtro por nome ou por datas (entrada/saída de setores)
+    const [setor, tipo] = this.filtroColuna.split('.');
     return this.isList.filter((is) => {
       if (this.filtroColuna === 'nome') {
         return is.nome.toLowerCase().includes(this.filtroValor.toLowerCase());
       }
-      // Para setores: analise, dev, qa, prod
-      const [setor, tipo] = this.filtroColuna.split('.');
       if (is.setores[setor as keyof typeof is.setores]) {
         const value = is.setores[setor as keyof typeof is.setores][tipo as keyof FluxoSetor];
         return value && value.toLowerCase().includes(this.filtroValor.toLowerCase());
       }
       return false;
     });
-  }
-
-  voltar() {
-    window.history.back();
   }
 
   onFiltroColunaChange(event: any) {
@@ -121,7 +379,6 @@ export class FluxosComponent {
     alert(`Detalhes de ${is.nome}`);
   }
 
-  // Calcula dias entre duas datas
   calcularDias(entrada: string | null, saida: string | null): number {
     if (!entrada || !saida) return 0;
     const e = new Date(entrada);
@@ -137,6 +394,23 @@ export class FluxosComponent {
       }
     }
     return total;
+  }
+
+  convertHorasToDiasHoras(valor: string | number): string {
+    // Remove o 'h' se existir
+    const horas = typeof valor === 'string' ? Number(valor.replace(/[^0-9.]/g, '')) : Number(valor);
+    if (isNaN(horas) || horas <= 0) return '0 hora';
+
+    const dias = Math.floor(horas / 24);
+    const restoHoras = horas % 24;
+    let resultado = '';
+    if (dias > 0) {
+      resultado = `${dias} dia${dias > 1 ? 's' : ''}`;
+    }
+    if (restoHoras > 0) {
+      resultado += resultado ? ` e ${restoHoras} hora${restoHoras > 1 ? 's' : ''}` : `${restoHoras} hora${restoHoras > 1 ? 's' : ''}`;
+    }
+    return resultado || '0 hora';
   }
 
   getTotalInteracoes(is: FluxoIS): number {

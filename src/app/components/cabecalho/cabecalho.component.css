@@ -153,3 +153,74 @@
     border: none; 
     cursor: pointer; 
   }
+
+  .submenu {
+      display: flex;
+      flex-direction: column;
+      padding-left: 2rem;
+      margin: 0.2rem 0 1rem 0;
+      gap: 0.15rem;
+  }
+
+  .submenu a {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      color: #c6e2fa;
+      padding: 0.4rem 0.2rem;
+      border-radius: 0.2rem;
+      text-decoration: none;
+      font-size: 0.97rem;
+      font-weight: 400;
+      transition: background 0.12s, color 0.12s;
+  }
+
+  .submenu a:hover {
+      background: #223b5a;
+      color: #fff;
+  }
+
+  .submenu .icon {
+      width: 20px;
+      height: 18px;
+      color: #78b9f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+
+  .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 44px;
+      /* para garantir altura uniforme */
+  }
+
+  .app-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.1;
+      display: flex;
+      align-items: center;
+  }
+
+  .close-btn {
+      border: none;
+      background: none;
+      color: #f5f9ff;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      /* Ajuste fino */
+      position: relative;
+      /* ajuste se necessário, tente entre -1px e 2px */
+  }
+
+  .close-btn svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+  }
