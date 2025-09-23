@@ -10,7 +10,7 @@
       </div>
 
       <!-- FORMULÁRIO DE LOGIN -->
-      <form *ngIf="!primeiroAcesso" (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <form *ngIf="!primeiroAcesso && !recuperarSenhaAtivo" (ngSubmit)="onLogin()" #loginForm="ngForm">
         <label>Login</label>
         <input type="text" name="email" placeholder="E-mail ou nome de usuário" [(ngModel)]="email"
           #emailInput="ngModel" required />
@@ -18,11 +18,14 @@
         <label>Senha</label>
         <div class="password-field">
           <input type="password" name="senha" placeholder="Senha" [(ngModel)]="senha" #senhaInput="ngModel" required />
-          <span class="toggle-password">
-          </span>
+          <span class="toggle-password"></span>
         </div>
 
-        <a class="forgot" href="#">Esqueceu suas credenciais?</a>
+        <div *ngIf="erroLogin" class="error-message">
+          {{ erroLogin }}
+        </div>
+
+        <a class="forgot" href="#" (click)="ativarRecuperacao($event)">Esqueceu suas credenciais?</a>
 
         <button type="submit" [disabled]="loginForm.invalid || loading">
           {{ loading ? 'Entrando...' : 'Entrar' }}
@@ -32,6 +35,17 @@
           <img src="assets/images/icon_primary_text/icon_before.svg" alt="Ícone usuário" class="icon icone-usuario" />
           Solicitar acesso
         </button>
+      </form>
+
+      <!-- FORMULÁRIO DE RECUPERAÇÃO DE SENHA -->
+      <form *ngIf="recuperarSenhaAtivo" (ngSubmit)="enviarRecuperacao()" #recuperarForm="ngForm">
+        <label for="rec-email">Digite seu e-mail</label>
+        <input id="rec-email" type="email" [(ngModel)]="emailRecuperacao" name="emailRecuperacao" required />
+
+        <button type="submit">Enviar</button>
+        <button type="button" (click)="cancelarRecuperacao()">Cancelar</button>
+
+        <div *ngIf="mensagemRecuperacao" class="info-message">{{ mensagemRecuperacao }}</div>
       </form>
 
       <!-- FORMULÁRIO DE ALTERAR SENHA (PRIMEIRO ACESSO) -->

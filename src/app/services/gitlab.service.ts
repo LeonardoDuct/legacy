@@ -49,7 +49,6 @@ export class GitlabService {
 
   alterarSenha(novaSenha: string) {
     const token = localStorage.getItem('token');
-    console.log('Token enviado:', token);
     const id = this.obterIdUsuarioDoToken();
   
     if (!id) {

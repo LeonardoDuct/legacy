@@ -3,6 +3,7 @@ import pool from '../config/database';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { handleError, handleNotFound } from '../shared/helpers/errorHandler';
+import { enviarEmail } from '../services/emailService';
 
 export const createUsuario = async (req: Request, res: Response) => {
     const { nome, email, senha, admin, head, iprojetos, adm_categorias, adm_usuarios } = req.body;
@@ -20,6 +21,17 @@ export const createUsuario = async (req: Request, res: Response) => {
             'INSERT INTO usuarios (nome, email, senha_hash, admin, head, iprojetos, adm_categorias, adm_usuarios) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
             [nome, email, senhaHash, !!admin, !!head, !!iprojetos, !!adm_categorias, !!adm_usuarios]
         );
+
+        // Envia email de boas-vindas
+        try {
+            await enviarEmail(
+                email,
+                "Bem-vindo ao Sistema Legacy!",
+                `Olá ${nome},\n\nSeu cadastro foi realizado com sucesso no sistema Legacy.`
+            );
+        } catch (erroEmail) {
+            console.error("Falha ao enviar email de boas-vindas:", erroEmail);
+        }
 
         res.status(201).json({ mensagem: 'Usuário criado com sucesso' });
     } catch (erro) {
@@ -149,6 +161,24 @@ export const resetarSenhaPadrao = async (req: Request, res: Response) => {
             'UPDATE usuarios SET senha_hash = $1, troca_senha = true WHERE id = $2',
             [senhaHash, id]
         );
+
+        // Buscar email e nome do usuário para envio
+        const result = await pool.query('SELECT nome, email FROM usuarios WHERE id = $1', [id]);
+        const usuario = result.rows[0];
+
+        if (usuario) {
+            try {
+                await enviarEmail(
+                    usuario.email,
+                    "Sua senha do Legacy foi resetada",
+                    `Olá ${usuario.nome},\n\nSua senha foi redefinida para o padrão: jallcard. Por favor, acesso o sistema para alterar a senha.`
+                );
+            } catch (erroEmail) {
+                console.error("Falha ao enviar email de reset de senha:", erroEmail);
+                // Não precisa dar erro na resposta, só loga mesmo
+            }
+        }
+
         res.status(200).json({ mensagem: 'Senha resetada para o padrão com sucesso!' });
     } catch (error) {
         handleError(res, error, 'Erro ao resetar senha.');

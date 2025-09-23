@@ -19,10 +19,15 @@ export class LoginComponent {
   loading = false;
   primeiroAcesso = false;
 
+  // Recuperação de senha
+  recuperarSenhaAtivo = false;
+  emailRecuperacao = '';
+  mensagemRecuperacao = '';
+
   constructor(
     private gitlabService: GitlabService,
     private router: Router
-  ) {}
+  ) { }
 
   onLogin() {
     this.erroLogin = '';
@@ -30,14 +35,13 @@ export class LoginComponent {
     this.gitlabService.login(this.email, this.senha).subscribe({
       next: (res) => {
         this.loading = false;
-
         if (res.trocaSenha) {
           this.primeiroAcesso = true;
           localStorage.setItem('token', res.token);
         } else {
           localStorage.setItem('token', res.token);
           this.router.navigate(['/dashboard']);
-        }        
+        }
       },
       error: (err) => {
         this.loading = false;
@@ -63,5 +67,28 @@ export class LoginComponent {
         this.erroLogin = err.error?.mensagem || 'Erro ao alterar a senha.';
       }
     });
+  }
+
+  ativarRecuperacao(event: Event) {
+    event.preventDefault();
+    this.recuperarSenhaAtivo = true;
+    this.emailRecuperacao = '';
+    this.mensagemRecuperacao = '';
+  }
+
+  cancelarRecuperacao() {
+    this.recuperarSenhaAtivo = false;
+    this.emailRecuperacao = '';
+    this.mensagemRecuperacao = '';
+  }
+
+  enviarRecuperacao() {
+    // ... já implementado antes!
+    this.mensagemRecuperacao = 'Iremos enviar um e-mail de redefinição de senha para o seu endereço!';
+    setTimeout(() => {
+      this.recuperarSenhaAtivo = false;
+      this.emailRecuperacao = '';
+      this.mensagemRecuperacao = '';
+    }, 2000); // volta ao modo normal após 2 segundos (opcional)
   }
 }

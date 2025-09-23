@@ -175,6 +175,28 @@
   margin-top: -15px;
 }
 
+.error-message {
+  color: #ff3b3b;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.recuperar-box {
+  margin-top: 20px;
+  background: #222c;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #0002;
+}
+
+.info-message {
+  color: #2e7d32;
+  margin-top: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
 /* Responsividade */
 @media (max-width: 900px) {
   .login-page {
