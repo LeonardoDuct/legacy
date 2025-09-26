@@ -29,7 +29,7 @@ export async function enviarEmail(
     texto: string
 ): Promise<boolean> {
     const mailOptions = {
-        from: `"Sistema Interno" <${process.env.SMTP_USER}>`,
+        from: `"Legacy" <${process.env.SMTP_USER}>`,
         to: destinatario,
         subject: assunto,
         text: texto,

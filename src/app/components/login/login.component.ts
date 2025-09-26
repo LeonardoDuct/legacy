@@ -83,12 +83,23 @@ export class LoginComponent {
   }
 
   enviarRecuperacao() {
-    // ... já implementado antes!
-    this.mensagemRecuperacao = 'Iremos enviar um e-mail de redefinição de senha para o seu endereço!';
-    setTimeout(() => {
-      this.recuperarSenhaAtivo = false;
-      this.emailRecuperacao = '';
-      this.mensagemRecuperacao = '';
-    }, 2000); // volta ao modo normal após 2 segundos (opcional)
-  }
+  this.mensagemRecuperacao = '';
+  this.loading = true;
+
+  this.gitlabService.recuperarSenha(this.emailRecuperacao).subscribe({
+    next: (res) => {
+      this.loading = false;
+      this.mensagemRecuperacao = res.mensagem || 'Verifique seu e-mail para redefinir a senha.';
+      setTimeout(() => {
+        this.recuperarSenhaAtivo = false;
+        this.emailRecuperacao = '';
+        this.mensagemRecuperacao = '';
+      }, 3000);
+    },
+    error: (err) => {
+      this.loading = false;
+      this.mensagemRecuperacao = err.error?.mensagem || 'Erro ao solicitar recuperação de senha.';
+    }
+  });
+}
 }

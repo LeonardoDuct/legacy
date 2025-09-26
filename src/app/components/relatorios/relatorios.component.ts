@@ -139,7 +139,7 @@ export class RelatoriosComponent implements OnInit {
       stacked: false, // Ativa empilhamento!
       toolbar: { show: false }
     },
-    colors: ['#FF8C00', '#2196F3', '#4CAF50', '#E53935'],
+    colors: ['#4CAF50', '#2196F3', '#FF8C00', '#E53935'],
     plotOptions: {
       bar: { horizontal: false, columnWidth: '60%', borderRadius: 3 }
     },
@@ -258,20 +258,24 @@ export class RelatoriosComponent implements OnInit {
 
   // Agrupamento por responsável + complexidade (para gráfico empilhado)
   agruparPorResponsavelEComplexidade(issues: any[]) {
-    const complexidadesSet = new Set<string>();
+    // Ordem fixa para complexidade e cores
+    const complexidadeOrder = ['Baixa', 'Não definida', 'Média', 'Alta'];
     const responsaveisSet = new Set<string>();
     issues.forEach(issue => {
-      complexidadesSet.add(issue.complexidade || 'Não definida');
       responsaveisSet.add(issue.responsavel || 'Indefinido');
     });
-    const complexidades = Array.from(complexidadesSet);
     const responsaveis = Array.from(responsaveisSet);
 
     // Monta mapa: responsavel -> complexidade -> count
     const mapa: { [responsavel: string]: { [complexidade: string]: number } } = {};
     for (const issue of issues) {
       const resp = issue.responsavel || 'Indefinido';
-      const comp = issue.complexidade || 'Não definida';
+      let comp = (issue.complexidade || 'Não definida').toLowerCase();
+      // Normaliza para garantir a ordem
+      if (comp.includes('baixa')) comp = 'Baixa';
+      else if (comp.includes('media') || comp.includes('média')) comp = 'Média';
+      else if (comp.includes('alta')) comp = 'Alta';
+      else comp = 'Não definida';
       if (!mapa[resp]) mapa[resp] = {};
       if (!mapa[resp][comp]) mapa[resp][comp] = 0;
       mapa[resp][comp]++;
@@ -281,19 +285,19 @@ export class RelatoriosComponent implements OnInit {
     const topResponsaveis = responsaveis
       .map(resp => ({
         responsavel: resp,
-        total: complexidades.reduce((sum, comp) => sum + (mapa[resp]?.[comp] || 0), 0)
+        total: complexidadeOrder.reduce((sum, comp) => sum + (mapa[resp]?.[comp] || 0), 0)
       }))
       .sort((a, b) => b.total - a.total)
       .slice(0, 10)
       .map(e => e.responsavel);
 
-    // Series para gráfico stacked
-    const series = complexidades.map(complexidade => ({
+    // Series para gráfico stacked, na ordem fixa
+    const series = complexidadeOrder.map(complexidade => ({
       name: complexidade,
       data: topResponsaveis.map(resp => mapa[resp]?.[complexidade] || 0)
     }));
 
-    return { series, responsaveis: topResponsaveis, complexidades };
+    return { series, responsaveis: topResponsaveis, complexidades: complexidadeOrder };
   }
 
   atualizarGraficos() {

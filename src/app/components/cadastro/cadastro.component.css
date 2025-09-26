@@ -15,21 +15,9 @@
   margin: var(--spacing-sm) 0;
 }
 
-.acoes button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-xs);
-  font-size: var(--font-normal);
-  padding: var(--spacing-xs);
-  border: none;
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-}
-
 /* Categoria container */
 .categoria {
-  background: var(--Shades-Base, #223348);
+  background: var(--primary-bg);
   border: 1px solid var(--border-contrast);
   border-radius: var(--border-radius-md);
   width: 100%;
@@ -135,7 +123,7 @@
   height: 60px;
   min-width: 80px;
   padding-left: var(--spacing-sm);
-  background: var(--Shades-Base, #223348);
+  background: var(--primary-bg);
   border-left: 1px solid var(--shades-contrast-10, #ADC8EB24);
   border-bottom: 1px solid var(--shades-contrast-10, #ADC8EB24);
 }
@@ -158,7 +146,6 @@
   font-weight: var(--font-weight-bold);
 }
 
-/* Nível */
 .nivel {
   color: var(--text-muted);
   background: var(--shades-contrast-5, #C0D5F20F);
@@ -174,7 +161,6 @@
 
 /* Score */
 .score {
-  display: inline-block;
   padding: 2px var(--spacing-xs);
   border-radius: var(--border-radius-sm);
   font-weight: var(--font-weight-bold);
@@ -245,7 +231,6 @@
 }
 
 /* Tabela dentro do modal */
-/* Estilização original da tabela */
 .tabela-categorias {
   width: 100%;
   border-collapse: separate; 
@@ -261,7 +246,6 @@
   text-align: left;
 }
 
-/* Cabeçalho da tabela */
 .tabela-categorias th {
   color: #EBF4FFE5;
   font-weight: bold;
@@ -299,7 +283,6 @@
 .tabela-categorias .peso-cell .peso-input {
   height: 30px; 
 }
-/* Ações no modal - alinhadas à direita e com espaçamento reduzido */
 
 .nova-categoria-container {
   margin-top: 20px; 
@@ -693,13 +676,13 @@ input#classificacao {
 }
 
 .btn-nova-classificacao {
-  background: var(--Semantic-colors-Primary, #0C6CE9);
+  background: var(--primary-blue);
   color: var(--text-primary);
   width: 197px;
 }
 
 .btn-nova-classificacao:hover {
-  background: var(--hover-blue, #095BB5);
+  background: var(--hover-blue);
   color: var(--text-secondary);
 }
 
@@ -707,17 +690,15 @@ input#classificacao {
 .btn-categoria {
   width: 169px;
   height: var(--field-height, 40px);
-  gap: 8px;
-  border-radius: var(--border-radius-md);
   padding: 8px var(--button-horizontal-padding, 16px);
-  background: var(--Semantic-colors-Primary, #0C6CE9);
+  background: var(--primary-blue);
   color: white;
   font-size: 14px;
   font-weight: bold;
-  cursor: pointer;
 }
 
-.btn-categoria:hover {
+.btn-categoria:hover,
+.btn-gravar:hover{
   background: #0A5BC7; 
 }
 
@@ -730,11 +711,8 @@ input#classificacao {
 .btn-excluir {
   background: none;
   color: var(--placeholder-text);
-  padding: 4px;
-  margin-left: 5px; 
+  margin-left: 5px;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
   gap: 4px;
   transition: transform var(--transition-fast), color var(--transition-fast);
 }
@@ -763,12 +741,8 @@ input#classificacao {
 }
 
 .btn-gravar {
-  background: #0C6CE9;
+  background: var(--primary-blue);
   color: white;
-}
-
-.btn-gravar:hover {
-  background: #0A5BC7;
 }
 
 /* Botão Fechar */
@@ -787,10 +761,6 @@ input#classificacao {
   margin-left: 10px; 
 }
 
-/* ====================== */
-/* POSICIONAMENTOS ESPECÍFICOS */
-/* ====================== */
-
 /* Botões de ação no modal */
 .btn-acoes {
   display: flex;
@@ -806,10 +776,6 @@ input#classificacao {
   height: 30px;
 }
 
-/* ====================== */
-/* ICONES */
-/* ====================== */
-
 .btn svg {
   width: var(--icon-size);
   height: var(--icon-size);
@@ -819,7 +785,7 @@ input#classificacao {
 .btn-cancelar{
   width: 100px;
 }
-/* Botão Confirmar */
+
 .btn-confirmar {
   background-color: #d32f2f; 
   color: #fff;

@@ -3,7 +3,7 @@
   display: flex;
   height: 100vh;
   min-height: 500px;
-  background: #1d2b3a;
+  background: var(--login-color);
 }
 
 .login-page>section {
@@ -15,7 +15,7 @@
 
 /* Lado esquerdo */
 .login-page .left-side {
-  background-color: #1d2b3a;
+    background: var(--login-color);
 }
 
 .login-page .shapes-img {
@@ -25,16 +25,16 @@
 
 /* Lado direito */
 .login-page .right-side {
-  background-color: #1d2b3a;
+  background: var(--login-color);
 }
 
 .login-box {
   width: 100%;
   max-width: 350px;
-  background-color: #1d2b3a;
-  color: #fff;
+  background: var(--login-color);
+  color: var(--text-primary);
   padding: 2rem;
-  border-radius: 8px;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.15);
 }
 
@@ -104,7 +104,7 @@
 }
 
 .toggle-password:hover {
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .forgot {
@@ -118,7 +118,7 @@
 }
 
 .forgot:hover {
-  color: #fff;
+  color: var(--text-primary);
   text-decoration: underline;
 }
 
@@ -160,7 +160,7 @@
 
 .login-box form .access-request:hover {
   background-color: #3a4b5e;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .icon {
@@ -186,7 +186,7 @@
   margin-top: 20px;
   background: #222c;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-md);
   box-shadow: 0 2px 8px #0002;
 }
 
