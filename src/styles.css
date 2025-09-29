@@ -14,6 +14,7 @@
   --text-muted: #D9E8FCB0;
   --placeholder-text: #90A1B9;
   --error-red: #E75D55;
+  --login-color: #1d2b3a;
   --hover-cancel-bg: rgba(192, 213, 242, 0.2);
   --disabled-primary-bg: rgba(12, 108, 233, 0.5);
   --secondary-hover-bg: rgba(192, 213, 242, 0.1);
@@ -550,8 +551,8 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: #2B3D52; /* Fundo geral da página */
+  font-family: var(--font-family);
+  background-color: var(--general-bg);
 }
 
 @media (max-width: 900px) {

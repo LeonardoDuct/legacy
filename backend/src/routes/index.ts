@@ -37,5 +37,6 @@ router.post('/login', usuariosController.login);
 router.post('/usuarios/:id/alterar-senha', authMiddleware, usuariosController.alterarSenha);
 router.get('/usuarios', usuariosController.getUsuarios);
 router.post('/usuarios/:id/resetar-senha', usuariosController.resetarSenhaPadrao);
+router.post('/usuarios/recuperar-senha', usuariosController.solicitarRecuperacaoSenha);
 
 export default router;

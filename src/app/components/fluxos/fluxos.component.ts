@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { CabecalhoComponent } from '../cabecalho/cabecalho.component';
 import { CommonModule } from '@angular/common';
 
-// Modelos extras para a estrutura do Kanban
 export interface Badge {
   label: string;
   type?: 'success' | 'warning' | 'error' | '';
@@ -35,7 +34,6 @@ export interface Highlight {
   type?: 'success' | 'warning' | 'error' | '';
 }
 
-// Modelo de dados com datas de entrada/saída por setor (mantido para suas IS)
 interface FluxoSetor {
   entrada: string | null;
   saida: string | null;
@@ -64,14 +62,12 @@ interface FluxoIS {
   styleUrls: ['./fluxos.component.css']
 })
 export class FluxosComponent {
-  // Tabs
   tabs: Array<{ value: 'geral' | 'eventos'; label: string }> = [
     { value: 'geral', label: 'Geral' },
     { value: 'eventos', label: 'Eventos' }
   ];
   abaSelecionada: 'geral' | 'eventos' = 'geral';
 
-  // Highlights das abas
   highlightsGeral: Highlight[] = [
     { label: 'Ligadas', value: 7 },
     { label: 'Concluídas', value: 3, type: 'success' }
@@ -81,7 +77,6 @@ export class FluxosComponent {
     { label: 'Aguardando', value: '104h', type: 'error' }
   ];
 
-  // Kanban Geral
   kanbanGeral: KanbanColumn[] = [
     {
       nome: 'Projetos',
@@ -191,7 +186,6 @@ export class FluxosComponent {
     }
   ];
 
-  // Kanban Eventos (resumido, preencha mais se precisar)
   kanbanEventos: KanbanColumn[] = [
     {
       nome: 'Projetos',
@@ -289,7 +283,6 @@ export class FluxosComponent {
     }
   ];
 
-  // Dados para o popover (score)
   popoverScore = [
     { categoria: 'Cliente', peso: '30%', classificacao: 'JAL', score: 5.0, subTotal: 15.0, type: 'warning' },
     { categoria: 'Prazo', peso: '30%', classificacao: '06/05/2025', score: 8.0, subTotal: 24.0, type: 'error' },
@@ -298,7 +291,6 @@ export class FluxosComponent {
     { categoria: 'Impacto', peso: '5%', classificacao: 'Alto', score: 10.0, subTotal: 5.0, type: 'error' }
   ];
 
-  // ------ SEUS DADOS ORIGINAIS DAS IS ------
   totalKickoff = 0;
   totalEmAndamento = 0;
   totalConcluidas = 0;
@@ -355,7 +347,6 @@ export class FluxosComponent {
     }
   ];
 
-  // Métodos utilitários:
   get isListFiltrada(): FluxoIS[] {
     if (!this.filtroColuna || !this.filtroValor) return this.isList;
     const [setor, tipo] = this.filtroColuna.split('.');
@@ -397,7 +388,6 @@ export class FluxosComponent {
   }
 
   convertHorasToDiasHoras(valor: string | number): string {
-    // Remove o 'h' se existir
     const horas = typeof valor === 'string' ? Number(valor.replace(/[^0-9.]/g, '')) : Number(valor);
     if (isNaN(horas) || horas <= 0) return '0 hora';
 

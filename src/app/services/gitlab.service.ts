@@ -43,13 +43,16 @@ export class GitlabService {
     return this.http.post<{ mensagem: string }>(`${this.apiUrl}/usuarios/${id}/resetar-senha`, {});
   }
 
+  recuperarSenha(email: string): Observable<{ mensagem: string }> {
+    return this.http.post<{ mensagem: string }>(`${this.apiUrl}/usuarios/recuperar-senha`, { email });
+  }
+
   atualizarUsuario(id: number, nome: string, email: string, admin: boolean, head: boolean, iprojetos: boolean, adm_categorias:boolean, adm_usuarios:boolean) {
     return this.http.put<{ mensagem: string }>(`${this.apiUrl}/usuarios/${id}`, { nome, email, admin, head, iprojetos, adm_categorias, adm_usuarios });
   }  
 
   alterarSenha(novaSenha: string) {
     const token = localStorage.getItem('token');
-    console.log('Token enviado:', token);
     const id = this.obterIdUsuarioDoToken();
   
     if (!id) {

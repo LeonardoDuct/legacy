@@ -1,7 +1,7 @@
 /* === QUADROS (cards) === */
 .quadros-container {
     display: grid;
-    gap: 16px;
+    gap: var(--spacing-sm);
     grid-template-columns: repeat(3, 1fr);
     margin: 20px;
     justify-items: stretch;
@@ -33,8 +33,8 @@
 
 .quadro {
     width: 100%;
-    background: var(--Shades-Base, #223348);
-    border-radius: 8px;
+    background: var(--primary-bg);
+    border-radius: var(--border-radius-md);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -62,7 +62,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: var(--spacing-sm);
     padding: 22px 16px 14px 16px;
     min-width: 160px;
     justify-content: center;
@@ -70,7 +70,7 @@
 
 .projeto-nome {
     font-size: 1.15rem;
-    color: #fff;
+    color: var(--text-primary);
     font-weight: bold;
     line-height: 1.02;
     min-height: 38px;
@@ -82,7 +82,7 @@
 }
 
 .percentual-concluidas {
-    color: #fff;
+    color: var(--text-primary);
     font-weight: 400;
     font-size: 17px;
     margin-bottom: 4px;
@@ -104,12 +104,12 @@
 .coluna-esquerda {
     width: 203px;
     font-size: 14px;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .obs-texto {
     font-size: 14px;
-    color: #fff;
+    color: var(--text-primary);
     margin-top: 8px;
 }
 
@@ -123,61 +123,41 @@
 }
 
 /* === BOTÕES === */
-.btn,
-.btn-detalhes,
-.btn-salvar,
-.btn-cancelar {
-    border-radius: 8px;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-}
-
 .btn-detalhes {
     width: 117px;
-    margin-right: 8px;
-    height: 36px;
-    padding: 8px 16px;
-    background-color: rgba(173, 200, 235, 0.14);
+    margin-right: var(--spacing-xs);
+    height: var(--height-small);
+    background-color: var(--border-contrast);
     color: #90BDF9;
 }
 
 .btn-detalhes:hover {
     background-color: rgba(173, 200, 235, 0.25);
-    transform: scale(1.03);
+}
+
+.btn-salvar,
+.btn-cancelar {
+    min-width: 92px;
+    height: var(--height-small);
+    padding: var(--spacing-xs) var(--spacing-md);
 }
 
 .btn-salvar {
-    min-width: 92px;
-    height: 38px;
-    padding: 8px 22px;
-    background: #0C6CE9;
-    color: white;
+    background: var(--primary-blue);
+    color: var(--text-primary);
 }
 
 .btn-salvar:hover {
-    background: #0A5BC7;
+    background: var(--hover-blue);
 }
 
 .btn-cancelar {
-    min-width: 92px;
-    height: 38px;
-    padding: 8px 22px;
-    background: rgba(192, 213, 242, 0.1);
+    background: var(--secondary-hover-bg);
     color: #90BDF9;
 }
 
 .btn-cancelar:hover {
-    background: rgba(192, 213, 242, 0.2);
-}
-
-.btn:focus,
-.btn-detalhes:focus,
-.btn-salvar:focus,
-.btn-cancelar:focus {
-    outline: 2px solid #0C6CE9;
-    outline-offset: 2px;
+    background: var(--hover-cancel-bg);
 }
 
 /* === STATUS === */
@@ -187,7 +167,7 @@
     padding: 6px 20px;
     border-radius: 6px;
     font-weight: 500;
-    font-size: 16px;
+    font-size: var(--font-normal);
     text-align: center;
     margin-right: 8px;
     box-shadow: 0 1px 4px #0002;
@@ -195,12 +175,12 @@
 
 .status-badge.aberta {
     background: #21c076;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .status-badge.fechada {
     background: #e34545;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 /* === MODAL === */
@@ -218,7 +198,7 @@
 }
 
 .modal {
-    background: #223348;
+    background: var(--primary-bg);
     position: relative;
     padding: 32px 24px;
     border-radius: 12px;
@@ -227,7 +207,7 @@
     max-width: 420px;
     width: 90vw;
     box-shadow: 0 0 24px 3px rgba(0, 0, 0, 0.18);
-    color: #fff;
+    color: var(--text-primary);
     display: flex;
     flex-direction: column;
     gap: 18px;
@@ -263,7 +243,7 @@
 }
 
 .btn-fechar-modal:hover {
-    color: #fff;
+  color: var(--text-primary);
 }
 
 .modal textarea,
@@ -273,9 +253,9 @@
     max-height: 200px;
     background: rgba(173, 200, 235, 0.08);
     border-radius: 6px;
-    color: #fff;
+    color: var(--text-primary);
     border: 1px solid #ADC8EB;
-    font-size: 16px;
+    font-size: var(--font-normal);
     padding: 8px 12px;
     outline: none;
     resize: vertical;
@@ -293,7 +273,7 @@
     width: 100%;
     height: 6px;
     background: rgba(173, 200, 235, 0.18);
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     margin-bottom: 8px;
     margin-top: -1px;
     overflow: hidden;
@@ -302,7 +282,7 @@
 .barra-progresso-preenchida {
     height: 100%;
     background: linear-gradient(90deg, #0C6CE9 0%, #0FF56F 100%);
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -333,7 +313,7 @@
     margin-left: auto;
     font-size: 1.2rem;
     font-weight: bold;
-    color: #fff;
+    color: var(--text-primary);
     padding-right: 24px;
 }
 
@@ -345,7 +325,7 @@
     margin-left: 14px;
     margin-right: 14px;
     font-weight: 500;
-    color: #fff;
+    color: var(--text-primary);
     user-select: none;
 }
 
@@ -371,13 +351,13 @@
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--text-primary);
     transition: left 0.2s;
 }
 
 .switch-abertas input[type="checkbox"]:checked+.slider::before {
     left: 19px;
-    background: #fff;
+    background: var(--text-primary);
 }
 
 .switch-abertas input[type="checkbox"]:checked+.slider {
@@ -386,7 +366,7 @@
 
 .switch-text {
     margin-left: 4px;
-    color: #fff;
+    color: var(--text-primary);
     font-size: 1rem;
     font-weight: 500;
 }

@@ -1,8 +1,11 @@
-import { Request, Response } from 'express';
+import { Request, Response, RequestHandler } from 'express';
 import pool from '../config/database';
+import crypto from 'crypto'
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { handleError, handleNotFound } from '../shared/helpers/errorHandler';
+import { resetPasswordEmail, resetLinkEmail } from '../shared/helpers/emailTemplates';
+import { enviarEmail } from '../services/emailService';
 
 export const createUsuario = async (req: Request, res: Response) => {
     const { nome, email, senha, admin, head, iprojetos, adm_categorias, adm_usuarios } = req.body;
@@ -20,6 +23,17 @@ export const createUsuario = async (req: Request, res: Response) => {
             'INSERT INTO usuarios (nome, email, senha_hash, admin, head, iprojetos, adm_categorias, adm_usuarios) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
             [nome, email, senhaHash, !!admin, !!head, !!iprojetos, !!adm_categorias, !!adm_usuarios]
         );
+
+        // Envia email de boas-vindas
+        try {
+            await enviarEmail(
+                email,
+                "Bem-vindo ao Sistema Legacy!",
+                `Olá ${nome},\n\nSeu cadastro foi realizado com sucesso no sistema Legacy.`
+            );
+        } catch (erroEmail) {
+            console.error("Falha ao enviar email de boas-vindas:", erroEmail);
+        }
 
         res.status(201).json({ mensagem: 'Usuário criado com sucesso' });
     } catch (erro) {
@@ -149,8 +163,61 @@ export const resetarSenhaPadrao = async (req: Request, res: Response) => {
             'UPDATE usuarios SET senha_hash = $1, troca_senha = true WHERE id = $2',
             [senhaHash, id]
         );
+
+        const result = await pool.query('SELECT nome, email FROM usuarios WHERE id = $1', [id]);
+        const usuario = result.rows[0];
+
+        if (usuario) {
+            try {
+                const { subject, body } = resetPasswordEmail(usuario.nome);
+                await enviarEmail(
+                    usuario.email,
+                    subject,
+                    body
+                );
+            } catch (erroEmail) {
+                console.error("Falha ao enviar email de reset de senha:", erroEmail);
+            }
+        }
+
         res.status(200).json({ mensagem: 'Senha resetada para o padrão com sucesso!' });
     } catch (error) {
         handleError(res, error, 'Erro ao resetar senha.');
     }
+};
+
+export const solicitarRecuperacaoSenha = async (req: Request, res: Response) => {
+    const { email } = req.body;
+    if (!email) {
+        res.status(400).json({ mensagem: 'E-mail obrigatório.' });
+        return;
+    }
+
+    const usuario = (await pool.query(
+        'SELECT id, nome FROM usuarios WHERE email = $1',
+        [email]
+    )).rows[0];
+
+    if (!usuario) {
+        res.status(200).json({ mensagem: 'Se o e-mail existir, enviaremos instruções.' });
+        return;
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expira_em = new Date(Date.now() + 1000 * 60 * 30); // 30 minutos
+
+    await pool.query(
+        'INSERT INTO tokens_recuperacao (usuario_id, token, expira_em) VALUES ($1, $2, $3)',
+        [usuario.id, token, expira_em]
+    );
+
+    const link = `${process.env.FRONTEND_URL}/redefinir-senha?token=${token}`;
+    const { subject, body } = resetLinkEmail(usuario.nome, link);
+
+    const enviado = await enviarEmail(email, subject, body);
+    if (!enviado) {
+        console.error("Falha ao enviar e-mail de recuperação.");
+    }
+
+    res.status(200).json({ mensagem: 'Se o e-mail existir, enviaremos instruções.' });
 };

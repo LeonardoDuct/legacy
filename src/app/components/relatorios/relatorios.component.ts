@@ -55,7 +55,6 @@ export class RelatoriosComponent implements OnInit {
     { nome: 'Dez', valor: 12 },
   ];
   mesesSelecionados: number[] = [];
-  // Projetos e anos disponíveis para seleção
   projetos = [
     'Desenvolvimento', 'QA', 'Sustentação', 'Projetos', 'Processos', 'Produtos', 'RNC', 'CMO'
   ];
@@ -64,7 +63,6 @@ export class RelatoriosComponent implements OnInit {
   projetoSelecionado = 'Desenvolvimento';
   anoSelecionado = 2025;
 
-  // Relatórios
   issuesFechadas: any[] = [];
   relatorioPorCliente: any[] = [];
   relatorioPorResponsavel: { series: any[], responsaveis: string[], complexidades: string[] } = {
@@ -75,7 +73,6 @@ export class RelatoriosComponent implements OnInit {
   loading = false;
   erro = '';
 
-  // Chart principal (por cliente)
   chartOptions: ChartOptions = {
     series: [],
     chart: {
@@ -129,17 +126,16 @@ export class RelatoriosComponent implements OnInit {
     }
   };
 
-  // Chart por responsável (agora: empilhado por complexidade)
   chartOptionsResponsavel: ChartOptions = {
     series: [],
     chart: {
       type: 'bar',
       width: '100%',
       height: 350,
-      stacked: false, // Ativa empilhamento!
+      stacked: false,
       toolbar: { show: false }
     },
-    colors: ['#FF8C00', '#2196F3', '#4CAF50', '#E53935'],
+    colors: ['#4CAF50', '#2196F3', '#FF8C00', '#E53935'],
     plotOptions: {
       bar: { horizontal: false, columnWidth: '60%', borderRadius: 3 }
     },
@@ -166,7 +162,7 @@ export class RelatoriosComponent implements OnInit {
         trim: true,
         hideOverlappingLabels: true,
         style: {
-          fontSize: '16px', // <-- aumente aqui (ex: '16px', '20px', etc)
+          fontSize: '16px',
           colors: '#fff'
         }
       },
@@ -205,11 +201,11 @@ export class RelatoriosComponent implements OnInit {
   selecionarMes(mes: number) {
     const idx = this.mesesSelecionados.indexOf(mes);
     if (idx > -1) {
-      this.mesesSelecionados.splice(idx, 1); // Remove
+      this.mesesSelecionados.splice(idx, 1);
     } else {
-      this.mesesSelecionados.push(mes); // Adiciona
+      this.mesesSelecionados.push(mes); 
     }
-    this.carregarRelatorio(); // <-- ATUALIZA!
+    this.carregarRelatorio(); 
   }
 
   carregarRelatorio() {
@@ -222,7 +218,6 @@ export class RelatoriosComponent implements OnInit {
       .subscribe({
         next: (dados) => {
           let issues = dados || [];
-          // Se algum mês foi selecionado, filtra as issues por mês
           if (this.mesesSelecionados.length) {
             issues = issues.filter(issue => {
               if (!issue.data_fechamento) return false;
@@ -249,55 +244,51 @@ export class RelatoriosComponent implements OnInit {
       const cli = issue.cliente || 'Indefinido';
       mapa.set(cli, (mapa.get(cli) || 0) + 1);
     }
-    // Ordena clientes pelo total de fechadas (desc)
     return Array.from(mapa.entries())
       .map(([cliente, fechadas]) => ({ cliente, fechadas }))
       .sort((a, b) => b.fechadas - a.fechadas)
-      .slice(0, 10); // Top 10 clientes
+      .slice(0, 10);
   }
 
-  // Agrupamento por responsável + complexidade (para gráfico empilhado)
   agruparPorResponsavelEComplexidade(issues: any[]) {
-    const complexidadesSet = new Set<string>();
+    const complexidadeOrder = ['Baixa', 'Não definida', 'Média', 'Alta'];
     const responsaveisSet = new Set<string>();
     issues.forEach(issue => {
-      complexidadesSet.add(issue.complexidade || 'Não definida');
       responsaveisSet.add(issue.responsavel || 'Indefinido');
     });
-    const complexidades = Array.from(complexidadesSet);
     const responsaveis = Array.from(responsaveisSet);
 
-    // Monta mapa: responsavel -> complexidade -> count
     const mapa: { [responsavel: string]: { [complexidade: string]: number } } = {};
     for (const issue of issues) {
       const resp = issue.responsavel || 'Indefinido';
-      const comp = issue.complexidade || 'Não definida';
+      let comp = (issue.complexidade || 'Não definida').toLowerCase();
+      if (comp.includes('baixa')) comp = 'Baixa';
+      else if (comp.includes('media') || comp.includes('média')) comp = 'Média';
+      else if (comp.includes('alta')) comp = 'Alta';
+      else comp = 'Não definida';
       if (!mapa[resp]) mapa[resp] = {};
       if (!mapa[resp][comp]) mapa[resp][comp] = 0;
       mapa[resp][comp]++;
     }
 
-    // Top 10 responsáveis pelo total de issues de todas as complexidades
     const topResponsaveis = responsaveis
       .map(resp => ({
         responsavel: resp,
-        total: complexidades.reduce((sum, comp) => sum + (mapa[resp]?.[comp] || 0), 0)
+        total: complexidadeOrder.reduce((sum, comp) => sum + (mapa[resp]?.[comp] || 0), 0)
       }))
       .sort((a, b) => b.total - a.total)
       .slice(0, 10)
       .map(e => e.responsavel);
 
-    // Series para gráfico stacked
-    const series = complexidades.map(complexidade => ({
+    const series = complexidadeOrder.map(complexidade => ({
       name: complexidade,
       data: topResponsaveis.map(resp => mapa[resp]?.[complexidade] || 0)
     }));
 
-    return { series, responsaveis: topResponsaveis, complexidades };
+    return { series, responsaveis: topResponsaveis, complexidades: complexidadeOrder };
   }
 
   atualizarGraficos() {
-    // Gráfico por cliente
     this.chartOptions = {
       ...this.chartOptions,
       xaxis: {
@@ -309,7 +300,6 @@ export class RelatoriosComponent implements OnInit {
       ]
     };
 
-    // Gráfico por responsável + complexidade (empilhado)
     this.chartOptionsResponsavel = {
       ...this.chartOptionsResponsavel,
       xaxis: {
