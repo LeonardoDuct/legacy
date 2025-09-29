@@ -1,27 +1,84 @@
-# TicketHub
+# Legacy
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.11.
+Legacy é um sistema para gerenciar demandas internas, as IS, facilitando a melhor distribuição das equipes e acompanhamento das atividades. O sistema permite identificar demandas mais prioritárias, otimizando os processos e a gestão do fluxo de trabalho.
 
-## Development server
+## Tecnologias Utilizadas
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Frontend:** [Angular](https://angular.io/) v19.2.5
+- **Backend:** [Express.js](https://expressjs.com/) + TypeScript
 
-## Code scaffolding
+## Como rodar o projeto
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Frontend (Angular)
 
-## Build
+1. Acesse a pasta `ticket-hub`:
+    ```bash
+    cd ticket-hub
+    ```
+2. Instale as dependências:
+    ```bash
+    npm install
+    ```
+3. Rode o servidor de desenvolvimento:
+    ```bash
+    ng serve
+    ```
+4. Acesse [http://localhost:4200](http://localhost:4200) no navegador.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### Backend (Express.js/TypeScript)
 
-## Running unit tests
+1. Acesse a pasta `backend`:
+    ```bash
+    cd backend
+    ```
+2. Instale as dependências:
+    ```bash
+    npm install
+    ```
+3. Rode o servidor:
+    ```bash
+    npm start
+    ```
+4. O backend estará em [http://localhost:3000](http://localhost:3000)
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Geração de código Angular
 
-## Running end-to-end tests
+- Gerar componente:
+    ```bash
+    ng generate component nome-do-componente
+    ```
+- Outras opções:
+    ```bash
+    ng generate directive|pipe|service|class|guard|interface|enum|module
+    ```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Build (produção)
 
-## Further help
+- Build do frontend:
+    ```bash
+    ng build
+    ```
+- Artefatos gerados em `dist/`.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Testes
+
+- **Unitários (Angular):**
+    ```bash
+    ng test
+    ```
+- **End-to-end (Angular):**
+    ```bash
+    ng e2e
+    ```
+
+## Ajuda
+
+Para mais informações sobre Angular CLI:  
+```bash
+ng help
+```
+Ou acesse a [documentação oficial](https://angular.io/cli).
+
+---
+
+*Atualizado para Angular v19.2.5, backend Express.js na pasta `backend`, e nome do projeto Legacy.*

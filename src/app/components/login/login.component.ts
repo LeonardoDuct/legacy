@@ -19,7 +19,6 @@ export class LoginComponent {
   loading = false;
   primeiroAcesso = false;
 
-  // Recuperação de senha
   recuperarSenhaAtivo = false;
   emailRecuperacao = '';
   mensagemRecuperacao = '';
